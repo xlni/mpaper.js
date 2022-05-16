@@ -28,7 +28,7 @@ Path.inject({ statics: new function() {
         path._closed = closed;
         // Set named arguments at the end, since some depend on geometry to be
         // defined (e.g. #clockwise)
-        return path.set(props, { insert: true });
+        return path.set(props, { insert: false });
     }
 
     function createEllipse(center, radius, args) {
@@ -86,6 +86,31 @@ Path.inject({ statics: new function() {
             ], false, args);
         },
 
+       /**
+         * Creates a poly line path item from the properties described by an object
+         * literal.
+         *
+         * @name Path.PolyLine
+         * @param {Object} object an object containing properties describing the
+         *     path's attributes
+         * @return {Path} the newly created path
+         *
+         * @example {@paperscript}
+         * var path = new Path.PolyLine({
+         *     data: [20, 20, 80,80, 45,90], 
+         *     closed: false,
+         *     strokeColor: 'black'
+         * });
+         */
+        PolyLine: function(/* from, to */) {
+            var args = arguments, data = Item.getNamed(args, 'data'), 
+            closed = !!Item.getNamed(args, 'closed'), points = [];
+            for(var i = 0; i < data.length; i+=2){
+                points.push(new Segment(new Point(data[i], data[i+1])));
+            }
+            return createPath(points, closed, args);
+        },
+
         /**
          * Creates a circular path item.
          *
@@ -119,6 +144,96 @@ Path.inject({ statics: new function() {
                 center = Point.readNamed(args, 'center'),
                 radius = Base.readNamed(args, 'radius');
             return createEllipse(center, new Size(radius), args);
+        },
+
+        /**
+         * * @example {@paperscript}
+         * var path = new Path.Annulus({
+         *     center: [80, 50],
+         *     inner_radius: 30,
+         *     outer_radius : 50,
+         *     inner_color: 'red' 
+         * 
+         * @returns 
+         */
+        Annulus: function(params) {
+            var args = arguments,
+                center = Point.readNamed(args, 'center'),
+                inner_radius  = Base.readNamed(args, 'inner_radius'),
+                outer_radius  = Base.readNamed(args, 'outer_radius') ,
+                inner_color  = params.inner_color ,
+                ese = ellipseSegments;
+
+                if( inner_color ){
+                    var c1 = createEllipse(center, new Size(inner_radius),args);
+                    c1.fillColor = inner_color;
+                    var c2 = createEllipse(center, new Size(outer_radius),args);
+                    c2.fillColor = params.fillColor || params.strokeColor;
+                    var group = new Group();
+                    group.addChild(c2);
+                    group.addChild(c1);
+                    group.setColor = function(inner, color){
+                       (inner? c1 : c2).fillColor = color;
+                    };
+                    return group;
+                }
+ 
+                var segments = [];
+                for (var i = 0; i < 4; i++) {
+                    var segment = ese[i];
+                    segments[i] = new Segment(
+                        segment._point.multiply(inner_radius).add(center),
+                        segment._handleIn.multiply(inner_radius),
+                        segment._handleOut.multiply(inner_radius)
+                    );
+                }
+                segments[4] = new Segment(
+                    ese[0]._point.multiply(inner_radius).add(center),
+                    ese[0]._handleIn.multiply(inner_radius),
+                    ese[0]._handleOut.multiply(inner_radius)
+                );
+                segments[5] = new Segment(  ese[0]._point.multiply(inner_radius).add(center)  );
+                segments[6] = new Segment(  ese[0]._point.multiply(outer_radius).add(center)  );
+                segments[ 7] = new Segment(
+                    ese[0]._point.multiply(outer_radius).add(center),
+                    ese[0]._handleOut.multiply(outer_radius),
+                    ese[0]._handleIn.multiply(outer_radius), 
+                ); 
+                for (var i = 0; i < 4; i++) {
+                    var segment = ese[ 3- i];
+                    segments[i+8] = new Segment(
+                        segment._point.multiply(outer_radius).add(center),
+                        segment._handleOut.multiply(outer_radius),
+                        segment._handleIn.multiply(outer_radius), 
+                    );
+                }
+                segments[11] = new Segment(
+                    ese[0]._point.multiply(outer_radius).add(center), 
+                    ese[0]._handleOut.multiply(outer_radius),
+                    ese[0]._handleIn.multiply(outer_radius),
+                );
+
+                segments[12] = new Segment(  ese[0]._point.multiply(outer_radius).add(center)  );
+                segments[13] = new Segment(  ese[0]._point.multiply(inner_radius).add(center)  );
+
+                return createPath(segments, true, args);
+
+        //     var inner_c = createEllipse(center, new Size(inner_radius), args);
+        //     if( inner_color ) inner_c.fillColor = inner_color;
+        //     else inner_c.fillColor = 'rgba(0,0,0,0)';
+        //     var outer_c = createEllipse(center, new Size(outer_radius), args);
+            
+        //   var p = new CompoundPath( {
+        //         children: [
+        //             inner_c,
+        //             outer_c
+        //         ],
+        //         strokeColor: 'orange',
+        //         fillColor: 'red',
+        //         }); 
+            
+        //     p.closed = true;
+        //     return p; 
         },
 
         /**
@@ -449,6 +564,47 @@ Path.inject({ statics: new function() {
                 segments[i] = new Segment(center.add(vector.rotate(step * i)
                         .multiply(i % 2 ? radius2 : radius1)));
             return createPath(segments, true, args);
-        }
+        },
+        /**
+         * 
+         * @example {@paperscript}
+         * var path =  new Path.Tex({
+         *     content: 'math ....',
+         *     scale: 12,    default is 10
+         *     position: ...
+         *     radius2: 40,
+         *     fillColor: 'black'
+         * });
+         */
+        Tex: function(props){ 
+            var  project =  props.project || mpaper.project,
+                 content = props.content, scale = props.scale || 10,
+                 position = props.position || project._view.center;   
+            var item = project.importLatex(content);
+            item.scale(scale); 
+            item.position = position;
+            return item;
+        },
+         /**
+         * 
+         * @example {@paperscript}
+         * var path =  new Path.Text({
+         *     content: 'math ....',   no math, pure english text.
+         *     scale: 12,    default is 10
+         *     position: ...
+         *     radius2: 40,
+         *     fillColor: 'black'
+         * });
+         */
+          Text: function(props){ 
+            var  project =  props.project || mpaper.project,
+                 content = props.content, scale = props.scale || 10,
+                 position = props.position || project._view.center;   
+                 content = '\\text{' + content + '}';
+            var item = project.importLatex(content);
+            item.scale(scale); 
+            item.position = position;
+            return item;
+        },
     };
 }});

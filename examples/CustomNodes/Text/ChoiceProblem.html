@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Choice Problem test</title>
+    <link rel="stylesheet" href="../../css/style.css"> 
+    <script type="text/javascript" src="../../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+       project.useBuiltinStyle('dark'); 
+ 
+       menu = new ChoiceProblem({    
+          problem:  {
+               title:  "",
+               options: [
+                          { 
+                            content:  'problem option one',
+                            correct: false,
+                            feedback: 'feedback for one', 
+                          },
+                          { 
+                            content:  'problem option two',
+                            correct: false,
+                            feedback: 'feedback for two', 
+                          },
+                          { 
+                            content:  'problem option trhee',
+                            correct: true, 
+                            toScene: 'story-1'
+                          }
+                        ]
+            
+            }
+        }); 
+ 
+        
+      menu.position =  [300,300];
+      Create({target: menu, duration:3})
+     // duration = 1;
+     // menu.imageEffect( duration, 'blinder_v',  true );
+   
+
+     Scene('story-1')
+     circle = new Path.Circle({
+        center:  [400, 200],
+        radius: 100,  
+        fillColor: 'blue'
+    })
+    circle2 = circle.clone();
+    circle3 = circle.clone();
+    circle4 = circle.clone();
+    group2 = new Group(circle, circle2, circle3, circle4 );
+    group2.align(false, 30);
+    group2.position = [600,600]
+
+    Create( {target: group2, type: 'FadeIn', duration: 1} )   
+    Wait(1)
+
+     Focus( { target: group2 , color: 'white'}) ; 
+     Wait(1)
+
+     circle4.on('click', function(){ 
+      leaveScene({resumeOnClose: true});
+       });
+
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

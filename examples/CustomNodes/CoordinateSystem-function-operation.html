@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Path Tangents</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+       // mpaper.settings.insertItems = true;
+        project.useBuiltinStyle('dark');  
+    
+        project.configuration.frame_width = 1000;
+        project.configuration.frame_height = 1000;
+
+        var space, path;
+        Main();
+      //    center = view.center;
+
+        //test 
+       
+          space =  new  CoordinateSystem.ByAxiesFullScreen( project, {   
+                 x_range:[-10, 10, 4], 
+                 y_range:[-10,20,5], 
+                 include_tip:true,
+                 include_label:true, 
+                 show_grid: true,
+                    strokeWidth: 3,
+                    strokeColor: 'red', 
+                    dot_color: 'red',
+                    draggable_origin: true,
+                    draggable_x_dot: 1 ,
+                    draggable_y_dot: 2 ,
+        });
+        
+        path = new R9Function.Linear({
+            coord_system:  space,
+            func  : function(x){  return  2*x  +2; },
+            t_range:[-10,10,2],  
+            strokeWidth: 3,
+            strokeColor: 'red'
+       }); 
+
+       Create({target: [space, path]});
+
+       Wait(2);
+       PlayCode(' space.space. createLineToAxis(true, 2, 5,  "blue", true)  ') ;
+
+    //  line1 = space.space. createLineToAxis(true, 2, 5, 'blue', true) ;
+     //  Create({target: line1});
+       Wait(2);
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

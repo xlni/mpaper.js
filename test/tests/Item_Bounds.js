@@ -307,7 +307,7 @@ test('path.bounds & path.strokeBounds with stroke styles', function() {
 });
 
 test('path.strokeBounds with rectangles', function() {
-    var path = new paper.Path.Rectangle({
+    var path = new mpaper.Path.Rectangle({
         point: [100, 100],
         size: [100, 100],
         strokeWidth: 50,
@@ -568,7 +568,7 @@ test('path.bounds & path.strokeBounds with stroke styles', function() {
 });
 
 test('path.strokeBounds with rectangles', function() {
-    var path = new paper.Path.Rectangle({
+    var path = new mpaper.Path.Rectangle({
         point: [100, 100],
         size: [100, 100],
         strokeWidth: 50,

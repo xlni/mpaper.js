@@ -31,10 +31,10 @@ gulp.task('test:node', ['minify:acorn'], function(callback) {
                 // To dynamically load the tests files from the sources, we need
                 // to require Prepro.js first.
                 'prepro/lib/node.js',
-                // Note that loading dist/paper-full.js also works in
+                // Note that loading dist/mpaper-full.js also works in
                 // combination with `gulp load`, in which case Prepro.js is
                 // present and handles the loading transparently.
-                { path: '../dist/paper-full.js', namespace: 'paper' }
+                { path: '../dist/mpaper-full.js', namespace: 'mpaper' }
             ],
             timeout: 40
         }));

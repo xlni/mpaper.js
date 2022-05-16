@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Rotation Sprite</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+        //  mpaper.settings.insertItems = true;
+        project.useBuiltinStyle('light');
+        
+          sprite = new  SpriteSVG({  
+            position: view.center,
+            animation: 'standing',
+            state: '',
+            states: {
+                svg1 : {
+                data:   'M 251.0,177.0 C 251.0,177.0,251.0,177.0,251.0,177.0 L 509.0,164.0 C 509.0,164.0,509.0,164.0,509.0,164.0  C 514.0,375.0,514.0,375.0,514.0,375.0 L 296.0,360.0 C 296.0,360.0,296.0,360.0,296.0,360.0 ',
+                adjusted: 'M 251.0,177.0 C 251.0,177.0,251.0,177.0,251.0,177.0 L 509.0,164.0 C 509.0,164.0,509.0,164.0,509.0,164.0 L 514.0,375.0 C 514.0,375.0,514.0,375.0,514.0,375.0 L 296.0,360.0 C 296.0,360.0,296.0,360.0,296.0,360.0 C 296.0,360.0,295.0,243.0,295.0,243.0 '
+                },
+                svg2 : {
+                data: ' M251.0 177.0 C251.0 177.0 327.81528399999996 243.183726 391.0 240.0 L509.0 164.0 C509.0 164.0 609.72551 216.21652199999997 611.0 270.0 L514.0 375.0 C514.0 375.0 434.483296 438.02408 376.0 434.0 L296.0 360.0 C296.0 360.0 402.25489799999997 321.823066 402.0 292.0 C401.755098 263.346466 295.0 243.0 295.0 243.0',
+                adjusted: 'M 251.0,177.0 C 251.0,177.0,327.81528,243.18373,391.0,240.0 L 509.0,164.0 C 509.0,164.0,609.7255,216.21652,611.0,270.0 L 514.0,375.0 C 514.0,375.0,434.4833,438.02408,376.0,434.0 L 296.0,360.0 C 296.0,360.0,402.25488,321.82306,402.0,292.0 C 401.7551,263.34647,295.0,243.0,295.0,243.0 '
+                }
+            },
+            animations: {
+            standing: { 
+                fromdata:  'svg1' ,
+                todata:  'svg2' ,
+                morphtime:  3.0,
+                yoyo: true 
+            },
+            kicking:  { 
+                fromdata:  'svg1' ,
+                todata:  'svg2' ,
+                morphtime: 3.0,
+                yoyo:  false
+            }        
+            },
+            fillColor: 'red',
+            strokeColor: 'blue', 
+        });   
+       
+        Create({target: sprite})
+        
+    </script>
+</head>
+<body>
+    <canvas id="canvas" resize></canvas>
+    
+</body>
+</html>

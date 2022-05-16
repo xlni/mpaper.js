@@ -19,7 +19,7 @@ var isNodeContext = typeof global === 'object',
 if (isNodeContext) {
     scope = global;
     // Resemble.js needs the Image constructor global.
-    global.Image = paper.window.Image;
+    global.Image = mpaper.window.Image;
 } else {
     scope = window;
     // This is only required when running in the browser:
@@ -43,8 +43,8 @@ var nativeClasses = this.nativeClasses || {
     MouseEvent: this.MouseEvent || {}
 };
 
-// The unit-tests expect the paper classes to be global.
-paper.install(scope);
+// The unit-tests expect the mpaper classes to be global.
+mpaper.install(scope);
 
 // Override console.error, so that we can catch errors that are only logged to
 // the console.
@@ -324,7 +324,7 @@ var compareItem = function(actual, expected, message, options, properties) {
                     ? expected.name + ' 1' : expected.name,
                 message + ' (#name)');
         compareProperties(actual, expected, ['children', 'bounds', 'position',
-                'matrix', 'data', 'opacity', 'locked', 'visible', 'blendMode',
+                'matrix', 'data', 'opacity', 'locked', 'draggable', 'visible', 'blendMode',
                 'selected', 'fullySelected', 'clipMask', 'guide'],
                 message, options);
         if (properties)
@@ -643,7 +643,7 @@ var triggerMouseEvent = function(type, point, target) {
     // will bubble from canvas to document, since the canvas used in tests is
     // not inserted in DOM.
     target = target || (type === 'mousedown' ? view.element : document);
-    // If `gulp load` was run, there is a name collision between paper Event /
+    // If `gulp load` was run, there is a name collision between mpaper Event /
     // MouseEvent and native javascript classes. In this case, we need to use
     // native classes stored in the nativeClasses object instead.
     // MouseEvent class does not exist in PhantomJS, so in that case, we need to

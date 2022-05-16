@@ -45,14 +45,14 @@ test('Item#matches()', function() {
 test('Project#getItems()', function() {
     var layer = new Layer();
 
-    var matches = paper.project.getItems({
+    var matches = mpaper.project.getItems({
         class: Layer
     });
     equals(function() {
         return matches.length == 1 && matches[0] == layer;
     }, true);
 
-    var matches = paper.project.getItems({
+    var matches = mpaper.project.getItems({
         class: Item
     });
     equals(function() {
@@ -60,7 +60,7 @@ test('Project#getItems()', function() {
     }, true);
 
     var path = new Path();
-    var matches = paper.project.getItems({
+    var matches = mpaper.project.getItems({
         class: Path
     });
     equals(function() {
@@ -68,14 +68,14 @@ test('Project#getItems()', function() {
     }, true);
 
     var group = new Group();
-    var matches = paper.project.getItems({
+    var matches = mpaper.project.getItems({
         className: 'Group'
     });
     equals(function() {
         return matches.length == 1 && matches[0] === group;
     }, true);
 
-    var matches = paper.project.getItems({
+    var matches = mpaper.project.getItems({
         type: 'group'
     });
     equals(function() {
@@ -83,7 +83,7 @@ test('Project#getItems()', function() {
     }, true);
 
     var raster = new Raster();
-    var matches = paper.project.getItems({
+    var matches = mpaper.project.getItems({
         class: Raster
     });
     equals(function() {
@@ -91,21 +91,21 @@ test('Project#getItems()', function() {
     }, true);
 
     equals(function() {
-        return paper.project.getItems({
+        return mpaper.project.getItems({
             selected: true
         }).length;
     }, 0);
 
     raster.selected = true;
     equals(function() {
-        return paper.project.getItems({
+        return mpaper.project.getItems({
             selected: true
         }).length;
     }, 2);
 
     raster.selected = true;
     equals(function() {
-        return paper.project.getItems({
+        return mpaper.project.getItems({
             selected: true,
             class: Raster
         }).length;
@@ -118,7 +118,7 @@ test('Project#getItems() with compare function', function() {
         opacity: 0.5
     });
 
-    var items = paper.project.getItems({
+    var items = mpaper.project.getItems({
         opacity: function(value) {
             return value < 1;
         }
@@ -134,7 +134,7 @@ test('Project#getItems() with specific property value', function() {
         opacity: 0.5
     });
 
-    var items = paper.project.getItems({
+    var items = mpaper.project.getItems({
         opacity: 1,
         type: 'path'
     });
@@ -152,7 +152,7 @@ test('Project#getItems() with color', function() {
         fillColor: 'black'
     });
 
-    var items = paper.project.getItems({
+    var items = mpaper.project.getItems({
         fillColor: 'red',
         type: 'path'
     });
@@ -162,7 +162,7 @@ test('Project#getItems() with color', function() {
 });
 
 test('Project#getItems() with regex function', function() {
-    var layer = paper.project.activeLayer;
+    var layer = mpaper.project.activeLayer;
     var stopPath = new Path({
         name: 'stop'
     });
@@ -175,17 +175,17 @@ test('Project#getItems() with regex function', function() {
         name: 'starting'
     });
 
-    var items = paper.project.getItems({
+    var items = mpaper.project.getItems({
         name: /^start/g
     });
 
-    // console.log(paper.project.activeLayer);
+    // console.log(mpaper.project.activeLayer);
     equals(function() {
         return items.length == 1 && items[0] == startPath;
     }, true);
 
     equals(function() {
-        var items = paper.project.getItems({
+        var items = mpaper.project.getItems({
             name: /^st/g
         });
         return items.length == 2;
@@ -202,7 +202,7 @@ test('Project#getItems() empty: true', function() {
     }, 2);
 
     equals(function() {
-        return paper.project.getItems({
+        return mpaper.project.getItems({
             empty: true
         }).length;
     }, 2);

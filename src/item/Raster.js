@@ -303,7 +303,7 @@ var Raster = Item.extend(/** @lends Raster# */{
             var view = that.getView(),
                 type = event && event.type || 'load';
             if (view && that.responds(type)) {
-                paper = view._scope;
+                mpaper = view._scope;
                 that.emit(type, new Event(event));
             }
         }
@@ -425,12 +425,12 @@ var Raster = Item.extend(/** @lends Raster# */{
      *
      * @example {@paperscript}
      * var raster = new Raster();
-     * raster.source = 'http://paperjs.org/about/paper-js.gif';
+     * raster.source = 'http://paperjs.org/about/mpaper-js.gif';
      * raster.position = view.center;
      *
      * @example {@paperscript}
      * var raster = new Raster({
-     *     source: 'http://paperjs.org/about/paper-js.gif',
+     *     source: 'http://paperjs.org/about/mpaper-js.gif',
      *     position: view.center
      * });
      */
@@ -736,6 +736,29 @@ var Raster = Item.extend(/** @lends Raster# */{
     },
 
     /**
+     * set a block of pixeles with same color
+     */
+    setPixeles: function(x, y , width, height, color  ) {
+        var    components = color._convert('rgb'),
+            alpha = color._alpha,
+            r = components[0] * 255,
+            g = components[1] * 255,
+            b = components[2] * 255,
+            a =  alpha != null ? alpha * 255 : 255,
+           
+            ctx = this.getContext(true),
+            imageData = ctx.createImageData( width,  height),
+            data = imageData.data; 
+        for (var i=0;i<data.length;i+=4)
+        {
+            data[i+0]=r;
+            data[i+1]=g;
+            data[i+2]=b;
+            data[i+3]=a;
+        } 
+        ctx.putImageData(imageData,  x,  y);
+    },
+    /**
      * Clears the image, if it is backed by a canvas.
      */
     clear: function() {
@@ -808,7 +831,7 @@ var Raster = Item.extend(/** @lends Raster# */{
      *     console.log('The image has finished loading.');
      * };
      *
-     * // As with all events in paper.js, you can also use this notation instead
+     * // As with all events in mpaper.js, you can also use this notation instead
      * // to install multiple handlers:
      * raster.on('load', function() {
      *     console.log('Now the image is definitely ready.');
@@ -846,6 +869,12 @@ var Raster = Item.extend(/** @lends Raster# */{
     },
 
     _draw: function(ctx, param, viewMatrix) {
+        if( this._raster ){
+            this._raster.position = this.position;
+            this._raster._style = this.getStyle(); 
+            this._raster._draw(ctx, param, viewMatrix);
+            return;
+        }
         var element = this.getElement();
         // Only draw if image is not empty (#1320).
         if (element && element.width > 0 && element.height > 0) {
@@ -871,7 +900,158 @@ var Raster = Item.extend(/** @lends Raster# */{
         }
     },
 
+    /**
+     * image morphing.
+     * @param {*} timeline 
+     * @param {*} target must be another image
+     * @param {*} duration 
+     * @param {*} offset 
+     * @param {*} finishCallback  optional, when morphing is done, get called.
+     * @param {*} precise : h(high), l(low). default is L.
+     */
+    morphingTo: function(timeline, target, duration, offset, finishCallback, precise){ 
+        var that = this,  curc, tc  ;
+        var width = Math.min(that.getWidth(), target.getWidth()), 
+           height = Math.min(that.getHeight(), target.getHeight()), w, h;
+      //  if( w != target.getWidth() || h != target.getHeight() )
+        //    return; //should we throw exception?
+        
+        that._raster = null;
+        target.visible = false;
+        that._raster = new Raster(new Size(width, height), this.position);
+       // that._raster.remove();
+        precise = precise || 'l';
+        if( precise === 'm' ) { 
+            w = width > 500 ? 100 : (width > 100 ? Math.ceil(width/5) : ( width > 48 ? Math.ceil(width/2) : width)); 
+            h = height > 500 ? 100 : (height > 100 ? Math.ceil(height/5) : ( height > 48 ? Math.ceil(height/2) : height)); 
+        } else {
+            w = width > 500 ? 30 : (width > 100 ? Math.ceil(width/20) : ( width > 48 ? Math.ceil(width/4) : width)); 
+            h = height > 500 ? 30 : (height > 100 ? Math.ceil(height/20) : ( height > 48 ? Math.ceil(height/4) : height)); 
+        } 
+        var size = new Size(w, h);  
+        var fb = this.bounds.clone(), tb = target.bounds.clone() , started = false; 
+         that.visible = false;
+         that.size = size;
+         target.size = size; 
+ 
+       var options = {
+            target : this,
+           // begin: function(){
+           //     started = true;
+          //      that._raster.addToViewIfNot();
+          //  }.bind(this),
+            progressFunc : function( progress){ 
+                if(!started ) {
+                    started = true;
+                    that._raster.addToViewIfNot();
+                }
+                that._raster.bounds = fb.morphingTo(tb, progress);
+              //  console.log( progress + " " + that._raster.bounds);
+                var adj = ( w == width && h == height) ? 0 : 1;
+                for (var i = 0; i < size.width; i++) {
+                    for (var j = 0; j < size.height; j++) {
+                        curc = that.getPixel(i,j);
+                        tc = target.getPixel(i,j);
+                        tc = curc.morphingTo(tc, progress); 
+                            var colSize = that._raster.size .__divide( size );//.__multiply( 1.5);
+                            var cw = colSize.width, ch = colSize.height; 
+                            var pos = new Point(i, j) .__multiply(colSize) ;/// .__add(colSize.__divide( 2 ) );
+                             that._raster.setPixeles( pos.x - cw/2, pos.y - ch/2, cw+adj, ch+adj , tc) 
+                     }
+                }  
+            }.bind(that),
+            duration :  duration,   
+            complete: function(){
+                that._raster.remove();
+                that._raster = null; 
+                that.bounds = fb;
+                target.bounds = tb;
+                if( finishCallback ){
+                    finishCallback();
+                }   
+                else {
+                    that.remove(); 
+                    that.visible = false;
+                    target.visible = true;
+                    target._changed(/*#=*/(Change.SEGMENTS)); 
+                } 
+            }.bind(this)
+        };
+        if( timeline )  timeline.add( options, offset); 
+        else anime(options);
+    },
+
     _canComposite: function() {
         return true;
     }
 });
+//CoreUtils.addComponentsGetterSetter(Raster, 'crop', ['x', 'y', 'width', 'height']);
+
+//CoreUtils.addGetterSetter(Raster, 'cropX', 0);
+//CoreUtils.addGetterSetter(Raster, 'cropY', 0);
+//CoreUtils.addGetterSetter(Raster, 'cropWidth', 0);
+//CoreUtils.addGetterSetter(Raster, 'cropHeight', 0);
+
+
+var CroppedImage = Item.extend(/** @lends CroppedImage# */{
+    _class: 'CroppedImage',
+    _applyMatrix: false,
+    _canApplyMatrix: false, 
+
+    initialize: function CroppedImage(raster, cropX, cropY, cropWidth, cropHeight) { 
+        this._initialize(raster, cropX, cropY, cropWidth, cropHeight)  ; 
+        this.raster = raster;
+        this.cropX = cropX;
+        this.cropY = cropY;
+        this.cropWidth = cropWidth;
+        this.cropHeight = cropHeight;
+        this._size = new Size(cropWidth, cropHeight);
+        this.position = raster.position.__subtract(new Point(raster.getSize().divide(2))).__add(
+            new Rectangle(cropX, cropY, cropWidth, cropHeight).getCenter()
+         );
+    },
+
+    /**
+     * The width of the raster in pixels.
+     *
+     * @bean
+     * @type Number
+     */
+     getWidth: function() {
+        return this._size ? this._size.width : 0;
+    },
+
+    setWidth: function(width) {
+        this.setSize(width, this.getHeight());
+    },
+
+    /**
+     * The height of the raster in pixels.
+     *
+     * @bean
+     * @type Number
+     */
+    getHeight: function() {
+        return this._size ? this._size.height : 0;
+    },
+
+    setHeight: function(height) {
+        this.setSize(this.getWidth(), height);
+    },
+    _getBounds: function(matrix, options) {
+        var rect = new Rectangle(this._size).setCenter(0, 0);
+        return matrix ? matrix._transformBounds(rect) : rect;
+    },
+    _draw: function(ctx, param, viewMatrix) {
+        var element = this.raster.getElement(), cropX = this.cropX, cropY = this.cropY,
+        cropWidth = this.cropWidth, cropHeight = this.cropHeight, size = this._size;
+        // Only draw if image is not empty (#1320).
+        if (element && element.width > 0 && element.height > 0) {
+            // Handle opacity for Rasters separately from the rest, since
+            // Rasters never draw a stroke. See Item#draw().
+            ctx.globalAlpha = Numerical.clamp(this._opacity, 0, 1); 
+            ctx.drawImage(element, cropX, cropY, cropWidth, cropHeight,
+                    -size.width / 2, -size.height / 2, size.width, size.height);
+        }
+    }
+})

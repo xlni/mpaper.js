@@ -23,13 +23,13 @@
  *
  * Paper classes can only be accessed through `PaperScope` objects. Thus in
  * PaperScript they are global, while in JavaScript, they are available on the
- * global {@link paper} object. For JavaScript you can use {@link
+ * global {@link mpaper} object. For JavaScript you can use {@link
  * PaperScope#install(scope) } to install the Paper classes and objects on the
  * global scope. Note that when working with more than one scope, this still
  * works for classes, but not for objects like {@link PaperScope#project}, since
  * they are not updated in the injected scope if scopes are switched.
  *
- * The global {@link paper} object is simply a reference to the currently active
+ * The global {@link mpaper} object is simply a reference to the currently active
  * `PaperScope`.
  */
 var PaperScope = Base.extend(/** @lends PaperScope# */{
@@ -46,23 +46,24 @@ var PaperScope = Base.extend(/** @lends PaperScope# */{
         // element is only used internally when creating scopes for PaperScript.
         // Whenever a PaperScope is created, it automatically becomes the active
         // one.
-        paper = this;
+        mpaper = this;
         // Default configurable settings.
         this.settings = new Base({
             applyMatrix: true,
-            insertItems: true,
+            insertItems: false,
             handleSize: 4,
             hitTolerance: 0
         });
         this.project = null;
         this.projects = [];
         this.tools = [];
+        this.studio = new Studio({});
         // Assign a unique id to each scope .
         this._id = PaperScope._id++;
         PaperScope._scopes[this._id] = this;
         var proto = PaperScope.prototype;
         if (!this.support) {
-            // Set up paper.support, as an object containing properties that
+            // Set up mpaper.support, as an object containing properties that
             // describe the support of various features.
             var ctx = CanvasProvider.getContext(1, 1) || {};
             proto.support = {
@@ -117,7 +118,7 @@ var PaperScope = Base.extend(/** @lends PaperScope# */{
     version: /*#=*/__options.version,
 
     /**
-     * Gives access to paper's configurable settings.
+     * Gives access to mpaper's configurable settings.
      *
      * @name PaperScope#settings
      * @type Object
@@ -176,9 +177,9 @@ var PaperScope = Base.extend(/** @lends PaperScope# */{
      */
 
     /**
-     * A reference to the local scope. This is required, so `paper` will always
+     * A reference to the local scope. This is required, so `mpaper` will always
      * refer to the local scope, even when calling into it from another scope.
-     * `paper.activate();` will have to be called in such a situation.
+     * `mpaper.activate();` will have to be called in such a situation.
      *
      * @bean
      * @type PaperScript
@@ -205,14 +206,14 @@ var PaperScope = Base.extend(/** @lends PaperScope# */{
      */
     execute: function(code, options) {
 /*#*/   if (__options.paperScript) {
-            var exports = paper.PaperScript.execute(code, this, options);
+            var exports = mpaper.PaperScript.execute(code, this, options);
             View.updateFocus();
             return exports;
 /*#*/   }
     },
 
     /**
-     * Injects the paper scope into any other given scope. Can be used for
+     * Injects the mpaper scope into any other given scope. Can be used for
      * example to inject the currently active PaperScope into the window's
      * global scope, to emulate PaperScript-style globally accessible Paper
      * classes and objects.
@@ -223,13 +224,13 @@ var PaperScope = Base.extend(/** @lends PaperScope# */{
      * scoped if you encounter issues caused by this.
      *
      * @example
-     * paper.install(window);
+     * mpaper.install(window);
      */
     install: function(scope) {
         // Define project, view and tool as getters that redirect to these
         // values on the PaperScope, so they are kept up to date
         var that = this;
-        Base.each(['project', 'view', 'tool'], function(key) {
+        Base.each(['project', 'view', 'tool', 'studio'], function(key) {
             Base.define(scope, key, {
                 configurable: true,
                 get: function() {
@@ -258,9 +259,10 @@ var PaperScope = Base.extend(/** @lends PaperScope# */{
     setup: function(element) {
         // Make sure this is the active scope, so the created project and view
         // are automatically associated with it.
-        paper = this;
+        mpaper = this;
         // Create an empty project for the scope.
-        this.project = new Project(element);
+        this.project = new Project(element); 
+        this.project.studio = this.studio;
         // This is needed in PaperScript.load().
         return this;
     },
@@ -274,7 +276,7 @@ var PaperScope = Base.extend(/** @lends PaperScope# */{
      * in its active project.
      */
     activate: function() {
-        paper = this;
+        mpaper = this;
     },
 
     clear: function() {
@@ -295,11 +297,11 @@ var PaperScope = Base.extend(/** @lends PaperScope# */{
 
     statics: new function() {
         // Produces helpers to e.g. check for both 'canvas' and
-        // 'data-paper-canvas' attributes:
+        // 'data-mpaper-canvas' attributes:
         function handleAttribute(name) {
             name += 'Attribute';
             return function(el, attr) {
-                return el[name](attr) || el[name]('data-paper-' + attr);
+                return el[name](attr) || el[name]('data-mpaper-' + attr);
             };
         }
 

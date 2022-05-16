@@ -243,6 +243,13 @@ var Segment = Base.extend(/** @lends Segment# */{
         return !this._handleIn.isZero() || !this._handleOut.isZero();
     },
 
+   // flat_self: function(){
+    //    this._handleIn = new Point(0,0);
+   //     this._handleOut = new Point(0,0); 
+   //     new SegmentPoint(this._handleIn, this, '_handleIn');
+    //    new SegmentPoint(this._handleOut, this, '_handleOut');
+   // },
+
     /**
      * Checks if the segment connects two curves smoothly, meaning that its two
      * handles are collinear and segment does not form a corner.

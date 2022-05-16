@@ -18,7 +18,7 @@
  * all fields of the currently active {@link PaperScope} object, which within
  * the script appear to be global.
  *
- * In a JavaScript context, only the {@link paper} variable is added to the
+ * In a JavaScript context, only the {@link mpaper} variable is added to the
  * global scope, referencing the currently active {@link PaperScope} object,
  * through which all properties and Paper.js classes can be accessed.
  */
@@ -27,7 +27,7 @@
 /**
  * A reference to the currently active {@link PaperScope} object.
  *
- * @name paper
+ * @name mpaper
  * @property
  * @type PaperScope
  */

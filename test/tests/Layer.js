@@ -13,7 +13,7 @@
 QUnit.module('Layer');
 
 test('#previousSibling / #nextSibling', function() {
-    var project = paper.project;
+    var project = mpaper.project;
     var firstLayer = project.activeLayer;
     var secondLayer = new Layer();
     equals(function() {
@@ -52,7 +52,7 @@ test('#previousSibling / #nextSibling', function() {
 });
 
 test('#insertAbove() / #insertBelow()', function() {
-    var project = paper.project;
+    var project = mpaper.project;
     var firstLayer = project.activeLayer;
     firstLayer.name = 'first';
     var secondLayer = new Layer();
@@ -95,7 +95,7 @@ test('#insertAbove() / #insertBelow()', function() {
 });
 
 test('#addChild() / #insertBelow() with nesting', function() {
-    var project = paper.project;
+    var project = mpaper.project;
     var firstLayer = project.activeLayer;
     var secondLayer = new Layer();
     // There should be two layers now in project.layers

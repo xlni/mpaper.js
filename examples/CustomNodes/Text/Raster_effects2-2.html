@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Path Tangents</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    
+    <script type="text/javascript" src="../../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+
+      mpaper.settings.insertItems = true;
+      project.useBuiltinStyle('dark'); 
+   
+      var center = view.center; 
+
+      var star =  new Path.Circle({ center: center,  radius: 4,   fillColor: 'red',  strokeColor: 'blue'  });
+ 
+         var text2 = new PointText({
+              position: view.center  ,
+               content: 'PointText PointText \n PointText \n PointText \n PointText \n PointText',
+           fillColor: 'red',
+              strokeColor: 'red',
+              fontFamily: 'Courier New',
+              fontWeight: 'bold',
+          //   justification: 'left',
+               fontSize: 20
+           });
+    
+           text2.position =  view.center 
+
+           var image2 = text2.rasterize() ;
+           image2.position = [100,100]
+          text2.onMouseDown = function(e){
+              console.log(e);
+              alert(e);
+            } ;
+            var star =  new Path.Circle({ center: [400,400],  radius: 4,   fillColor: 'red',  strokeColor: 'blue'  });
+ 
+ 
+        var text = new StyledText({
+      //    position: new Point(500,500),
+         content: 'StyledText StyledText \n StyledText\n StyledText\n StyledText\n StyledText',
+         fillColor: 'red',
+       //  content: 'de fg hi jk lnm', 
+      //   r9textstyle :  [{"ry": 1, "rh": 30, "start": 0, "end": 2 },{"b": 1, "stroke": "rgba(255, 59,0, 1.0)", "ry": 1, "rh": 30, "start": 3, "end": 4 },{"ry": 1, "rh": 30, "start": 5, "end": 8 },{"stroke": "rgba(0, 76,227, 1.0)", "ry": 1, "rh": 30, "start": 9, "end": 10 },{"ry": 1, "rh": 30, "start": 11, "end": 14 }],
+          fillColor: 'red',
+         strokeColor: 'red',
+         fontFamily: 'Courier New',
+         fontWeight: 'bold',
+      //   justification: 'left',
+         fontSize: 20,
+         borderColor: 'blue',
+         bgColor: 'green', 
+       });
+       text.position =  new Point(500,500) ;
+       text .onMouseDown = function(e){
+         console.log(e);
+          var image = text.rasterize() ;
+          image.position = new Point(700,100)
+          var star =  new Path.Circle({ center: [700,100],  radius: 5,   fillColor: 'red',  strokeColor: 'blue'  });
+ 
+       } ;
+ 
+       var image = text.rasterize() ;
+       image.position = new Point(100,100)
+       var star =  new Path.Circle({ center: [100,100],  radius: 5,   fillColor: 'red',  strokeColor: 'blue'  });
+ 
+ 
+ 
+       var star =  new Path.Circle({ center: [500,500],  radius: 5,   fillColor: 'red',  strokeColor: 'blue'  });
+ 
+   
+   //  var image = text.rasterize() ;
+   //   image.position = new Point(300,300)
+     
+ 
+     // var group = new Group(circle);  
+     // var image = group.rasterize() ;
+     // image.position = [400,200]
+
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

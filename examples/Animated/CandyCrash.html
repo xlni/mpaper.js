@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <title>Candy Crash</title>
     <link rel="stylesheet" href="../css/style.css">
-    <script type="text/javascript" src="../../dist/paper-full.js"></script>
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
     <script type="text/paperscript" canvas="canvas">
     // kynd.info 2014
+    mpaper.settings.insertItems = true;
+    project.useBuiltinStyle('dark');  
 
     function Ball(r, p, v) {
         this.radius = r;
@@ -119,19 +121,6 @@
     };
 
     //--------------------- main ---------------------
-
-    var balls = [];
-    var numBalls = 18;
-    for (var i = 0; i < numBalls; i++) {
-        var position = Point.random() * view.size;
-        var vector = new Point({
-            angle: 360 * Math.random(),
-            length: Math.random() * 10
-        });
-        var radius = Math.random() * 60 + 60;
-        balls.push(new Ball(radius, position, vector));
-    }
-
     function onFrame() {
         for (var i = 0; i < balls.length - 1; i++) {
             for (var j = i + 1; j < balls.length; j++) {
@@ -142,6 +131,24 @@
             balls[i].iterate();
         }
     }
+
+    var balls = [];
+    var numBalls = 18;
+
+    Main();
+
+    console.log(view)
+    for (var i = 0; i < numBalls; i++) {
+        var position = Point.random() * view.size;
+        var vector = new Point({
+            angle: 360 * Math.random(),
+            length: Math.random() * 10
+        });
+        var radius = Math.random() * 60 + 60;
+        balls.push(new Ball(radius, position, vector));
+    }
+
+
 
     </script>
 </head>

@@ -13,12 +13,12 @@
 var fs = require('fs'),
     path = require('path');
 
-module.exports = function(paper) {
-    if (paper.PaperScript) {
-        var sourceMapSupport = 'require("source-map-support").install(paper.PaperScript.sourceMapSupport);\n',
+module.exports = function(mpaper) {
+    if (mpaper.PaperScript) {
+        var sourceMapSupport = 'require("source-map-support").install(mpaper.PaperScript.sourceMapSupport);\n',
             sourceMaps = {};
 
-        paper.PaperScript.sourceMapSupport = {
+        mpaper.PaperScript.sourceMapSupport = {
             retrieveSourceMap: function(source) {
                 var map = sourceMaps[source];
                 return map ? { url: source, map: map } : null;
@@ -33,13 +33,13 @@ module.exports = function(paper) {
             module.exports = function(canvas) {
                 var source = fs.readFileSync(filename, 'utf8'),
                     code = sourceMapSupport + source,
-                    compiled = paper.PaperScript.compile(code, {
+                    compiled = mpaper.PaperScript.compile(code, {
                         url: filename,
                         source: source,
                         sourceMaps: true,
                         offset: -1 // remove sourceMapSupport...
                     }),
-                    scope = new paper.PaperScope();
+                    scope = new mpaper.PaperScope();
                 // Keep track of sourceMaps so retrieveSourceMap() can link them up
                 scope.setup(canvas);
                 scope.__filename = filename;
@@ -48,18 +48,18 @@ module.exports = function(paper) {
                 scope.require = require;
                 scope.console = console;
                 sourceMaps[filename] = compiled.map;
-                paper.PaperScript.execute(compiled, scope);
+                mpaper.PaperScript.execute(compiled, scope);
                 return scope;
             };
         };
     }
 
-    paper.PaperScope.inject({
+    mpaper.PaperScope.inject({
         createCanvas: function(width, height, type) {
             // Do not use CanvasProvider.getCanvas(), since we may be changing
             // the underlying node-canvas when requesting PDF support, and don't
             // want to release it after back into the pool.
-            var canvas = paper.document.createElement('canvas');
+            var canvas = mpaper.document.createElement('canvas');
             canvas.width = width;
             canvas.height = height;
             canvas.type = type;
@@ -76,14 +76,14 @@ module.exports = function(paper) {
     // NOTE: In Node.js, we only support manual updating for now, but
     // View#exportFrames() below offers a way to emulate animations by exporting
     // them frame by frame at the given frame-rate.
-    paper.DomEvent.requestAnimationFrame = function(callback) {
-    };
+  //  mpaper.anime.engine.requestAnimationFrame = function(callback) {
+  //  };
 
     // Node.js based image exporting code.
-    paper.CanvasView.inject({
+    mpaper.CanvasView.inject({
         // DOCS: CanvasView#exportFrames(options);
         exportFrames: function(options) {
-            options = paper.Base.set({
+            options = mpaper.Base.set({
                 fps: 30,
                 prefix: 'frame-',
                 amount: 1,
@@ -106,7 +106,7 @@ module.exports = function(paper) {
 
             function exportFrame() {
                 // Convert to a Base object, for #toString()
-                view.emit('frame', new paper.Base({
+                view.emit('frame', new mpaper.Base({
                     delta: frameDuration,
                     time: frameDuration * count,
                     count: count

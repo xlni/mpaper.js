@@ -4,8 +4,12 @@
     <meta charset="UTF-8">
     <title>Raster Smoothing</title>
     <link rel="stylesheet" href="../css/style.css">
-    <script type="text/javascript" src="../../dist/paper-full.js"></script>
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
     <script type="text/paperscript" canvas="canvas">
+        mpaper.settings.insertItems = true;
+        project.useBuiltinStyle('dark');
+     
+
         var raster = new Raster('pattern');
 
         function showRasters(raster, position, scale) {
@@ -26,6 +30,8 @@
             showRasters(raster, new Point(50, 600), 0.75);
             raster.remove();
         };
+
+        Main();
 
     </script>
 </head>

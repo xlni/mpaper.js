@@ -43,6 +43,10 @@ var TextItem = Item.extend(/** @lends TextItem# */{
         var hasProps = arg && Base.isPlainObject(arg)
                 && arg.x === undefined && arg.y === undefined;
         this._initialize(hasProps && arg, !hasProps && Point.read(arguments));
+        if( !this.fillColor && this.strokeColor )
+            this.fillColor = this.strokeColor;
+        if( !this.strokeColor && this.fillColor )
+            this.strokeColor = this.fillColor; 
     },
 
     _equals: function(item) {
@@ -169,5 +173,24 @@ var TextItem = Item.extend(/** @lends TextItem# */{
      * @deprecated use {@link #style} instead.
      */
     getParagraphStyle: '#getStyle',
-    setParagraphStyle: '#setStyle'
+    setParagraphStyle: '#setStyle',
+    statics: {
+        AUTO : 'auto',
+        CENTER : 'center', 
+        CHANGE_KINETIC : 'Change.kinetic', 
+        CONTEXT_2D :'2d', 
+        DASH : '-', 
+        EMPTY_STRING : '', 
+        LEFT : 'left', 
+        TEXT : 'text', 
+        TEXT_UPPER : 'Text', 
+        MIDDLE : 'middle', 
+        NORMAL : 'normal', 
+        PX_SPACE : 'px ', 
+        SPACE : ' ', 
+        RIGHT : 'right', 
+        WORD : 'word', 
+        CHAR : 'char', 
+        NONE : 'none' 
+    }
 });

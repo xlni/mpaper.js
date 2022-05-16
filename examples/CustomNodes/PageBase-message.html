@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Boolean Operations</title>
+    <link rel="stylesheet" href="../css/style.css"> 
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+        //  mpaper.settings.insertItems = true;
+        project.useBuiltinStyle('dark')
+
+          text = new StyledText({
+            position: view.center + [0, -200],
+            fillColor: 'red',
+            strokeColor: 'blue',
+            justification: 'center',
+            fontSize: 20,
+            content: 'simple justification = center'
+        });
+        text.position =  view.center + [-220, -200];
+      
+        Create({target: text});
+
+        Wait(3);
+   
+       studio.publish('global.message.notification', {content : 'de fg hi jk lnm',
+                style:   [{"ry": 1, "rh": 30, "start": 0, "end": 2 },{"b": 1, "stroke": "rgba(255, 59,0, 1.0)", "ry": 1, "rh": 30, "start": 3, "end": 4 },{"ry": 1, "rh": 30, "start": 5, "end": 8 },{"stroke": "rgba(0, 76,227, 1.0)", "ry": 1, "rh": 30, "start": 9, "end": 10 },{"ry": 1, "rh": 30, "start": 11, "end": 14 }]
+          })  
+    </script>
+</head>
+<body>
+    <canvas id="canvas" resize stats></canvas>
+</body>
+</html>

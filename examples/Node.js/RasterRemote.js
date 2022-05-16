@@ -1,18 +1,18 @@
-// Please note: When loading paper as a normal module installed in node_modules,
+// Please note: When loading mpaper as a normal module installed in node_modules,
 // you would use this instead:
-// var paper = require('paper-jsdom-canvas');
-var paper = require('../../dist/paper-core.js');
+// var mpaper = require('mpaper-jsdom-canvas');
+var mpaper = require('../../dist/mpaper-core.js');
 var fs = require('fs');
 
-var canvas = paper.createCanvas(800, 600);
-paper.setup(canvas);
+var canvas = mpaper.createCanvas(800, 600);
+mpaper.setup(canvas);
 
 var url = 'http://assets.paperjs.org/images/marilyn.jpg';
-var raster = new paper.Raster(url);
-raster.position = paper.view.center;
+var raster = new mpaper.Raster(url);
+raster.position = mpaper.view.center;
 
 raster.onLoad = function() {
-    paper.view.update();
+    mpaper.view.update();
     console.log('The image has loaded:' + raster.bounds);
 
     // Saving the canvas to a file.

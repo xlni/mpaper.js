@@ -4,8 +4,12 @@
     <meta charset="UTF-8">
     <title>Space</title>
     <link rel="stylesheet" href="../css/style.css">
-    <script type="text/javascript" src="../../dist/paper-full.js"></script>
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
     <script type="text/paperscript" canvas="canvas">
+        mpaper.settings.insertItems = true;
+        project.useBuiltinStyle('dark'); 
+       
+
     // The amount of symbol we want to place;
     var count = 150;
 
@@ -51,6 +55,7 @@
         // the position of the placed symbols:
         for (var i = 0; i < count; i++) {
             var item = project.activeLayer.children[i];
+            if(!item) continue;
             var size = item.bounds.size;
             var length = vector.length / 10 * size.width / 10;
             item.position += vector.normalize(length) + item.data.vector;
@@ -78,6 +83,7 @@
             position.y = bounds.height  + itemBounds.height / 2;
         }
     }
+    Main()
     </script>
 </head>
 <body>

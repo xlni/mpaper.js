@@ -15,7 +15,7 @@ QUnit.module('HitResult');
 test('Hit-testing options', function() {
     var defaultOptions = {
         type: null,
-        tolerance: paper.settings.hitTolerance,
+        tolerance: mpaper.settings.hitTolerance,
         fill: true,
         stroke: true,
         segments: true,
@@ -81,7 +81,7 @@ test('the item on top should be returned', function() {
     // The cloned path is lying above the path:
     var copy = path.clone();
 
-    testHitResult(paper.project.hitTest([75, 75]), {
+    testHitResult(mpaper.project.hitTest([75, 75]), {
         type: 'fill',
         item: copy
     });
@@ -93,7 +93,7 @@ test('hitting a stroked path', function() {
     // We are hit-testing with an offset of 5pt on a path with a stroke width
     // of 10:
 
-    testHitResult(paper.project.hitTest([25, 5]), null,
+    testHitResult(mpaper.project.hitTest([25, 5]), null,
             'Since the path is not stroked yet, the hit-test should return null.');
 
     path.strokeColor = 'black';
@@ -109,12 +109,12 @@ test('hitting a selected path', function() {
     var path = new Path.Circle([50, 50], 50);
     path.fillColor = 'red';
 
-    testHitResult(paper.project.hitTest([75, 75], { selected: true }), null,
+    testHitResult(mpaper.project.hitTest([75, 75], { selected: true }), null,
             'Since the path is not stroked yet, the hit-test should return null.');
 
     path.selected = true;
 
-    testHitResult(paper.project.hitTest([75, 75]), {
+    testHitResult(mpaper.project.hitTest([75, 75]), {
         type: 'fill',
         item: path
     });
@@ -123,7 +123,7 @@ test('hitting a selected path', function() {
 test('hitting path segments', function() {
     var path = new Path([0, 0], [10, 10], [20, 0]);
 
-    testHitResult(paper.project.hitTest([10, 10]), {
+    testHitResult(mpaper.project.hitTest([10, 10]), {
         type: 'segment',
         item: path
     });
@@ -141,31 +141,31 @@ test('hitting the center and position of a path', function() {
             type: 'center', item: path, point: center
         };
 
-    testHitResult(paper.project.hitTest(position, {
+    testHitResult(mpaper.project.hitTest(position, {
         center: true
     }), centerResult);
 
     var offset = new Point(1, 1);
-    testHitResult(paper.project.hitTest(position.add(offset), {
+    testHitResult(mpaper.project.hitTest(position.add(offset), {
         tolerance: offset.length,
         center: true
     }), centerResult, 'position with tolerance');
 
-    testHitResult(paper.project.hitTest(position, {
+    testHitResult(mpaper.project.hitTest(position, {
         position: true
     }), positionResult);
 
-    testHitResult(paper.project.hitTest(center, {
+    testHitResult(mpaper.project.hitTest(center, {
         position: true
     }), positionResult);
 
     path.pivot = [100, 100];
 
-    testHitResult(paper.project.hitTest(center, {
+    testHitResult(mpaper.project.hitTest(center, {
         position: true
     }), null, 'with pivot, the position should not be in the center');
 
-    testHitResult(paper.project.hitTest(path.position, {
+    testHitResult(mpaper.project.hitTest(path.position, {
         position: true
     }), {
         type: 'position', item: path, point: path.position
@@ -178,14 +178,14 @@ test('hitting path handles (1)', function() {
     path.firstSegment.handleOut = [50, 0];
     var firstPoint = path.firstSegment.point;
 
-    testHitResult(paper.project.hitTest(firstPoint.add(50, 0), {
+    testHitResult(mpaper.project.hitTest(firstPoint.add(50, 0), {
         handles: true
     }), {
         type: 'handle-out',
         item: path
     });
 
-    testHitResult(paper.project.hitTest(firstPoint.add(-50, 0), {
+    testHitResult(mpaper.project.hitTest(firstPoint.add(-50, 0), {
         handles: true
     }), {
         type: 'handle-in',
@@ -200,14 +200,14 @@ test('hitting path handles (2)', function() {
         handleOut: [50, 50]
     }));
 
-    testHitResult(paper.project.hitTest([50, 50], {
+    testHitResult(mpaper.project.hitTest([50, 50], {
         handles: true
     }), {
         type: 'handle-out',
         item: path
     });
 
-    testHitResult(paper.project.hitTest([-50, -50], {
+    testHitResult(mpaper.project.hitTest([-50, -50], {
         handles: true
     }), {
         type: 'handle-in',
@@ -222,7 +222,7 @@ test('hit-testing stroke on segment point of a path', function() {
 
     var error = null;
     try {
-        var hitResult = paper.project.hitTest(path.firstSegment.point, {
+        var hitResult = mpaper.project.hitTest(path.firstSegment.point, {
             stroke: true
         });
     } catch (e) {
@@ -257,14 +257,14 @@ test('hitting path ends', function() {
     path.closed = true;
 
     equals(function() {
-        return !paper.project.hitTest(path.firstSegment.point, {
+        return !mpaper.project.hitTest(path.firstSegment.point, {
             ends: true
         });
     }, true, 'No HitResult should be returned, because the path is closed.');
 
     path.closed = false;
 
-    testHitResult(paper.project.hitTest(path.lastSegment.point, {
+    testHitResult(mpaper.project.hitTest(path.lastSegment.point, {
         ends: true
     }), {
         type: 'segment',
@@ -273,7 +273,7 @@ test('hitting path ends', function() {
     });
 
     equals(function() {
-        return !paper.project.hitTest(path.segments[1].point, {
+        return !mpaper.project.hitTest(path.segments[1].point, {
             ends: true
         });
     }, true, 'No HitResult should be returned, since the second segment is not an end');
@@ -283,7 +283,7 @@ test('When a path is closed, the end of a path cannot be hit.', function() {
     var path = new Path([0, 0], [50, 50], [100, 0]);
     path.closed = true;
 
-    var hitResult = paper.project.hitTest([0, 0], {
+    var hitResult = mpaper.project.hitTest([0, 0], {
         ends: true
     });
     equals(function() {
@@ -298,7 +298,7 @@ test('hitting path bounding box', function() {
         fillColor: 'red'
     });
 
-    testHitResult(paper.project.hitTest(path.bounds.topLeft, {
+    testHitResult(mpaper.project.hitTest(path.bounds.topLeft, {
         bounds: true
     }), {
         type: 'bounds',
@@ -317,7 +317,7 @@ test('hitting raster bounding box', function() {
     var raster = path.rasterize(72);
     path.remove();
 
-    testHitResult(paper.project.hitTest(raster.bounds.topLeft, {
+    testHitResult(mpaper.project.hitTest(raster.bounds.topLeft, {
         bounds: true
     }), {
         type: 'bounds',
@@ -335,14 +335,14 @@ test('hitting guides', function() {
     });
     var copy = path.clone();
 
-    var result = paper.project.hitTest(path.position);
+    var result = mpaper.project.hitTest(path.position);
 
     equals(result && result.item, copy,
             'The copy should be returned, because it is on top.');
 
     path.guide = true;
 
-    var result = paper.project.hitTest(path.position, {
+    var result = mpaper.project.hitTest(path.position, {
         guides: true,
         fill: true
     });
@@ -357,7 +357,7 @@ test('hitting raster items', function() {
     path.fillColor = 'red';
     var raster = path.rasterize(72);
 
-    var hitResult = paper.project.hitTest(new Point(160, 120));
+    var hitResult = mpaper.project.hitTest(new Point(160, 120));
 
     equals(function() {
         return hitResult && hitResult.item == raster;
@@ -366,7 +366,7 @@ test('hitting raster items', function() {
     // Move the raster:
     raster.translate(100, 100);
 
-    var hitResult = paper.project.hitTest(new Point(160, 120));
+    var hitResult = mpaper.project.hitTest(new Point(160, 120));
 
     equals(function() {
         return hitResult && hitResult.item == raster;
@@ -377,7 +377,7 @@ test('hitting path with a text item in the project', function() {
     var path = new Path.Rectangle(new Point(50, 50), new Point(100, 100));
     path.fillColor = 'blue';
 
-    var hitResult = paper.project.hitTest(new Point(75, 75));
+    var hitResult = mpaper.project.hitTest(new Point(75, 75));
 
     equals(function() {
         return hitResult && hitResult.item == path;
@@ -386,7 +386,7 @@ test('hitting path with a text item in the project', function() {
     var text1 = new PointText(30, 30);
     text1.content = "Text 1";
 
-    var hitResult = paper.project.hitTest(new Point(75, 75));
+    var hitResult = mpaper.project.hitTest(new Point(75, 75));
 
     equals(function() {
         return !!hitResult;
@@ -399,7 +399,7 @@ test('hitting path with a text item in the project', function() {
 });
 
 test('hit-testing of items that come after a transformed group.', function() {
-    paper.project.currentStyle.fillColor = 'black';
+    mpaper.project.currentStyle.fillColor = 'black';
     var point1 = new Point(100, 100);
     var point2 = new Point(140, 100);
     var delta = new Point(250, 0);
@@ -412,29 +412,29 @@ test('hit-testing of items that come after a transformed group.', function() {
     var group = new Group(path2);
     group.name = 'group';
 
-    var hitResult = paper.project.hitTest(point1);
+    var hitResult = mpaper.project.hitTest(point1);
     equals(function() {
         return hitResult && hitResult.item;
     }, path1, 'Hit testing project for point1 should give us path1.');
 
-    hitResult = paper.project.hitTest(point2);
+    hitResult = mpaper.project.hitTest(point2);
     equals(function() {
         return hitResult && hitResult.item;
     }, path2, 'Hit testing project for point2 should give us path2.');
 
-    hitResult = paper.project.hitTest(point2);
+    hitResult = mpaper.project.hitTest(point2);
     equals(function() {
         return hitResult && hitResult.item;
     }, path2, 'Hit testing project for point2 should give us path2.');
 
     group.translate(delta);
 
-    hitResult = paper.project.hitTest(point1);
+    hitResult = mpaper.project.hitTest(point1);
     equals(function() {
         return hitResult && hitResult.item;
     }, path1, 'After translating group, hit-testing project for point1 should give us path1.');
 
-    hitResult = paper.project.hitTest(point2.add(delta));
+    hitResult = mpaper.project.hitTest(point2.add(delta));
     equals(function() {
         return hitResult && hitResult.item;
     }, path2, 'After translating group, hit-testing project for point2 + delta should give us path2.');
@@ -446,12 +446,12 @@ test('hit-testing of items that come after a transformed group.', function() {
 
     group.moveBelow(path1);
 
-    hitResult = paper.project.hitTest(point1);
+    hitResult = mpaper.project.hitTest(point1);
     equals(function() {
         return hitResult && hitResult.item;
     }, path1, 'After moving group before path1, hit-testing project for point1 should give us path1.');
 
-    hitResult = paper.project.hitTest(point2.add(delta));
+    hitResult = mpaper.project.hitTest(point2.add(delta));
     equals(function() {
         return hitResult && hitResult.item;
     }, path2, 'After moving group before path1, hit-testing project for point2 + delta should give us path2.');
@@ -503,13 +503,13 @@ test('hit-testing invisible items.', function() {
     });
 
     equals(function() {
-        return paper.project.hitTest(point).item === circle2;
+        return mpaper.project.hitTest(point).item === circle2;
     }, true);
 
     circle2.visible = false;
 
     equals(function() {
-        return paper.project.hitTest(point).item === circle1;
+        return mpaper.project.hitTest(point).item === circle1;
     }, true);
 });
 
@@ -529,17 +529,17 @@ test('hit-testing guides.', function() {
     var strokePoint = circle2.bounds.leftCenter;
 
     equals(function() {
-        return paper.project.hitTest(strokePoint).item === circle2;
+        return mpaper.project.hitTest(strokePoint).item === circle2;
     }, true);
 
     circle2.guide = true;
 
     equals(function() {
-        return paper.project.hitTest(strokePoint).item === circle1;
+        return mpaper.project.hitTest(strokePoint).item === circle1;
     }, true);
 
     equals(function() {
-        var result = paper.project.hitTest(strokePoint, {
+        var result = mpaper.project.hitTest(strokePoint, {
             guides: true,
             fill: true
         });
@@ -558,7 +558,7 @@ test('hit-testing fills with tolerance', function() {
     var point = path.bounds.bottomRight.add(tolerance / Math.SQRT2);
 
     equals(function() {
-        var result = paper.project.hitTest(point, {
+        var result = mpaper.project.hitTest(point, {
             tolerance: tolerance,
             fill: true
         });
@@ -607,14 +607,14 @@ test('hit-testing compound-paths', function() {
     });
     // When hit-testing a side, we should get a result on the torus
     equals(function() {
-        var result = paper.project.hitTest(center.add([75, 0]), {
+        var result = mpaper.project.hitTest(center.add([75, 0]), {
             fill: true
         });
         return result && result.item === compoundPath;
     }, true);
     // When hit-testing the center, we should not get a result on the torus
     equals(function() {
-        var result = paper.project.hitTest(center, {
+        var result = mpaper.project.hitTest(center, {
             fill: true
         });
         return result === null;
@@ -622,7 +622,7 @@ test('hit-testing compound-paths', function() {
     // When asking specifically for paths, she should get the top-most path in
     // the center (the one that cuts out the hole)
     equals(function() {
-        var result = paper.project.hitTest(center, {
+        var result = mpaper.project.hitTest(center, {
             class: Path,
             fill: true
         });
@@ -650,12 +650,12 @@ test('hit-testing clipped items', function() {
     var point2 = new Point(100, 210);
 
     equals(function() {
-        var result = paper.project.hitTest(point1);
+        var result = mpaper.project.hitTest(point1);
         return result && result.item === circle;
     }, true);
 
     equals(function() {
-        var result = paper.project.hitTest(point2);
+        var result = mpaper.project.hitTest(point2);
         return result === null;
     }, true);
 });
@@ -682,7 +682,7 @@ test('hit-testing with a match function', function() {
     });
 
     equals(function() {
-        var result = paper.project.hitTest(point, {
+        var result = mpaper.project.hitTest(point, {
             fill: true,
             match: function(res) {
                 return res.item.fillColor == red;
@@ -691,7 +691,7 @@ test('hit-testing with a match function', function() {
         return result && result.item === c1;
     }, true);
     equals(function() {
-        var result = paper.project.hitTest(point, {
+        var result = mpaper.project.hitTest(point, {
             fill: true,
             match: function(res) {
                 return res.item.fillColor == green;
@@ -700,7 +700,7 @@ test('hit-testing with a match function', function() {
         return result && result.item === c2;
     }, true);
     equals(function() {
-        var result = paper.project.hitTest(point, {
+        var result = mpaper.project.hitTest(point, {
             fill: true,
             match: function(res) {
                 return res.item.fillColor == blue;
@@ -728,41 +728,41 @@ test('hit-testing for all items', function() {
     });
 
     equals(function() {
-        var result = paper.project.hitTestAll([60, 60]);
+        var result = mpaper.project.hitTestAll([60, 60]);
         return result.length === 0;
     }, true);
 
     equals(function() {
-        var result = paper.project.hitTestAll([80, 80]);
+        var result = mpaper.project.hitTestAll([80, 80]);
         return result.length === 1 && result[0].item === c1;
     }, true);
 
     equals(function() {
-        var result = paper.project.hitTestAll([100, 100]);
+        var result = mpaper.project.hitTestAll([100, 100]);
         return result.length === 2 && result[0].item === c2
                 && result[1].item === c1;
     }, true);
 
     equals(function() {
-        var result = paper.project.hitTestAll([120, 120]);
+        var result = mpaper.project.hitTestAll([120, 120]);
         return result.length === 3 && result[0].item === c3
                 && result[1].item === c2
                 && result[2].item === c1;
     }, true);
 
     equals(function() {
-        var result = paper.project.hitTestAll([140, 140]);
+        var result = mpaper.project.hitTestAll([140, 140]);
         return result.length === 2 && result[0].item === c3
                 && result[1].item === c2;
     }, true);
 
     equals(function() {
-        var result = paper.project.hitTestAll([160, 160]);
+        var result = mpaper.project.hitTestAll([160, 160]);
         return result.length === 1 && result[0].item === c3;
     }, true);
 
     equals(function() {
-        var result = paper.project.hitTestAll([180, 180]);
+        var result = mpaper.project.hitTestAll([180, 180]);
         return result.length === 0;
     }, true);
 });

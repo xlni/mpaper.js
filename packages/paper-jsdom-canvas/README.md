@@ -5,4 +5,4 @@ Packaged for Node.js with canvas rendering through
 importing and exporting through [jsdom](https://github.com/tmpvar/jsdom).
 
 For documentation, see the
-[main README](https://github.com/paperjs/paper.js/blob/develop/README.md) file.
+[main README](https://github.com/paperjs/mpaper.js/blob/develop/README.md) file.

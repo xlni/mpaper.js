@@ -39,7 +39,7 @@ gulp.task('build:copy', function() {
 
 buildNames.forEach(function(name) {
     gulp.task('build:' + name, ['clean:build:' + name, 'minify:acorn'], function() {
-        return gulp.src('src/paper.js')
+        return gulp.src('src/mpaper.js')
             .pipe(prepro({
                 // Evaluate constants.js inside the precompilation scope before
                 // the actual precompilation, so all the constants substitution
@@ -69,7 +69,7 @@ buildNames.forEach(function(name) {
 
     gulp.task('clean:build:' + name, function() {
         return del([
-            'dist/paper-' + name + '*.js'
+            'dist/mpaper-' + name + '*.js'
         ]);
     });
 });

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Style testing</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <script type="text/javascript" src="../../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+
+        mpaper.settings.insertItems = true;
+          project.useBuiltinStyle('dark'); 
+
+
+        function onResize(){text.position =  [500,500]
+            text2.position = view.center + [0, -150]; 
+            text3.position = view.center + [0, -100];
+            text4.position = view.center + [0, -50];
+            text5.position = view.center + [0,  0];
+            text6.position = view.center + [0,  50];
+        }
+
+        Main()
+
+         text = new StyledText({
+         //   position: view.center + [0, -200],
+            fillColor: 'red',
+            strokeColor: 'blue', 
+            fontSize: 20,
+            content: 'AAAA AAA AAA AAA'
+        });
+
+         text2 = new StyledText({
+            position: view.center + [0, -150],
+            fillColor: 'black',
+            strokeColor: 'black',
+           
+            fontSize: 20,
+            content: 'de fg hi jk lnm', 
+            r9textstyle :  [{"ry": 1, "rh": 30, "start": 0, "end": 2 },{"b": 1, "stroke": "rgba(255, 59,0, 1.0)", "ry": 1, "rh": 30, "start": 3, "end": 4 },{"ry": 1, "rh": 30, "start": 5, "end": 8 },{"stroke": "rgba(0, 76,227, 1.0)", "ry": 1, "rh": 30, "start": 9, "end": 10 },{"ry": 1, "rh": 30, "start": 11, "end": 14 }]
+          });
+         text3 = new StyledText({
+            position: view.center + [0, -100],
+            fillColor: 'red',
+            strokeColor: 'blue',
+            
+            fontSize: 20,
+            bgColor:'pink',
+            borderColor:'green',
+            corner:5,
+            borderWidth:1,
+            textXOffset:10,
+            textYOffset:3,
+            content: 'text with background border color  ,corner-5'
+        });
+         text4 = new StyledText({
+            position: view.center + [0, -50],
+            fillColor: 'red',
+            strokeColor: 'blue',
+            
+            fontSize: 20,
+            bgColor:'pink',
+            borderColor:'green',
+            corner:5, 
+            textXOffset:10,
+            textYOffset:3,
+            content: 'text with background color  ,corner-5'
+        });
+         text5 = new StyledText({
+            position: view.center + [0,  0],
+            fillColor: 'red',
+            strokeColor: 'blue',
+          
+            fontSize: 20,
+            content: 'simple //justification = left'
+        });
+         text6 = new StyledText({
+            position: view.center + [0,  50],
+            fillColor: 'black',
+            strokeColor: 'black',
+             
+            bgColor:'pink',
+            borderColor:'green',
+            corner:5, 
+            textXOffset:10,
+            textYOffset:3,
+            fontSize: 20,
+            content: 'de fg hi jk lnm', 
+            r9textstyle :  [{"ry": 1, "rh": 30, "start": 0, "end": 2 },{"b": 1, "stroke": "rgba(255, 59,0, 1.0)", "ry": 1, "rh": 30, "start": 3, "end": 4 },{"ry": 1, "rh": 30, "start": 5, "end": 8 },{"stroke": "rgba(0, 76,227, 1.0)", "ry": 1, "rh": 30, "start": 9, "end": 10 },{"ry": 1, "rh": 30, "start": 11, "end": 14 }]
+          });
+
+           text6_copy = text6.rasterize();
+          text6_copy.position = text6_copy.position.__add(new Point(100,100));
+
+          text6.onMouseDown = function(e){
+              console.log(e);
+              alert(e);
+          } ;
+          text5.onMouseDown = function(e){
+            console.log(e);
+            alert(e);
+        } ;
+
+        text4.onMouseDown = function(e){
+            console.log(e);
+        }
+
+    </script>
+</head>
+<body>
+    <canvas id="canvas" resize stats></canvas>
+</body>
+</html>

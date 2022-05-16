@@ -698,16 +698,21 @@ statics: /** @lends Curve */{
         return res;
     },
 
-    getTimeOf: function(v, point) {
+    getTimeOf: function(v, point, forceEpsilon) {
         // Before solving cubics, compare the beginning and end of the curve
         // with zero epsilon:
         var p0 = new Point(v[0], v[1]),
             p3 = new Point(v[6], v[7]),
             epsilon = /*#=*/Numerical.EPSILON,
-            geomEpsilon = /*#=*/Numerical.GEOMETRIC_EPSILON,
-            t = point.isClose(p0, epsilon) ? 0
+            geomEpsilon = /*#=*/Numerical.GEOMETRIC_EPSILON;
+        if( forceEpsilon ){
+            epsilon = forceEpsilon;
+            geomEpsilon = forceEpsilon;
+        }
+        var  t = point.isClose(p0, epsilon) ? 0
               : point.isClose(p3, epsilon) ? 1
               : null;
+
         if (t === null) {
             // Solve the cubic for both x- and y-coordinates and consider all
             // solutions, testing with the larger / looser geometric epsilon.
@@ -1179,10 +1184,11 @@ statics: /** @lends Curve */{
      * curve, `null` otherwise.
      *
      * @param {Point} point the point on the curve
+       @param {Number} [epsilon] the point on the curve
      * @return {CurveLocation} the curve location of the specified point
      */
-    getLocationOf: function(/* point */) {
-        return this.getLocationAtTime(this.getTimeOf(Point.read(arguments)));
+    getLocationOf: function(point, epsilon) {
+        return this.getLocationAtTime(this.getTimeOf(Point.read(arguments), epsilon));
     },
 
     /**
@@ -1204,10 +1210,11 @@ statics: /** @lends Curve */{
      * self-intersecting curve, the first found result is returned.
      *
      * @param {Point} point the point on the curve
-     * @return {Number} the curve-time parameter of the specified point
+     * @param {Number} [epsilon] the point on the curve
+     * @return {Number}   the curve-time parameter of the specified point
      */
-    getTimeOf: function(/* point */) {
-        return Curve.getTimeOf(this.getValues(), Point.read(arguments));
+    getTimeOf: function(point, epsilon) {
+        return Curve.getTimeOf(this.getValues(), Point.read(arguments), epsilon);
     },
 
     // TODO: Remove in 1.0.0? (deprecated January 2016):

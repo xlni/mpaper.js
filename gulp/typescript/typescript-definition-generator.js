@@ -109,7 +109,7 @@ const template = fs.readFileSync(__dirname + '/typescript-definition-template.mu
 // Render template.
 const output = mustache.render(template, context);
 // Write output in a file.
-fs.writeFileSync(__dirname + '/../../dist/paper.d.ts', output, 'utf8');
+fs.writeFileSync(__dirname + '/../../dist/mpaper.d.ts', output, 'utf8');
 
 
 //
@@ -184,12 +184,12 @@ function parseType(type, options) {
         const singleType = splittedType.replace(/(\[\])+$/, '');
         // Handle eventual type conflict in static constructors block. For
         // example, in `Path.Rectangle(rectangle: Rectangle)` method,
-        // `rectangle` parameter type must be mapped to `paper.Rectangle` as it
+        // `rectangle` parameter type must be mapped to `mpaper.Rectangle` as it
         // is declared inside a `Path` namespace and would otherwise be wrongly
         // assumed as being the type of `Path.Rectangle` class.
         if (options.staticConstructorClass && options.staticConstructorClass.methods.find(it => it.isStatic && it.isConstructor && formatMethodName(it._name) === singleType)
         ) {
-            return 'paper.' + splittedType;
+            return 'mpaper.' + splittedType;
         }
         // Convert primitive types to their lowercase equivalent to suit
         // typescript best practices.

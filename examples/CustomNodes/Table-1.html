@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Bar Chart test -1</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+      //mpaper.settings.insertItems = true;
+      project.useBuiltinStyle('dark');
+      
+          center = view.center; 
+        //test 
+          table =  new  Table( {  
+          area: [100,100,300,200],
+           data: [["First", "Second"],  ["Third","Fourth"]],
+           row_labels:  [ "R1", "R2" ],
+           col_labels:  [ "C1" ,  "C2" ],
+           strokeColor: 'red',
+           fillColor: 'blue',
+           strokeWidth: 1
+        });
+      // table.position = center;
+      Create({target: table})
+      
+ 
+        //test 
+          table2 =  new  Table( {  
+          area: [450,100,300,200],
+          data: [["First", "Second"],  ["Third","Fourth"]],
+          row_labels:  [ "R1", "R2" ],
+          col_labels:  [ "C1" ,  "C2" ],
+          strokeColor: 'red',
+          fillColor: 'blue',
+          strokeWidth: 1,
+          include_outer_lines: true
+        });
+   
+          table3 =  new  Table( {  
+          area: [800,100,300,200],
+          data: [["First", "Second"],  ["Third","Fourth"]],
+          row_labels:  [ "R1", "R2" ],
+          col_labels:  [ "C1" ,  "C2" ],
+          strokeColor: 'red',
+          fillColor: 'blue',
+          strokeWidth: 1,
+          include_outer_lines: true,
+          background_rectangle_color: 'pink'
+        });
+        Create({target: [table2, table3]})
+
+          table =  new  Table( {  
+          area: [100,350,300,200],
+           data: [["First", "Second"],  ["Third","Fourth"]],
+           row_labels:  [ "R1", "R2" ],
+           col_labels:  [ "C1" ,  "C2" ],
+           strokeColor: 'red',
+           fillColor: 'blue',
+           strokeWidth: 1,
+           row_config:[0.2,0.3,0.5],
+           col_config:[0.2, 0.5,0.3]
+        });
+        Create({target: [table ]})
+          table =  new  Table( {  
+          area: [450,350,300,200],
+           data: [["First", "Second"],  ["Third","Fourth"]],
+           row_labels:  [ "R1", "R2" ],
+           col_labels:  [ "C1" ,  "C2" ],
+           strokeColor: 'red',
+           fillColor: 'blue',
+           strokeWidth: 1, 
+           line_config: {
+               strokeColor: 'green',
+               strokeWidth: 5,
+           },
+           text_config: {
+              strokeColor: 'yellow',
+              fontSize: 12,
+           },
+        });
+        Create({target: [table ]})
+          table =  new  Table( {  
+          area: [800,350,300,200],
+           data: [["First", "Second"],  ["Third","Fourth"]],
+           row_labels:  [ "R1", "R2" ],
+           col_labels:  [ "C1" ,  "C2" ],
+           strokeColor: 'red',
+           fillColor: 'blue',
+           strokeWidth: 1, 
+           cell_bg_color: 'yellow',
+           line_config: {
+               strokeColor: 'green',
+               strokeWidth: 5,
+           },
+           text_config: {
+              strokeColor: 'purple',
+              fontSize: 12,
+           },
+        });
+        Create({target: [table ]})
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

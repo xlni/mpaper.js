@@ -20,10 +20,14 @@
 // DOCS: Explain that path matrix is always applied with each transformation.
 var Path = PathItem.extend(/** @lends Path# */{
     _class: 'Path',
+ 
     _serializeFields: {
         segments: [],
-        closed: false
+        closed: false,
+        tips: 'none',
+        tipsLoc: 'none'
     },
+
 
     /**
      * Creates a new path item and places it at the top of the active layer.
@@ -91,6 +95,20 @@ var Path = PathItem.extend(/** @lends Path# */{
         // Increased on every change of segments, so CurveLocation knows when to
         // update its internally cached values.
         this._version = 0;
+        this._tips= 'none'; //'arrow', 'square', 'circle', 'star', 'polygon', 'none'
+        this._tipsLoc= 'end'; // 'start', 'end', 'both',  
+        this._tipsShape= null;
+        this._tipsAngle= 0;
+        //if a line ,flag to indicate if two ends are draggable. if polyline, similiar behavior
+        this._vertexDraggable=false;
+        this. _hitSegment=null; 
+        this.duration = 0;
+        //flag to indicate animation
+    //    this.duration= 0; //number,  zero means  no animation
+     //   this._repeat=false;//   
+     //   this. startAniTime=0; 
+        //used for svg morphing , or alternative drawing..
+        this._svg = null;
         // arg can either be an object literal containing properties to be set
         // on the path, a list of segments to be set, or the first of multiple
         // arguments describing separate segments.
@@ -125,7 +143,92 @@ var Path = PathItem.extend(/** @lends Path# */{
         // Only pass on arg as props if it wasn't consumed for segments already.
         this._initialize(!segments && arg);
     },
+    resetPathData: function(pathDataStr){
+        this._closed = false;
+        this._segments = [];
+        this._curves = undefined; // For hidden class optimization
+        this._segmentSelection = 0;
+        if( pathDataStr )
+            this.setPathData(pathDataStr);  
+    },
+    write: function(timeline, duration, offset,  doneCallback) {
+        this._write0(timeline, duration, offset,   true, doneCallback);
+    },
 
+    unwrite: function(timeline, duration, offset,  doneCallback) {
+        this._write0(timeline, duration, offset,   false, doneCallback);
+    },
+
+    _write0: function(timeline, duration, offset, create, doneCallback) {
+        //if updater is running, we can not reset it . operation failed 
+        var that = this; 
+        this.duration = duration;
+       // this.startAniTime = startAniTime;
+      //  this._repeat = repeat; 
+        timeline.add({
+                targets : this,
+                progressFunc : function(progress){
+                     that._progress = create ? progress : 1 - progress;
+                     that._changed(/*#=*/(Change.SEGMENTS)); 
+                }.bind(this),
+                duration : duration,   
+                complete: doneCallback
+           }, offset);
+          
+        return true;
+     },
+
+    /**
+     * 
+     * @param {*} duration 
+     * @param {*} startAniTime 
+     * @param {*} repeat 
+     * @param {*} doneCallback 
+     * @returns  false if start failed.
+     */
+    start: function(duration, startAniTime, repeat, doneCallback) {
+        //if updater is running, we can not reset it . operation failed
+        if( this.path_animator && this.getUpdater( this.path_animator.id) != null){
+            return false;
+        }
+        var that = this; 
+        this.duration = duration;
+        startAniTime = startAniTime || 0;
+        repeat = repeat || false;
+       // this.startAniTime = startAniTime;
+      //  this._repeat = repeat; 
+        if( !this.path_animator || this.getUpdater( this.path_animator.id) == null){
+            this.path_animator = new Updater({
+                host : this,
+                func : function(e, progress){
+                     that._progress = progress;
+                     that._changed(/*#=*/(Change.GEOMETRY)); 
+                },
+                duration : that.duration, 
+                startAniTime:  startAniTime,
+                repeat :  repeat,
+                doneCallback: doneCallback
+           });
+           this.addUpdater( this.path_animator );
+        }
+        this.path_animator.resume(  );
+        return true;
+     },
+      /**
+      * resume sprite animation 
+      */
+    resume: function() {
+        if( this.path_animator )
+            this.path_animator.resume();
+    },
+     /**
+      * stop sprite animation 
+      */
+     pause: function() {
+         if( this.path_animator )
+             this.path_animator.pause();
+     },
+     
     _equals: function(item) {
         return this._closed === item._closed
                 && Base.equals(this._segments, item._segments);
@@ -161,6 +264,165 @@ var Path = PathItem.extend(/** @lends Path# */{
         return (parent instanceof CompoundPath ? parent : this)._style;
     },
 
+    setTips: function(tips){
+        if( this._tips == tips )
+            return;
+        if( tips )  //if empty, just reset/sync
+            this._tips = tips;
+        this._setTips2( this.length );
+    },
+    _setTips2: function(offset){
+         //only for end for now TODO: 
+        var point = this.getPointAt(offset), tips = this._tips,
+            tipcolor = this._style.fillColor || this._style.strokeColor,
+            ws = this._style.strokeWidth;
+        if( ws == 1 ) ws = 4;
+        else if( ws == 2 ) ws = 6;
+        else if( ws == 3 ) ws = 8;
+        else ws = ws* 2;
+        
+        if( tips == 'none' ){
+            if( this._tipsShape != null )
+                this._tipsShape.remove();
+            this._tipsShape = null;
+            return;
+        } else if( tips == 'arrow' ){ 
+            var ps = 3, tangent = this.getTangentAt(offset), angle = tangent.angle - 30; 
+            var radius2 = ws;
+            this._tipsShape = new Path.RegularPolygon({
+                center: point, 
+                sides: ps, 
+                radius: radius2});
+            this._tipsShape.rotate( angle );   
+            this._tipsShape.strokeColor = tipcolor;
+            this._tipsShape.fillColor = tipcolor;
+            this._tipsAngle = angle;
+
+        } else if( tips == 'square' ){
+            var ps = 4; 
+            var radius2 = ws;
+            this._tipsShape = new Path.RegularPolygon({
+                center: point, 
+                sides: ps, 
+                radius: radius2});
+            this._tipsShape.strokeColor = tipcolor;
+            this._tipsShape.fillColor = tipcolor;
+        } else if( tips == 'circle' ){
+            this._tipsShape = new Path.Circle({
+                center: point,
+                radius: ws,
+                strokeColor: tipcolor,
+                fillColor: tipcolor
+            });
+           
+        } else if( tips == 'star' ){
+            var ps = 8;
+            var radius1 = ws/2;
+            var radius2 = ws;
+            this._tipsShape = new Path.Star({
+                center: point, 
+                points: ps, 
+                radius1: radius1, 
+                radius2: radius2
+            });
+            this._tipsShape.strokeColor = tipcolor;
+            this._tipsShape.fillColor = tipcolor;
+        } else if( tips == 'polygon' ){
+            var ps = 5; 
+            var radius2 = ws;
+            this._tipsShape = new Path.RegularPolygon({
+                center: point, 
+                sides: ps, 
+                radius: radius2
+            });
+            this._tipsShape.strokeColor = tipcolor;
+            this._tipsShape.fillColor = tipcolor;
+        }
+        this._tipsShape.visible = false;
+    },
+
+    _sync_tip_locs: function( ){
+        //only for end for now TODO: 
+        var offset = this.length,point = this.getPointAt(offset), tips = this._tips;
+        if( tips == 'none' || !this._tipsShape ){ 
+           return;
+        }
+        this._tipsShape.position = point;
+        if( tips == 'arrow' ){ 
+           var ps = 3, tangent = this.getTangentAt(offset), angle = tangent.angle - 30;  
+           this._tipsShape.rotate( angle - this._tipsAngle );   
+           this._tipsAngle = angle;
+        }   
+   },
+
+
+    getTips: function(){
+        return this._tips;
+    },
+
+    setTipsLoc: function(tipsLoc){
+        if( this._tipsLoc == tipsLoc )
+            return;
+        this._tipsLoc = tipsLoc;
+    },
+
+    getTipsLoc: function(){
+        return this._tipsLoc;
+    },
+
+    setVertexDraggable: function(draggable){
+        if( this._vertexDraggable == draggable ) return;
+        this._vertexDraggable = draggable;
+        this._hitSegment = null;
+        var project = this._project, that = this;
+           
+        function onMouseDown(event) {
+            that._hitSegment  = null;
+            var hitResult = project.hitTest(event.point,  {
+                segments: true,
+                stroke: true,
+                fill: true,
+                tolerance: 10
+                });
+            if (!hitResult || hitResult.item != that )
+                return;  
+            
+            if (hitResult.type == 'segment') {
+                that._hitSegment = hitResult.segment;
+            } else if (hitResult.type == 'stroke') {
+                //   var location = hitResult.location;
+                //   segment = path.insert(location.index + 1, event.point);
+                //   path.smooth();
+            } 
+        }
+
+        function onMouseMove(event) {
+            project.activeLayer.selected = false;
+            if (event.item)
+                event.item.selected = true;
+        } 
+        function onMouseDrag(event) {
+            if (that._hitSegment) {  
+                that._hitSegment._point.x += event.delta.x;
+                that._hitSegment._point.y += event.delta.y; 
+               // this._hitSegment.point = this._hitSegment.point.__add( event.delta ); 
+               //  that.flatten();
+                that._changed(/*#=*/(Change.SEGMENTS)); 
+            }  
+        }
+        if( draggable ){
+            that.on('mousemove', onMouseMove);
+            that.on('mousedrag', onMouseDrag);
+            that.on('mousedown', onMouseDown); 
+        } else {
+            that.off('mousemove', onMouseMove);
+            that.off('mousedrag', onMouseDrag);
+            that.off('mousedown', onMouseDown); 
+        }
+    },
+    isVertexDraggable: function(){
+        return this._vertexDraggable;
+    },
     /**
      * The segments contained within the path.
      *
@@ -556,6 +818,42 @@ var Path = PathItem.extend(/** @lends Path# */{
             // addSegment
             : this._add([ Segment.read(args) ])[0];
     },
+
+
+    /**
+     * used for svg morphing. as common morphing algorithm requires both svgs have same number of segments.
+     * the shape may be changed, so it is only used for svg morphing internal usage.
+     * @param {} numPoints number of segments need to be inserted.
+     * @returns  new points inserted.
+     */
+    insertExtraSegments: function(numPoints){
+        if( numPoints <= 0 ) return;
+        var that = this, newpoints = [], i = 0, curves = that.getCurves().slice(), cur_curve;
+        if( curves.length == 0 ) return;
+        while( i < numPoints ){
+            curves.sort((a, b) => b.length - a.length);
+            cur_curve = curves[0];
+            var offset = that.getOffsetOf(cur_curve.point1) + cur_curve.length/2;
+            var newpoint = that.getPointAt(offset);
+            var tangent =  that.getTangentAt(offset);
+            if( newpoint ){ 
+                that.insert(cur_curve.index+1, new Segment(newpoint));//, tangent.__multiply(-10),  tangent.__multiply(10)));
+            } 
+            else
+                that.insert(cur_curve.index+1, new Segment( cur_curve.point1 ));
+            newpoints.push(newpoint);
+            curves.splice(0,1);
+            var cc = that.getCurves();
+            curves.push( cc[cur_curve.index] )
+            curves.push( cc[cur_curve.index+1] ) 
+            i++; 
+        }
+        return newpoints;
+    },
+
+   
+
+
 
     /**
      * Inserts one or more segments at a given index in the list of this path's
@@ -1039,6 +1337,68 @@ var Path = PathItem.extend(/** @lends Path# */{
      *
      * // Select the first segment:
      * path.firstSegment.selected = true;
+     */
+    cloneSubPath: function(start_offset, end_offset){
+        var loc0 = this.getLocationAt(start_offset), index0 = loc0 && loc0.index, time0 = loc0 && loc0.time,
+            loc1 = this.getLocationAt(end_offset), index1 = loc1 && loc1.index, time1 = loc1 && loc1.time,
+            tMin = /*#=*/Numerical.CURVETIME_EPSILON,
+            tMax = 1 - tMin;
+        if (time0 > tMax) {
+            // time == 1 is the same location as time == 0 and index++
+            index0++;
+            time0 = 0;
+        }
+        if (time1 > tMax) {
+            // time == 1 is the same location as time == 0 and index++
+            index1++;
+            time1 = 0;
+        }
+        var path = new Path(Item.NO_INSERT);
+         path.insertAbove(this);
+        path.copyAttributes(this);
+        var segments = this._segments, selength = segments.length,  curves = this._curves;
+        for(var i = index0; i <= index1 ; i++){
+            var seg = segments[i].clone();
+            seg._index = i - index0 ; 
+            seg._path = path;
+            path.add(seg)
+         //   path._segments.push(seg);
+          //  var cv = curves[i].clone();
+          //  cv._path = path;
+         //   path._curves.push(cv);
+        }
+        if( (curves.length == segments.length) && (index1 == curves.length-1) ){
+            var seg = segments[0].clone();
+            seg._index = index1 - index0 +1 ; 
+            seg._path = path;
+            path.add(seg);
+        } else {
+            if( segments.length > index1 +1 ){
+                var seg = segments[index1+1].clone();
+                seg._index = index1 - index0 +1 ; 
+                seg._path = path;
+                path.add(seg);
+            } 
+        }
+
+        path._changed(/*#=*/Change.SEGMENTS);
+        var offset = 0;
+        for(var i = 0; i < index0; i++){
+            offset += curves[i].length;
+        }
+        //remove ending..
+        var path2 = path.splitAt(end_offset - offset); 
+        if( path2 )  path2.remove();
+        //remove starting.
+        var path3 = path.splitAt(start_offset - offset ); 
+        path.remove();
+        return path3;  
+    },
+
+    /**
+     * 
+     * @param {*} location 
+     * @returns 
      */
     splitAt: function(location) {
         // NOTE: getLocationAt() handles both offset and location:
@@ -1658,6 +2018,7 @@ var Path = PathItem.extend(/** @lends Path# */{
             style = this.getStyle(),
             segments = this._segments,
             numSegments = segments.length,
+            tipShape = this._tipsShape,
             closed = this._closed,
             // transformed tolerance padding, see Item#hitTest. We will add
             // stroke padding on top if stroke is defined.
@@ -1773,6 +2134,18 @@ var Path = PathItem.extend(/** @lends Path# */{
                 if (res = checkSegmentPoints(segments[i]))
                     return res;
         }
+
+        if( tipShape ){
+            var r = tipShape._hitTestSelf(point, options, viewMatrix, strokeMatrix);
+            if( r != null ){
+                r.type = 'segment';
+                r.item = that;
+                if( options.segments ){
+                    r.segments = that.segments[numSegments - 1]
+                }  
+                return r;
+            }
+        }
         // If we're querying for stroke, perform that before fill
         if (strokeRadius !== null) {
             loc = this.getNearestLocation(point);
@@ -1846,13 +2219,14 @@ var Path = PathItem.extend(/** @lends Path# */{
      * path, `null` otherwise.
      *
      * @param {Point} point the point on the path
+     * @param {Number} [epsilon]  
      * @return {CurveLocation} the curve location of the specified point
      */
-    getLocationOf: function(/* point */) {
+    getLocationOf: function(point, epsilon) {
         var point = Point.read(arguments),
             curves = this.getCurves();
         for (var i = 0, l = curves.length; i < l; i++) {
-            var loc = curves[i].getLocationOf(point);
+            var loc = curves[i].getLocationOf(point, epsilon);
             if (loc)
                 return loc;
         }
@@ -1864,11 +2238,20 @@ var Path = PathItem.extend(/** @lends Path# */{
      * specified point if it lies on the path, `null` otherwise.
      *
      * @param {Point} point the point on the path
+     * @param {Number} [epsilon] the point on the path
      * @return {Number} the length of the path up to the specified point
      */
-    getOffsetOf: function(/* point */) {
-        var loc = this.getLocationOf.apply(this, arguments);
-        return loc ? loc.getOffset() : null;
+    getOffsetOf: function(point, epsilon) {
+        var loc = this.getLocationOf(point, epsilon);
+        if( loc ) return loc.getOffset();
+        if( epsilon ){
+            var p = this.getNearestPoint(point);
+            if( point.getDistance(p) > epsilon )
+                return null;
+            loc = this.getLocationOf(p);
+            return loc ? loc.getOffset() : null;
+        }
+        return  null;
     },
 
     /**
@@ -2223,7 +2606,7 @@ new function() { // Scope for drawing
             }
         }
     }
-
+ 
     function drawSegments(ctx, path, matrix) {
         var segments = path._segments,
             length = segments.length,
@@ -2232,7 +2615,23 @@ new function() { // Scope for drawing
             curX, curY,
             prevX, prevY,
             inX, inY,
-            outX, outY;
+            outX, outY,
+            totalLen, progress, accLen, hasprogress = path.duration > 0 && path.progress >= 0;
+        if( hasprogress ){
+            totalLen = path.length; progress = path.progress * totalLen; accLen = 0;
+        }
+       //hasprogress = false;
+
+        function drawPartialCurve(curve, drawLength){
+            var preLoc =  curve.getLocationAt(0);
+            ctx.moveTo(preLoc.point.x, preLoc.point.y);
+            var step = parseInt(drawLength) / 100 +1;  //reduce steps if too long.
+            for(var i = 1; i <= drawLength; i+=step){
+                var curLoc = curve.getLocationAt(i);
+                ctx.lineTo(curLoc.point.x, curLoc.point.y);
+                preLoc = curLoc;
+            }
+        }
 
         function drawSegment(segment) {
             // Optimise code when no matrix is provided by accessing segment
@@ -2279,15 +2678,41 @@ new function() { // Scope for drawing
             }
         }
 
-        for (var i = 0; i < length; i++)
-            drawSegment(segments[i]);
-        // Close path by drawing first segment again
-        if (path._closed && length > 0)
-            drawSegment(segments[0]);
+        if( !hasprogress ){
+            for (var i = 0; i < length; i++)
+                drawSegment(segments[i]);
+            // Close path by drawing first segment again
+            if (path._closed && length > 0)
+                drawSegment(segments[0]);
+        } else {
+            ctx.beginPath(); 
+            for (var i = 0, l = path._curves.length; i < l; i++){
+                var c = path._curves[i];
+                if( accLen + c.length <= progress ){
+                    drawSegment(c.segment1);
+                    drawSegment(c.segment2);
+                    accLen += c.length;
+                } 
+                else {
+                    drawPartialCurve(c, progress - accLen );
+                    break;
+                }
+            } 
+            if (path._closed)
+                ctx.closePath();  
+        }
+      
     }
 
     return {
-        _draw: function(ctx, param, viewMatrix, strokeMatrix) {
+        _draw: function(ctx, param, viewMatrix, strokeMatrix) { 
+          //  this._setStyles(ctx, param, viewMatrix);
+            if( this._svg ){   
+                this._svg.position = this.position;
+                this._svg._style = this.getStyle(); 
+                this._svg._draw(ctx, param, viewMatrix, strokeMatrix);
+                return;
+            }
             var dontStart = param.dontStart,
                 dontPaint = param.dontFinish || param.clip,
                 style = this.getStyle(),
@@ -2295,8 +2720,28 @@ new function() { // Scope for drawing
                 hasStroke = style.hasStroke(),
                 dashArray = style.getDashArray(),
                 // dashLength is only set if we can't draw dashes natively
-                dashLength = !paper.support.nativeDash && hasStroke
+                dashLength = !mpaper.support.nativeDash && hasStroke
                         && dashArray && dashArray.length;
+
+
+            if( this.duration > 0 && this.progress >= 0 ){  
+                drawSegments(ctx, this, strokeMatrix);
+                 this._setStyles(ctx, param, viewMatrix);
+                if (hasFill) {
+                    ctx.fill(style.getFillRule()); 
+                    ctx.shadowColor = 'rgba(0,0,0,0)';
+                }
+                if (hasStroke) {
+                    ctx.stroke();
+                }
+
+                if( this._tipsShape ){ 
+                    var totalLen = this.length; progress = this.progress * totalLen;
+                    this._setTips2(progress);
+                    this._tipsShape._draw(ctx, param, viewMatrix, strokeMatrix) 
+                }
+                return;
+            }
 
             if (!dontStart)
                 ctx.beginPath();
@@ -2308,6 +2753,8 @@ new function() { // Scope for drawing
                 if (this._closed)
                     ctx.closePath();
             }
+
+          
 
             function getOffset(i) {
                 // Negative modulo is necessary since we're stepping back
@@ -2352,7 +2799,192 @@ new function() { // Scope for drawing
                     }
                     ctx.stroke();
                 }
+
+                if( this._tipsShape ){
+                    this. _sync_tip_locs();
+                    this._tipsShape._draw(ctx, param, viewMatrix, strokeMatrix)
+                  
+                }
             }
+            this._draw_decro(ctx, param, viewMatrix, strokeMatrix);
+        },
+
+        toPointPath: function( step){
+           // for(var i = 0; i < this._segments.length; i++){
+            //    var s = this._segments[i];
+           //     console.log( s.point + " ---" + s.handleIn + " ---- " + s.handleOut);
+         //   }
+            var r = new PointPath(),  length = this.length, acc = 0, step = Math.abs(step) || 4, pos;
+            while ( acc+ step <  length ){
+                pos = this.getPointAt(acc); 
+                if( pos ){
+                    r.data.push(pos.x);
+                    r.data.push(pos.y);
+                }
+                acc += step;
+            }
+            r.strokeColor = this.strokeColor;
+            r.strokeWidth = this.strokeWidth;
+            r.fillColor = this.fillColor;
+            r.closed = this.closed;
+            return r;
+        },
+  
+        doHomotopy: function(timeline, homotopy, duration, offset, doneCallback){
+            var that = this;
+            var start = function(){
+                if( that._svg  ) return; 
+                //    that._svg = that.toPointPath( );
+                    that._svg = new PointPath2( );
+                    var len = that._segments.length;
+                    for(var i = 0; i < len; i++){
+                       that._svg.add( that._segments[i].clone());
+                    } 
+                    if( len < 20 ){
+                        that._svg.insertExtraSegments(20- len);
+                    }
+                    that._svg.strokeColor = that.strokeColor;
+                    that._svg.strokeWidth = that.strokeWidth;
+                    that._svg.fillColor = that.fillColor;
+                    that._svg.closed = that.closed;
+                     that._svg.homotopy =  homotopy;
+                     that._svg.setTime(0);
+            };
+            timeline.add({
+                targets : that,
+              //  begin: function(){
+              //      start();
+              //  }.bind(that),
+                progressFunc : function(progress){
+                    if( !that._svg ){ 
+                        start(); 
+                    }
+                     that._svg.setTime( progress * duration );
+                     that._changed(/*#=*/(Change.GEOMETRY)); 
+                }.bind(that),
+                duration : duration,   
+                complete: function(){
+                    if( doneCallback ) doneCallback();
+                    that._svg = null;
+                }.bind(that)
+           }, offset);
+          
+        },
+        /**
+         * * @param {*} timeline
+         * @param {*} target must be path object, if it is compoundPath, use longest subpath
+         * @param {*} duration 
+         * @param {*} offset 
+         * @param {*} finishCallback  optional, when morphing is done, get called.
+         */
+         morphingTo: function(timeline, target, duration, offset,  finishCallback){
+            if( target._class == 'Path' )  return this._morphingTo2(timeline, target,duration, offset, finishCallback);
+            if( target._class != 'CompoundPath' ) {
+                console.log( 'not a path ,nor compound path');
+                if( finishCallback ) finishCallback();
+                return;
+            }
+            var tc = target._children, tcount = tc.length, fs = 0;
+         //   tc.forEach(e =>{
+         //       if( !e.strokeColor ) e.strokeColor = target.strokeColor;
+         //       if( !e.fillColor ) e.fillColor = target.fillColor;
+         //   })
+            var added = [], t;
+            var callback = function(){ 
+                fs++; 
+                if( fs == tcount ) {
+                   if(finishCallback) finishCallback();
+                   added.forEach( e => { if(e) e.remove(); })
+                   target.showing(0.1);
+                } 
+            }
+            this._morphingTo2(timeline, tc[0],duration, offset,  callback);
+            for(var i = 1; i < tcount; i++){
+                t = this.clone();
+                added.push( t );
+                t._morphingTo2(timeline, tc[i], duration, '==',   callback);
+            } 
+         },
+
+
+        _morphingTo2: function(timeline, target, duration,  offset,  finishCallback){
+            var compound;
+            if( target._class == 'CompoundPath' ){
+                compound = target;
+                target = target.getLongestPath();
+            //    if( !target.strokeColor ) target.strokeColor = compound.strokeColor;
+            //    if( !target.fillColor ) target.fillColor = compound.fillColor; 
+            }
+            var that = this, from_segs = that.segments.length, to_segs = target.segments.length;  
+            that._svgFrom = that.clone();
+            that._svgTo = target.clone();
+            if( from_segs < 20 && to_segs < 20 ){ 
+                that._svgFrom.insertExtraSegments( 20 - from_segs );  
+                that. _svgTo.insertExtraSegments( 20 - to_segs ); 
+            } else if( from_segs < to_segs ){ 
+                that._svgFrom.insertExtraSegments( to_segs - from_segs );  
+            } else if( from_segs > to_segs ){ 
+                that._svgTo.insertExtraSegments( from_segs - to_segs ); 
+            } 
+            that. _svgFrom.visible = false;
+            that. _svgTo.visible = false;
+           
+            that._svg = new Path(Item.NO_INSERT);  
+            var thatpos = that.position.clone() , started = false;
+            var start = function(){
+                if( started ) return;
+                started = true;
+                that.addToViewIfNot(); 
+            };
+            var options = {
+                targets : this,
+                begin: function(){
+                   start();
+                }.bind(this),
+                progressFunc : function( progress){
+                    if( !started ) start();
+                    that._svg.resetPathData(""); 
+                    that._svg.interpolate( that._svgFrom, that. _svgTo, progress);
+                  
+                    that._svg.position = target.position.__subtract(thatpos).__multiply(progress).__add(thatpos);
+                    that.position = that._svg.position;  
+                    var from_style = that._style, to_style= target._style, ffcolor = from_style.getFillColor(),
+                        tfcolor = to_style.getFillColor(), fscolor = from_style.getStrokeColor(), tscolor = to_style.getStrokeColor();
+                    if( tfcolor && ffcolor )
+                        that._svg.fillColor = tfcolor.__subtract(ffcolor).__multiply(progress).__add(ffcolor);
+                    else if ( tfcolor )
+                       that._svg.fillColor = tfcolor;
+                    if( tscolor && fscolor )
+                        that._svg.strokeColor = tscolor.__subtract(fscolor).__multiply(progress).__add(fscolor);
+                    else if( tscolor ) 
+                        that._svg.strokeColor = tscolor;
+                }.bind(that),
+                duration :  duration,  
+                repeat : false,
+                complete: function(){ 
+                    if(  that._svgFrom ){ that. _svgFrom.remove(); that. _svgFrom = null; }
+                    if(  that._svgTo ){ that._svgTo.remove(); that._svgTo = null; } 
+                   
+                    if( finishCallback ){   finishCallback();   }   
+                    {
+                        that.hiding(   function(){
+                            if( that._svg ) that._svg.remove();
+                            that._svg = null;
+                            that.remove();
+                        }  ); 
+                        target.showing(0.1); 
+                    } 
+                }.bind(this)
+           };
+           if( timeline ) timeline.add(options, offset);
+           else 
+             anime(options);
+         
+        },
+
+        //override by subclass....
+        _draw_decro: function(ctx, param, viewMatrix, strokeMatrix) {
+
         },
 
         _drawSelected: function(ctx, matrix) {
@@ -2360,7 +2992,7 @@ new function() { // Scope for drawing
             drawSegments(ctx, this, matrix);
             // Now stroke it and draw its handles:
             ctx.stroke();
-            drawHandles(ctx, this._segments, matrix, paper.settings.handleSize);
+            drawHandles(ctx, this._segments, matrix, mpaper.settings.handleSize);
         }
     };
 },

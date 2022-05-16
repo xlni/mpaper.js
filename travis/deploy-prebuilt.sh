@@ -36,7 +36,7 @@ git checkout --orphan prebuilt/dist
 # Remove and delete all tracked files left after the switch.
 git rm -rf --quiet .
 # Move the zipped dist file into the branch and commit.
-mv $TMP/dist/paperjs.zip .
+mv $TMP/dist/mpaperjs.zip .
 git add --all *
 git commit -m "Prebuilt package for ${TARGET}"
 # Push with --force since we're always overriding the previous built version.

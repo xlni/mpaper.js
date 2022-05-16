@@ -25,7 +25,7 @@ test('Create a raster without a source and set its size', function() {
 
 test('Create a raster from a URL', function(assert) {
     var done = assert.async();
-    var raster = new Raster('assets/paper-js.gif');
+    var raster = new Raster('assets/mpaper-js.gif');
     raster.onLoad = function() {
         equals(raster.size, new Size(146, 146), true);
         done();
@@ -52,7 +52,7 @@ test('Create a raster from a data URL', function(assert) {
 test('Create a raster from a dom image', function(assert) {
     var done = assert.async();
     var img = document.createElement('img');
-    img.src = 'assets/paper-js.gif';
+    img.src = 'assets/mpaper-js.gif';
     document.body.appendChild(img);
     DomEvent.add(img, {
         load: function() {
@@ -69,7 +69,7 @@ test('Create a raster from a dom image', function(assert) {
 });
 
 test('Create a raster from a canvas', function() {
-    var canvas = paper.createCanvas(30, 20);
+    var canvas = mpaper.createCanvas(30, 20);
     var raster = new Raster(canvas);
     equals(raster.size, new Size(30, 20), true);
 });
@@ -77,7 +77,7 @@ test('Create a raster from a canvas', function() {
 test('Create a raster from a dom id', function(assert) {
     var done = assert.async();
     var img = document.createElement('img');
-    img.src = 'assets/paper-js.gif';
+    img.src = 'assets/mpaper-js.gif';
     img.id = 'testimage';
     document.body.appendChild(img);
     DomEvent.add(img, {
@@ -151,7 +151,7 @@ test('Raster#getAverageColor(path)', function() {
         radius: 25,
         fillColor: new Color(1, 0, 0)
     });
-    var raster = paper.project.activeLayer.rasterize(72);
+    var raster = mpaper.project.activeLayer.rasterize(72);
     circle.scale(0.8);
     equals(raster.getAverageColor(circle), circle.fillColor, null,
             { tolerance: 1e-3 });
@@ -173,7 +173,7 @@ test('Raster#getAverageColor(path) with compound path', function() {
     });
     var compoundPath = new CompoundPath(path, path2);
     compoundPath.fillColor = new Color(1, 0, 0);
-    var raster = paper.project.activeLayer.rasterize(72);
+    var raster = mpaper.project.activeLayer.rasterize(72);
     path.scale(0.8);
     path2.scale(1.2);
     equals(raster.getAverageColor(compoundPath), new Color(1, 0, 0), null,

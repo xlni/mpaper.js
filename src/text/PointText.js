@@ -73,11 +73,11 @@ var PointText = TextItem.extend(/** @lends PointText# */{
 
     setPoint: function(/* point */) {
         var point = Point.read(arguments);
-        this.translate(point.subtract(this._matrix.getTranslation()));
+        this.translate(point.subtract(this._matrix.getTranslation())); 
     },
 
     _draw: function(ctx, param, viewMatrix) {
-        if (!this._content)
+        if (typeof this._content == 'undefined' || this._content.length == 0 )
             return;
         this._setStyles(ctx, param, viewMatrix);
         var lines = this._lines,

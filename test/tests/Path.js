@@ -98,7 +98,7 @@ test('Path#join(path)', function() {
 
     path1.join(path2);
     equals(path1.segments.toString(), '{ point: { x: 0, y: 0 } },{ point: { x: 10, y: 0 } },{ point: { x: 20, y: 10 } }');
-    equals(function() { return paper.project.activeLayer.children.length; }, 1);
+    equals(function() { return mpaper.project.activeLayer.children.length; }, 1);
 
     var path1 = new Path();
     path1.add(0, 0);
@@ -178,7 +178,7 @@ test('Path#remove()', function() {
     path.remove();
 
     equals(function() {
-        return paper.project.activeLayer.children.length;
+        return mpaper.project.activeLayer.children.length;
     }, 0);
 });
 
@@ -202,7 +202,7 @@ test('Is the path deselected after setting a new list of segments?', function() 
         return path.selected;
     }, true);
     equals(function() {
-        return paper.project.selectedItems.length;
+        return mpaper.project.selectedItems.length;
     }, 1);
 
     path.segments = [[0, 10]];
@@ -210,7 +210,7 @@ test('Is the path deselected after setting a new list of segments?', function() 
         return path.selected;
     }, true);
     equals(function() {
-        return paper.project.selectedItems.length;
+        return mpaper.project.selectedItems.length;
     }, 1);
 });
 
@@ -276,7 +276,7 @@ test('After cloning a selected item, it should be added to the Project#selectedI
     var copy = path.clone();
 
     equals(function() {
-        return paper.project.selectedItems.length;
+        return mpaper.project.selectedItems.length;
     }, 2);
 });
 
@@ -458,7 +458,7 @@ test('Path#single segment closed path flatten (#1338)', function() {
 });
 
 test('Path#curves after removing a segment - 1', function() {
-    var path = new paper.Path([0, 0], [1, 1], [2, 2]);
+    var path = new mpaper.Path([0, 0], [1, 1], [2, 2]);
     var prevCurves = path.curves.slice();
 
     equals(function() {
@@ -487,7 +487,7 @@ test('Path#curves after removing a segment - 1', function() {
 });
 
 test('Path#curves after removing a segment - 2', function() {
-    var path = new paper.Path([0, 0], [1, 1], [2, 2]);
+    var path = new mpaper.Path([0, 0], [1, 1], [2, 2]);
 
     equals(function() {
         return path.curves.length;

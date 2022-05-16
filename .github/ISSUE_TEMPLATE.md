@@ -1,7 +1,7 @@
 <!--
 This issues database is used to keep track of bugs and new features.
 For questions and support, please visit the Gitter channel instead:
-  https://gitter.im/paperjs/paper.js
+  https://gitter.im/paperjs/mpaper.js
 -->
 
 # Description/Steps to reproduce

@@ -61,6 +61,8 @@ var Color = Base.extend(new function() {
         colorCtx;
 
     function fromCSS(string) {
+        if( mpaper.project && mpaper.project.getBuiltInColor(string))
+            string = mpaper.project.getBuiltInColor(string);
         var match = string.match(
                 /^#([\da-f]{2})([\da-f]{2})([\da-f]{2})([\da-f]{2})?$/i
             ) || string.match(
@@ -673,8 +675,11 @@ var Color = Base.extend(new function() {
                 var parsers = componentParsers[this._type];
                 for (var i = 0, l = parsers.length; i < l; i++) {
                     var value = parsers[i].call(this, values && values[i]);
-                    if (value != null)
+                    if (value != null){
                         components[i] = value;
+                        if( type == 'rgb' && value > 1 )  components[i] /= 255.0;
+                    }
+                       
                 }
             }
             this._components = components;
@@ -871,7 +876,7 @@ var Color = Base.extend(new function() {
         },
 
         /**
-         * Returns the color as a CSS string.
+         * Returns the color as a CSS string.__
          *
          * @param {Boolean} hex whether to return the color in hexadecimal
          * representation or as a CSS RGB / RGBA string.
@@ -967,6 +972,14 @@ var Color = Base.extend(new function() {
             }
         },
 
+        morphingTo: function(to, progress){
+              //tc.__subtract(curc).__multiply(progress).__add(curc)
+            var r = ( to.red - this.red ) * progress + this.red,
+                g = ( to.green - this.green ) * progress + this.green,
+                b = ( to.blue - this.blue ) * progress + this.blue,
+                a = ( to.alpha - this.alpha ) * progress + this.alpha;
+            return new Color(r,g,b,a);
+        },
         /**
          * {@grouptitle RGB Components}
          *

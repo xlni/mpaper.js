@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Path Tangents</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+        //mpaper.settings.insertItems = true;
+        project.useBuiltinStyle('dark');
+        
+           path =  new Path.PolyLine({
+            data:[200,500,300,100,400,1000,300,900,800,500],
+            closed:false
+        }); 
+        path.position = view.center ; 
+        path.fillColor = 'blue';
+
+        Create({target: path});
+
+           path2 =  new Path.Circle({
+            center : [500,500],
+            radius:200,
+        }); 
+        path2.fillColor = 'orange';
+        path2.visible = false;
+        Create({target: path2});
+
+        MorphingTo({ target: path, to: path2, duration:5});
+       
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

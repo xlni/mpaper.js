@@ -188,6 +188,25 @@ Base.exports.PaperScript = function() {
             code = code.substring(0, start) + str + code.substring(end);
         }
 
+        //help insert content as first arguments 
+        function insertArguments(str, inserted){
+            var pos = str.indexOf('(');
+            return str.substring(0, pos +1) + inserted + str.substring(pos+1); 
+        }
+        function insertOptions(str, inserted){
+            var pos = str.indexOf('{');
+            return str.substring(0, pos +1) + inserted + str.substring(pos+1); 
+        }
+        function insertFirstStatement(parentNode, inserted){
+            if( parentNode.type == 'FunctionDeclaration' && parentNode.body
+                && parentNode.body.type == 'BlockStatement' ){
+                var pos = parentNode.body.start;
+                replaceCode({
+                range: [pos, pos+1]
+                }, '{ ' + inserted  );
+            }
+        }
+
         function handleOverloading(node, parent) {
 			switch (node.type) {
             case 'UnaryExpression': // -a
@@ -274,6 +293,169 @@ Base.exports.PaperScript = function() {
                 break;
             }
         }
+        
+        function handleInjection(node, parent, parseCxt){
+            switch (node.type) {
+                case 'Identifier':
+                    if( parent.type == 'AssignmentExpression' ){
+                        if( !parseCxt.global_vars[node.name] )
+                            parseCxt.global_vars.push(node.name);
+                    }
+                    switch( node.name ){
+                        case 'onResize':
+                        case 'onFrame':
+                            insertFirstStatement(parent, 'if( !doneInitialization ) return;'); 
+                            break;
+                    }
+                    break; 
+                case 'CallExpression':
+                    if( node.callee.type == 'Identifier' ){
+                        switch(node.callee.name ){
+                            case 'Main':
+                                replaceCode({
+                                    range: [node.start, node.end]
+                                }, ' \n curPage = new Page(curLayer); \n curPage.setup2=function(curPage, curLayer, curTimeline){ \n ');
+                                break;
+                            case 'Scene':
+                                replaceCode({
+                                    range: [node.callee.start, node.callee.end]
+                                }, '}; \n project.addNewLayer');
+                                break;
+                            case 'End_Scene_Setup':
+                                replaceCode({
+                                    range: [node.callee.start, node.callee.end]
+                                }, '}; \n curPage.blockAnimation = true; \n curLayer.sceneSetup');
+                                break;
+                            case 'enterScene':
+                                    replaceCode({
+                                        range: [node.callee.start, node.callee.end]
+                                    }, ' \n;project.showLayer');
+                                    break;
+                            case 'leaveScene':
+                                replaceCode({
+                                    range: [node.callee.start, node.callee.end]
+                                }, ' \n;project.hideTopLayer');
+                                break;
+                            case 'Clear':
+                                replaceCode({
+                                    range: [node.start, node.end]
+                                }, ' \n;curPage.cly.removeChildren(); ');
+                                break;
+                            case 'Broadcast':
+                                replaceCode({
+                                    range: [node.callee.start, node.callee.end]
+                                }, ' \n;project.broadcast');
+                                break;
+                            case 'Wait':
+                                replaceCode({
+                                    range: [node.callee.start, node.callee.end]
+                                }, ' \n;curPage.wait'); 
+                                break;
+                            case 'Pause':
+                                replaceCode({
+                                    range: [node.start, node.end]
+                                }, '}; \n curPage.blockAnimation = true;  \n curPage = new Page(curLayer); \n curPage.setup2=function(curPage, curLayer, curTimeline){ ');
+                                break;
+                            case 'Play':
+                                replaceCode({
+                                    range: [node.callee.start, node.callee.end]
+                                }, ' \n curPage.add_to_tl');
+                                break;
+                            case 'Create':
+                                replaceCode({
+                                    range: [node.callee.start, node.callee.end]
+                                }, ' \n curPage.createItems');
+                                break;
+                            case 'Uncreate':
+                                replaceCode({
+                                    range: [node.callee.start, node.callee.end]
+                                }, ' \n curPage.uncreateItems');
+                                break;
+                           
+                            case 'Focus':
+                            case 'Indicate':
+                            case 'Flash':
+                            case 'Circumscribe':
+                            case 'ShowPassingFlash':
+                            case 'Homotopy':
+                            case 'ApplyingWaves':
+                            case 'MorphingTo':
+                                var code = getCode(node), tag = node.callee.name;
+                                code = insertOptions(code, 'page : curPage, ');
+                                code = code.replace(tag, 'RU.' + tag)
+                                replaceCode({
+                                    range:  [node.start, node.end]
+                                }, code);
+                                break;  
+                            case 'PlayCode':
+                                var code = getCode(node), numops = node.arguments.length,
+                                    op0 = node.arguments[0].raw, op0len = op0.length, op1 = numops > 1 ? node.arguments[1].raw : undefined;
+                                op0 = op0.substring(1,op0len-1); 
+                                replaceCode({
+                                    range: [node.start, node.end]
+                                }, ' \n curPage.add_func_to_tl( function(){' + op0 + '}, ' + op1 + '); ');
+                                break;  
+                            case 'Anime':
+                                var code = getCode(node), tag = node.callee.name;
+                                code = insertOptions(code, 'complete : function(){   curPage.cly._player.nextStep(); }, ');
+                                code = code.replace(tag, ' curPage.blockAnimation=true; anime')
+                                replaceCode({
+                                    range:  [node.start, node.end]
+                                }, code);
+                                break;  
+                            case 'stagger':
+                                replaceCode({
+                                    range: [node.callee.start, node.callee.end]
+                                }, 'anime.stagger');
+                                break; 
+                           
+                        }
+                        switch(node.callee.name ){
+                            case 'Wait': 
+                            case 'Play': 
+                            case 'Create':
+                            case 'Uncreate': 
+                            case 'PlayCode':      
+                            case 'Focus':
+                            case 'Indicate':
+                            case 'Flash':
+                            case 'Circumscribe':
+                            case 'ShowPassingFlash':
+                            case 'Homotopy':
+                            case 'ApplyingWaves':
+                            case 'MorphingTo':
+                            case 'Anime':
+                                replaceCode({
+                                    range: [node.start, node.start]
+                                 }, ' }; \n curPage = new Page(curLayer); \n curPage.setup2=function(curPage, curLayer, curTimeline){  \n');
+                                replaceCode({
+                                   range: [node.end, node.end]
+                                }, ' } ; \n  curPage = new Page(curLayer); \n curPage.setup2=function(curPage, curLayer, curTimeline){  \n');
+                                break;  
+                            case 'Scene': 
+                                replaceCode({
+                                    range: [node.start, node.start]
+                                }, ' }; ');
+                                replaceCode({
+                                    range: [node.end, node.end]
+                                }, ';  curLayer  =  project.getActiveLayer(); \n'   
+                                    + ';  curPage = new Page(curLayer); \n curPage.setup2=function(curPage, curLayer, curTimeline){  \n ');
+                                break;
+                                
+                            case 'End_Scene_Setup': 
+                                replaceCode({
+                                    range: [node.start, node.start]
+                                }, ' } ; ');
+                                replaceCode({
+                                    range: [node.end, node.end]
+                                }, '; \n curPage = new Page(curLayer); \n curPage.setup2=function(curPage, curLayer, curTimeline){ \n ');
+                                break;
+                           
+                        }
+                    }  
+                    break;
+            }
+        }
 
         function handleExports(node) {
 			switch (node.type) {
@@ -315,7 +497,7 @@ Base.exports.PaperScript = function() {
         }
 
         // Recursively walks the AST and replaces the code of certain nodes
-        function walkAST(node, parent, paperFeatures) {
+        function walkAST(node, parent, paperFeatures, parseCxt) {
             if (node) {
                 // The easiest way to walk through the whole AST is to simply
                 // loop over each property of the node and filter out fields we
@@ -325,12 +507,12 @@ Base.exports.PaperScript = function() {
                         var value = node[key];
                         if (Array.isArray(value)) {
                             for (var i = 0, l = value.length; i < l; i++) {
-                                walkAST(value[i], node, paperFeatures);
+                                walkAST(value[i], node, paperFeatures, parseCxt);
                             }
                         } else if (value && typeof value === 'object') {
                             // Don't use Base.isPlainObject() for these since
                             // Acorn.js uses its own internal prototypes now.
-                            walkAST(value, node, paperFeatures);
+                            walkAST(value, node, paperFeatures, parseCxt);
                         }
                     }
                 }
@@ -340,6 +522,7 @@ Base.exports.PaperScript = function() {
                 if (paperFeatures.moduleExports !== false) {
                     handleExports(node);
                 }
+                handleInjection(node, parent, parseCxt);
             }
         }
 
@@ -367,7 +550,7 @@ Base.exports.PaperScript = function() {
             // source file so the debugger can still display it correctly.
             source = options.source || code,
             offset = options.offset || 0,
-            agent = paper.agent,
+            agent = mpaper.agent,
             version = agent.versionNumber,
             offsetCode = false,
             lineBreaks = /\r\n|\n|\r/mg,
@@ -420,6 +603,8 @@ Base.exports.PaperScript = function() {
                 sourcesContent: [source]
             };
         }
+        var hasMainTag = new RegExp('\\s+' + 'Main' + '\\b').test(code);
+        var parseCxt = { global_vars :[] };
         if (
             paperFeatures.operatorOverloading !== false ||
             paperFeatures.moduleExports !== false
@@ -429,8 +614,20 @@ Base.exports.PaperScript = function() {
                 ranges: true,
                 preserveParens: true,
                 sourceType: 'module'
-            }), null, paperFeatures);
+            }), null, paperFeatures, parseCxt);
         }
+        var code2 = '';
+        if( parseCxt.global_vars.length > 0 ){
+            code2 += ' var ' + parseCxt.global_vars[0] + '';
+            for(var i = 1; i < parseCxt.global_vars.length; i++) 
+                code2 += ', ' + parseCxt.global_vars[i];
+            code2 += '; '
+        }
+        if( !hasMainTag )
+            code2  += 'curPage = new Page(curLayer);  curPage.setup2=function(curPage, curLayer, curTimeline){   ';
+       
+        code =  Constants.Env +  ' var doneInitialization = false, curLayer = project.getActiveLayer(), center = view.center,  curPage; curLayer.name =\'main\'; RU.setProject(project); ' 
+                + code2  + code + '   };  project.resetLayerStack(); project.showLayer(\'main\', {}, function(){ doneInitialization=true; }); '; 
         if (map) {
             if (offsetCode) {
                 // Adjust the line offset of the resulting code if required.
@@ -444,6 +641,7 @@ Base.exports.PaperScript = function() {
             }
             code += "\n//# sourceURL=" + (url || 'paperscript');
         }
+      //  console.log(code);
         return {
             url: url,
             source: source,
@@ -474,7 +672,7 @@ Base.exports.PaperScript = function() {
      */
     function execute(code, scope, options) {
         // Set currently active scope.
-        paper = scope;
+        mpaper = scope;
         var view = scope.getView(),
             // Only create a tool if the tool object is accessed or something
             // resembling a global tool handler is contained in the code, but
@@ -512,7 +710,7 @@ Base.exports.PaperScript = function() {
                 }
             }
         }
-        expose({ __$__: __$__, $__: $__, paper: scope, tool: tool },
+        expose({ __$__: __$__, $__: $__, mpaper: scope, tool: tool },
                 true);
         expose(scope);
         // Add a fake `module.exports` object so PaperScripts can export things.
@@ -535,7 +733,9 @@ Base.exports.PaperScript = function() {
         }
         // End by returning `module.exports` at the end of the generated code:
         code += '\nreturn module.exports;';
-        var agent = paper.agent;
+
+        console.log( code );
+        var agent = mpaper.agent;
         if (document && (agent.chrome
                 || agent.firefox && agent.versionNumber < 40)) {
             // On older Firefox, all error numbers inside dynamically compiled
@@ -604,11 +804,11 @@ Base.exports.PaperScript = function() {
                 canvas = document.getElementById(canvasId),
                 // To avoid possible duplicate browser requests for PaperScript
                 // files, support the data-src attribute as well as src:
-                // TODO: Consider switching from data-paper- to data- prefix
+                // TODO: Consider switching from data-mpaper- to data- prefix
                 // in PaperScope.getAttribute() and use it here too:
                 src = script.src || script.getAttribute('data-src'),
                 async = PaperScope.hasAttribute(script, 'async'),
-                scopeAttribute = 'data-paper-scope';
+                scopeAttribute = 'data-mpaper-scope';
             if (!canvas)
                 throw new Error('Unable to find canvas with id "'
                         + canvasId + '"');
@@ -619,6 +819,8 @@ Base.exports.PaperScript = function() {
             // Link the element to this scope, so we can reuse the scope when
             // compiling multiple scripts for the same element.
             canvas.setAttribute(scopeAttribute, scope._id);
+
+   
             if (src) {
                 // If we're loading from a source, request the source
                 // synchronously to guarantee code is executed in the
@@ -639,7 +841,7 @@ Base.exports.PaperScript = function() {
                 execute(script.innerHTML, scope, script.baseURI);
             }
             // Mark script as loaded now.
-            script.setAttribute('data-paper-ignore', 'true');
+            script.setAttribute('data-mpaper-ignore', 'true');
             return scope;
         }
     }
@@ -654,7 +856,7 @@ Base.exports.PaperScript = function() {
      * that this method is executed automatically for all scripts in the
      * document through a window load event. You can optionally call it earlier
      * (e.g. from a DOM ready event), or you can mark scripts to be ignored by
-     * setting the attribute `ignore="true"` or `data-paper-ignore="true"`, and
+     * setting the attribute `ignore="true"` or `data-mpaper-ignore="true"`, and
      * call the `PaperScript.load(script)` method for each script separately
      * when needed.
      *
@@ -671,7 +873,7 @@ Base.exports.PaperScript = function() {
     }
 
     if (window) {
-        // Catch cases where paper.js is loaded after the browser event has
+        // Catch cases where mpaper.js is loaded after the browser event has
         // already occurred.
         if (document.readyState === 'complete') {
             // Handle it asynchronously

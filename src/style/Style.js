@@ -9,6 +9,7 @@
  *
  * All rights reserved.
  */
+ 
 
 /**
  * @name Style
@@ -94,14 +95,18 @@ var Style = Base.extend(new function() {
         // Characters
         fontFamily: 'sans-serif',
         fontWeight: 'normal',
-        fontSize: 12,
+        fontSize: 18,
         leading: null,
         // Paragraphs
-        justification: 'left'
+        justification: 'left',
+        textBaseline: 'middle'
     }),
     // Defaults for TextItem (override default fillColor to black):
     textDefaults = Base.set({}, groupDefaults, {
         fillColor: new Color() // black
+    }),
+    layerDefaults = Base.set({}, textDefaults, {
+        sceneBgColor: new Color([255,255,255,1]) // white
     }),
     flags = {
         strokeWidth: /*#=*/Change.STROKE,
@@ -115,7 +120,9 @@ var Style = Base.extend(new function() {
         fontSize: /*#=*/Change.GEOMETRY,
         font: /*#=*/Change.GEOMETRY, // deprecated, links to fontFamily
         leading: /*#=*/Change.GEOMETRY,
-        justification: /*#=*/Change.GEOMETRY
+        justification: /*#=*/Change.GEOMETRY,
+        textBaseline: /*#=*/Change.GEOMETRY,
+        sceneBgColor: /*#=*/(Change.STYLE | Change.GEOMETRY),
     },
     item = {
         // Enforce creation of beans, as bean getters have hidden parameters,
@@ -131,9 +138,9 @@ var Style = Base.extend(new function() {
             this._values = {};
             this._owner = _owner;
             this._project = _owner && _owner._project || _project
-                    || paper.project;
+                    || mpaper.project;
             // Use different defaults based on the owner
-            this._defaults = !_owner || _owner instanceof Group ? groupDefaults
+            this._defaults = !_owner || _owner instanceof Group ? (!_owner || _owner instanceof Layer? layerDefaults:groupDefaults)
                     : _owner instanceof TextItem ? textDefaults
                     : itemDefaults;
             if (style)
@@ -143,7 +150,7 @@ var Style = Base.extend(new function() {
 
     // Iterate over groupDefaults to inject getters / setters, to cover all
     // properties
-    Base.each(groupDefaults, function(value, key) {
+    Base.each(layerDefaults, function(value, key) {
         var isColor = /Color$/.test(key),
             isPoint = key === 'shadowOffset',
             part = Base.capitalize(key),
@@ -703,3 +710,52 @@ var Style = Base.extend(new function() {
      * @default 'left'
      */
 });
+/** 
+ * theme is set at project or layer level.  
+ */ 
+Style.inject({ statics: new function() {  
+    var name2style =  {
+        'dark' : {
+            sceneBgColor: 'rgba(0,0,0,1)',
+            strokeColor: 'rgba(255,255,255,1)',
+            fillColor: 'rgba( 255,255,255,1)',
+            pointColor: 'rgba( 255,0,0,1)',
+            textColor: 'rgba( 255,255,255,1)',
+            correctColor : 'rgba(0,173,0,1)',
+            wrongColor: 'rgba( 255,36,36,1)',
+            bgColor1: 'rgba( 80,179,226,0.5)',
+            bgColor2: 'rgba( 128,236,85,0.5)',
+            color1: 'rgba( 80,179,226,1)',
+            color2: 'rgba( 128,236,85,1)',
+            color3: 'rgba( 0,221,225,0.6)',
+        },
+        'light' : {
+            sceneBgColor: 'rgba( 255,255,255,1)',
+            strokeColor: 'rgba( 0,0,0,1)',
+            fillColor: 'rgba( 0,0,0,1)',
+            pointColor: 'rgba( 255,0,0,1)',
+            textColor: 'rgba( 51,93,148,1)',
+            correctColor : 'rgba(0,173,0,1)',
+            wrongColor: 'rgba( 255,36,36,1)',
+            bgColor1: 'rgba( 22,22,22,1)',
+            bgColor2: 'rgba( 128,236,85,1)',
+            color1: 'rgba( 79,138,216,0.8)',
+            color2: 'rgba( 79,138,216,0.8)',
+            color3: 'rgba( 79,138,216,0.8)',
+        },
+    };   
+    return /** @lends Style */{ 
+        getBuiltinStyle: function(styleName, project) {   
+            var s = name2style[styleName];
+            if( s ){
+              //  var c = Base.set({}, Style.layerDefaults, s);
+              //  console.log(c)
+                return new Style( s, null, project) 
+            }
+            return null;
+        }, 
+        getBuiltinColors: function(styleName, project) {   
+            return name2style[styleName]; 
+        }, 
+    };
+}});

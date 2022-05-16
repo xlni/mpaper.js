@@ -8,8 +8,7 @@
  * Distributed under the MIT license. See LICENSE file for details.
  *
  * All rights reserved.
- */
-
+ */ 
 /**
  * @name CompoundPath
  *
@@ -99,6 +98,7 @@ var CompoundPath = PathItem.extend(/** @lends CompoundPath# */{
     initialize: function CompoundPath(arg) {
         // CompoundPath has children and supports named children.
         this._children = [];
+        this._topIndex = -1;
         this._namedChildren = {};
         if (!this._initialize(arg)) {
             if (typeof arg === 'string') {
@@ -106,7 +106,7 @@ var CompoundPath = PathItem.extend(/** @lends CompoundPath# */{
             } else {
                 this.addChildren(Array.isArray(arg) ? arg : arguments);
             }
-        }
+        } 
     },
 
     insertChildren: function insertChildren(index, items) {
@@ -219,6 +219,80 @@ var CompoundPath = PathItem.extend(/** @lends CompoundPath# */{
         return curves;
     },
 
+
+    /**
+     * 
+     * @returns longest sub-path
+     */
+    getLongestPath: function(){
+        var children = this._children, selectedPath, longest = 0;
+        for (var i = 0, l = children.length; i < l; i++) {
+             if( children[i].length > longest ){
+                 longest = children[i].length;
+                 selectedPath = children[i];
+             }
+        }
+        return selectedPath;
+    },
+
+    doHomotopy: function(timeline, homotopy, duration, offset, doneCallback){
+        var children = this._children, length = children.length;
+        children[0]. doHomotopy(timeline, homotopy, duration, offset, doneCallback);
+        for (var i = 1, l = children.length; i < l; i++)
+            children[i]. doHomotopy(timeline, homotopy, duration, '==', doneCallback);
+    },
+    /**
+     * @param {*} timeline 
+     * @param {*} target  may be compound path  or single path.
+     * @param {*} duration 
+     *  @param {*} offset 
+     *  @param {*} finishCallback 
+     */
+    morphingTo: function(timeline, target, duration, offset,  finishCallback){
+        var that = this, cc = this._children.slice(0), ccount = cc.length,
+            tcount, tc;
+        if( target._class == 'CompoundPath' ) tc = target._children.slice(0);
+        else tc = [target];
+        tcount = tc.length;
+        that.visible = false;
+        cc.forEach(e =>{
+            if( !e.strokeColor ) e.strokeColor = this.strokeColor;
+            if( !e.fillColor ) e.fillColor = this.fillColor;
+        })
+     //   tc.forEach(e =>{
+     //       if( !e.strokeColor ) e.strokeColor = target.strokeColor;
+     //       if( !e.fillColor ) e.fillColor = target.fillColor;
+     //   })
+        var to_more = ccount < tcount, temp = to_more ? cc : tc, diff =  Math.abs(ccount - tcount),
+            added=[];
+        if( diff > 0 ){
+            var temp = ccount < tcount ? cc : tc, last = temp[temp.length-1], t; 
+            for(var i = diff; i > 0; i--) {
+               t =  last.clone(); 
+             //  if( !to_more )  t.visible = false;
+                temp.push(  tc );
+                added.push( t )
+            }
+        }
+       
+        var count = Math.max(ccount, tcount), fs=0;
+        var callback = function(){ 
+            fs++; 
+            if( fs == count ){
+               if( finishCallback) finishCallback(); 
+                that.hiding(true)  ;  
+                added.forEach(e =>{  e.remove(true);  });
+                cc.forEach( e => {  e.remove(); })
+                target.showing(0.1);
+            }
+        }
+        cc[0].morphingTo(timeline, tc[0], duration, offset, callback) ; 
+
+        for(var k = 1; k < count; k++){
+            cc[k].morphingTo(timeline, tc[k], duration, '==', callback) ; 
+        } 
+    },
+  
     /**
      * The first Curve contained within the compound-path, a short-cut to
      * calling {@link Path#firstCurve} on {@link Item#firstChild}.
@@ -261,6 +335,84 @@ var CompoundPath = PathItem.extend(/** @lends CompoundPath# */{
     },
 
     /**
+     * remove all children 
+     */
+    destroyContent: function(){
+        var children = this._children;
+        for (var i = children.length-1;  i >=0; i--){
+            children[i].removeSegments(); 
+            children[i].remove();
+        }
+        this._children = [];
+        this._topIndex = -1;
+        this._namedChildren = {}; 
+    },
+    write: function(timeline, duration, offset,  doneCallback) {
+        this._write0(timeline, duration, offset,   true, doneCallback);
+    }, 
+    unwrite: function(timeline, duration, offset, doneCallback) {
+        this._write0(timeline, duration, offset,   false, doneCallback);
+    },
+    _write0: function(timeline, duration, offset, create, doneCallback) {
+        var len = this.getLength(),  cs = this._children, count = cs.length; 
+        if( count == 0 ) return;
+        var  cdur, clen ; 
+         
+        clen = cs[0].getLength(), cdur = duration * clen / len;
+        cs[0].write( timeline, cdur, offset,  create, doneCallback);
+        for(var i = 1; i < count; i++){
+            var c = cs[i], clen = c.getLength(), cdur = duration * clen / len;
+            c.write(timeline, cdur, undefined,  create, doneCallback) ;
+        } 
+    },
+
+    start: function(duration, offset, repeat, doneCallback ) {
+        var len = this.getLength(),  cs = this._children, count = cs.length; 
+        if( count == 0 ) return;
+        var  cdur, clen, acc; 
+         
+        clen = cs[0].getLength(), cdur = duration * clen / len, acc = offset;
+        cs[0].start(  cdur, offset,  repeat, doneCallback);
+        for(var i = 1; i < count; i++){ 
+            var c = cs[i], clen = c.getLength(), cdur = duration * clen / len;
+            acc += cdur;
+            c.start(  cdur, acc,  repeat, doneCallback) ;
+        }  
+    },
+
+    pause: function(){
+        var children = this._children;
+        for (var i = children.length-1;  i >=0; i--){
+            children[i].pause();
+        }
+    },
+    resume: function(){
+        var children = this._children;
+        for (var i = children.length-1;  i >=0; i--){
+            children[i].resume();
+        }
+    },
+
+    cloneSubPath: function(start_offset, end_offset){
+        var len = this.getLength(),  children = this._children, accLen = 0;
+        var r = new CompoundPath();
+         for (var i = 0, l = children.length; i < l; i++){
+            var c = children[i], clen = c.getLength(), accLen_e = accLen + clen ;
+            if( accLen_e < start_offset ) { accLen = accLen_e; continue; }
+            if( accLen > end_offset ) { break; }
+            var start_offset_adjust = accLen_e >= end_offset ? start_offset-accLen : 0;
+            if( accLen_e >= end_offset ){
+                r.addChild( c.cloneSubPath(start_offset_adjust, end_offset-accLen) );
+                break;
+            } else {
+                r.addChild(  c.cloneSubPath(start_offset_adjust, clen)  )
+                accLen = accLen_e; 
+                continue;
+            }  
+         } 
+         return r;
+    },
+    /**
      * The total length of all sub-paths in this compound-path, calculated by
      * getting the {@link Path#length} of each sub-path and it adding up.
      *
@@ -273,6 +425,99 @@ var CompoundPath = PathItem.extend(/** @lends CompoundPath# */{
         for (var i = 0, l = children.length; i < l; i++)
             length += children[i].getLength();
         return length;
+    },
+
+    //added Positions functions
+    getLocationOf: function(point, epsilon){
+        var children = this._children, curveLoc = null;
+        for (var i = 0, l = children.length; i < l; i++){
+            curveLoc =  children[i].getLocationOf(point, epsilon);
+           if( curveLoc != null ){
+            curveLoc.indexOfSubpath = i;
+               return curveLoc;
+           }
+        } 
+        return curveLoc;
+    },
+
+    /**
+     * 
+     * @param {*} point 
+     * @param {*} [epsilon] 
+     * @returns  -1 if not on the path
+     */
+    getOffsetOf: function(point, epsilon){
+        var children = this._children, curPath = null, curveLoc = null, accLen = 0;
+        for (var i = 0, l = children.length; i < l; i++){
+            curPath = children[i];
+            curveLoc =  curPath.getOffsetOf(point, epsilon);
+           if( curveLoc != null ){
+               accLen += curveLoc 
+               return accLen;
+           } else {
+                accLen += curPath.length; 
+           }
+        } 
+        return -1;
+    },
+ 
+    
+    getSubpathAndLocByOffset: function(offset){
+        var children = this._children, curPath,  accLen = 0;
+        for (var i = 0, l = children.length; i < l; i++){
+            curPath = children[i];
+            if( accLen + curPath.length <= offset ){
+                return [curPath, offset - accLen];
+            }
+            accLen + curPath.length;
+        } 
+        return null;
+    },
+
+    getLocationAt: function(offset){
+        var f = this.getSubpathAndLocByOffset(offset);
+        return f == null ? nulll : f[0].getLocationAt(f[1]);
+    },
+
+    getPointAt: function(offset){
+        var f = this.getSubpathAndLocByOffset(offset);
+        return f == null ? nulll : f[0].getPointAt(f[1]); 
+    },
+
+    getTangentAt: function(offset){
+        var f = this.getSubpathAndLocByOffset(offset);
+        return f == null ? nulll : f[0].getTangentAt(f[1]); 
+    },
+
+    getNormalAt: function(offset){
+        var f = this.getSubpathAndLocByOffset(offset);
+        return f == null ? nulll : f[0].getNormalAt(f[1]); 
+    },
+
+    getWeightedTangentAt: function(offset){
+        var f = this.getSubpathAndLocByOffset(offset);
+        return f == null ? nulll : f[0].getWeightedTangentAt(f[1]); 
+    },
+    getWeightedNormalAt: function(offset){
+        var f = this.getSubpathAndLocByOffset(offset);
+        return f == null ? nulll : f[0].getWeightedNormalAt(f[1]); 
+    },
+    getCurvatureAt: function(offset){
+        var f = this.getSubpathAndLocByOffset(offset);
+        return f == null ? nulll : f[0].getCurvatureAt(f[1]); 
+    },
+    getOffsetsWithTangent: function(tangent){
+        var children = this._children, curPath,  r = [], r0;
+        for (var i = 0, l = children.length; i < l; i++){
+            curPath = children[i];
+            r0 = curPath.getOffsetsWithTangent(tangent);
+            if( r0 != null && r0.length > 0){
+                r0.array.forEach(element => {
+                    r.push(element);
+                });
+            }
+        } 
+        return r;
     },
 
     getPathData: function(_matrix, _precision) {

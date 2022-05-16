@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>SLabeled Dot</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <script type="text/javascript" src="../../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+
+        mpaper.settings.insertItems = true;
+        project.useBuiltinStyle('dark'); 
+       
+
+
+        var text = new LabeledDot({
+            position:  [200,200],
+            fillColor: 'red',
+            strokeColor: 'blue', 
+            fontSize: 20,
+            content: 'A'
+        });
+
+        var text2 = new LabeledDot({
+            position: [400,400],
+            fillColor: 'white',
+            strokeColor: 'white', 
+            fontSize: 20,
+            content: 'de fg hi jk lnm', 
+            r9textstyle :  [{"ry": 1, "rh": 30, "start": 0, "end": 2 },{"b": 1, "stroke": "rgba(255, 59,0, 1.0)", "ry": 1, "rh": 30, "start": 3, "end": 4 },{"ry": 1, "rh": 30, "start": 5, "end": 8 },{"stroke": "rgba(0, 76,227, 1.0)", "ry": 1, "rh": 30, "start": 9, "end": 10 },{"ry": 1, "rh": 30, "start": 11, "end": 14 }]
+          });
+        var text3 = new LabeledDot({
+            position:   [200, 300],
+            fillColor: 'red',
+            strokeColor: 'blue', 
+            fontSize: 20,
+            bgColor:'pink',
+            borderColor:'green',
+            corner:5,
+            borderWidth:1,
+            textXOffset:10,
+            textYOffset:3,
+            content: 'text'
+        });
+        var text4 = new LabeledDot({
+            position:  [200, 400],
+            fillColor: 'red',
+            strokeColor: 'blue', 
+            fontSize: 20,
+            bgColor:'pink',
+            borderColor:'green',
+            corner:5, 
+            textXOffset:10,
+            textYOffset:3,
+            content: '2'
+        });
+        var text5 = new LabeledDot({
+            position:  [200,  500],
+            fillColor: 'red',
+            strokeColor: 'blue', 
+            fontSize: 20,
+            content: 'sA2'
+        });
+       
+ 
+    </script>
+</head>
+<body>
+    <canvas id="canvas" resize stats></canvas>
+</body>
+</html>

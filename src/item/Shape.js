@@ -177,8 +177,8 @@ var Shape = Item.extend(/** @lends Shape# */{
         path.copyAttributes(this);
         // The created path will inherit #applyMatrix from this Shape, hence it
         // will always be false.
-        // Respect the setting of paper.settings.applyMatrix for new paths:
-        if (paper.settings.applyMatrix)
+        // Respect the setting of mpaper.settings.applyMatrix for new paths:
+        if (mpaper.settings.applyMatrix)
             path.setApplyMatrix(true);
         if (insert === undefined || insert)
             path.insertAbove(this);

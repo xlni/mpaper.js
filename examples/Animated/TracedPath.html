@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Path Tangents</title>
+    <link rel="stylesheet" href="../css/style.css"> 
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+
+        mpaper.settings.insertItems = true;
+        project.useBuiltinStyle('dark'); 
+        circle = new Path.Circle({
+            center: [400,400],
+            radius:100,
+            strokeColor: 'white'
+        });
+        
+        dot = new Path.Circle({
+            center: [300,400],
+            radius:10,
+            strokeColor: 'white'
+        });
+        mr = new MoveRestriction({
+            host :  dot,
+           type :  'mrs_move_with' , 
+           shape:  circle, 
+       });
+         dot.addUpdater(mr)
+        
+        function r(){
+            circle.rotate(0.1);
+            circle.position.x += 1;
+        };
+
+        circle.addUpdater( r , 5)
+ 
+ 
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

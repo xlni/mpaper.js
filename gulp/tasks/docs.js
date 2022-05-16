@@ -23,8 +23,8 @@ var docOptions = {
 };
 
 gulp.task('docs', ['build:full', 'docs:local', 'docs:typescript'], function() {
-    return gulp.src('dist/paper-full.js')
-        .pipe(rename({ basename: 'paper' }))
+    return gulp.src('dist/mpaper-full.js')
+        .pipe(rename({ basename: 'mpaper' }))
         .pipe(gulp.dest('dist/docs/assets/js/'));
 });
 
@@ -60,7 +60,7 @@ gulp.task('docs:typescript', ['build:full'], function(callback) {
 });
 // First clean eventually existing type definition...
 gulp.task('docs:typescript:clean:before', function() {
-    return del('dist/paper.d.ts');
+    return del('dist/mpaper.d.ts');
 });
 // ...then build the definition...
 gulp.task('docs:typescript:build', function() {

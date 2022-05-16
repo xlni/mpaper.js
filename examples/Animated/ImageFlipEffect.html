@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Path Tangents</title>
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+        mpaper.settings.insertItems = true;
+        project.useBuiltinStyle('dark'); 
+      
+          var sideA =  new Path.Star({
+              center: [ 300, 300 ], 
+              points: 25,
+              radius1: 30,
+              radius2: 50,
+              fillColor: 'red', 
+              strokeColor: 'blue'
+			    });
+          var sideB =  new Path.Star({
+            center: [ 300, 300 ], 
+            points: 30,
+            radius1: 30,
+            radius2: 50,
+            fillColor: 'green', 
+            strokeColor: 'blue'
+         });
+
+         var easing = ''; 
+         var duration = 3;
+         RU.imageFlipEffect(project._activeLayer,sideA, sideB, duration);
+        
+      
+   
+ 
+ 
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

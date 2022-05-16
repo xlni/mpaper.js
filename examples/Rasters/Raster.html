@@ -4,19 +4,22 @@
     <meta charset="UTF-8">
     <title>Raster</title>
     <link rel="stylesheet" href="../css/style.css">
-    <script type="text/javascript" src="../../dist/paper-full.js"></script>
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
     <script type="text/paperscript" canvas="canvas">
+        mpaper.settings.insertItems = true;
+        project.useBuiltinStyle('dark');
+        
         // Load from Server:
-        var raster = new Raster('http://assets.paperjs.org/images/marilyn.jpg');
+          raster = new Raster('http://assets.paperjs.org/images/marilyn.jpg');
         // Load from DOM image:
-        // var raster = new Raster('marilyn');
+        //   raster = new Raster('marilyn');
         raster.onLoad = function() {
             console.log('Successfully loaded image!');
         };
-        var lastScale = 1;
-        var center = view.center;
+          lastScale = 1;
+          center = view.center;
         function onFrame(event) {
-            var scale = (Math.sin(event.time * 2) + 1) / 2;
+              scale = (Math.sin(event.time * 2) + 1) / 2;
             raster.scale(scale / lastScale);
             lastScale = scale;
             raster.position = center + [
@@ -25,6 +28,7 @@
             ];
             raster.rotate(event.delta * 120);
         }
+        Main();
     </script>
 </head>
 <body>

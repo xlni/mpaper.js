@@ -404,6 +404,11 @@ var Size = Base.extend(/** @lends Size# */{
         return isNaN(this.width) || isNaN(this.height);
     },
 
+    morphingTo: function(to, progress){ 
+        var w = ( to.width - this.width ) * progress + this.width,
+            h = ( to.height - this.height ) * progress + this.height;
+        return new Point(w, h);
+    },
     /**
      * {@grouptitle Math Functions}
      *

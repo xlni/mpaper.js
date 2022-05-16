@@ -378,6 +378,17 @@ var PathItem = Item.extend(/** @lends PathItem# */{
     },
 
     /**
+     * set both strokeColor and fillColor
+     * @param {*} c 
+     */
+    setColor: function(c){
+        this.strokeColor = c;
+        this.fillColor = c;
+    },
+    getColor: function(){
+        return this.fillColor || this.strokeColor;
+    },
+    /**
      * Returns the nearest point on the path item to the specified point.
      *
      * @param {Point} point the point for which we search the nearest point

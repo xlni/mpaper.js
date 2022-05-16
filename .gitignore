@@ -1,7 +1,6 @@
 /node_modules/
 /dist/*/
-/dist/*.min.js
-/dist/paperjs.zip
+/dist/mpaperjs.zip
 # Yarn
 .yarn/*
 !.yarn/cache

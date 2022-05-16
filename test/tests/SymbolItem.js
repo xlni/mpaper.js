@@ -100,7 +100,7 @@ test('SymbolDefinition item selection', function() {
         return definition.item.selected == false;
     }, true);
     equals(function() {
-        return paper.project.selectedItems.length === 0;
+        return mpaper.project.selectedItems.length === 0;
     }, true);
 });
 
@@ -109,7 +109,7 @@ test('SymbolDefinition#place()', function() {
     var symbol = new SymbolDefinition(path);
     var placed = symbol.place();
     equals(function() {
-        return placed.parent == paper.project.activeLayer;
+        return placed.parent == mpaper.project.activeLayer;
     }, true);
 
     equals(function() {

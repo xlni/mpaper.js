@@ -1,10 +1,10 @@
-// Please note: When loading paper as a normal module installed in node_modules,
+// Please note: When loading mpaper as a normal module installed in node_modules,
 // you would use this instead:
-// var paper = require('paper-jsdom-canvas');
-var paper = require('../../dist/paper-core.js');
-paper.setup(new paper.Size(1024, 768));
+// var mpaper = require('mpaper-jsdom-canvas');
+var mpaper = require('../../dist/mpaper-core.js');
+mpaper.setup(new mpaper.Size(1024, 768));
 
-var layer = paper.project.activeLayer;
+var layer = mpaper.project.activeLayer;
 
 var values = {
     count: 34,
@@ -13,7 +13,7 @@ var values = {
 
 initialize();
 
-paper.view.exportFrames({
+mpaper.view.exportFrames({
     amount: 100,
     directory: __dirname,
     onComplete: function() {
@@ -26,8 +26,8 @@ paper.view.exportFrames({
 
 function initialize() {
     for (var i = 0; i < values.count; i++) {
-        var offset = new paper.Point(20 + 10 * i, 0);
-        var path = new paper.Path();
+        var offset = new mpaper.Point(20 + 10 * i, 0);
+        var path = new mpaper.Path();
         path.fillColor = i % 2 ? 'red' : 'black';
         path.closed = true;
 
@@ -40,10 +40,10 @@ function initialize() {
         path.smooth();
         layer.insertChild(0, path);
     }
-    layer.fitBounds(paper.view.bounds);
+    layer.fitBounds(mpaper.view.bounds);
 }
 
-paper.view.onFrame = function(event) {
+mpaper.view.onFrame = function(event) {
     for (var i = 0, l = layer.children.length; i < l; i++) {
         var item = layer.children[i];
         var angle = (values.count - i) * Math.sin(event.count / 128) / 10;

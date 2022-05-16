@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Path Tangents</title>
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+      mpaper.settings.insertItems = true;
+      project.useBuiltinStyle('dark'); 
+      
+      var center = view.center; 
+      var circle =  new Path.Star({
+        center: [-400, -400 ], 
+        points: 16,
+        radius1: 50,
+        radius2: 100,
+        fillColor: 'red',
+        strokeColor: 'blue'
+     });
+      
+
+     var image = circle.rasterize(), w = 200/5, h = 200/5;
+     var ims = [];
+     for(var i = 0; i < 5; i++){
+        for(var j = 0;j < 5; j++){
+            var c = image.getSubRaster(new Rectangle(i*w, j*h, w, h));
+            c.position = new Point( 100 + i *2 * w, 100 + j * 2 * w )
+        }
+     }
+     for(var i = 0; i < 5; i++){
+      for(var j = 0;j < 5; j++){
+          var c = new CroppedImage(image, i*w, j*h, w, h);
+          c.position = new Point( 500 + i *2 * w, 100 + j * 2 * w )
+      }
+    }
+
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

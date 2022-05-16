@@ -1,15 +1,15 @@
 {
-  "name": "paper-jsdom",
+  "name": "mpaper-jsdom",
   "version": "0.12.15",
-  "description": "The Swiss Army Knife of Vector Graphics Scripting, packaged for headless use in Node.js",
+  "description": "Math extension of popular Paper.js",
   "license": "MIT",
-  "homepage": "http://paperjs.org",
+  "homepage": "http://mpaperjs.org",
   "repository": {
     "type": "git",
-    "url": "https://github.com/paperjs/paper-jsdom"
+    "url": "https://github.com/xlni/mpaper-jsdom"
   },
-  "bugs": "https://github.com/paperjs/paper.js/issues",
-  "author": "Jürg Lehni <juerg@scratchdisk.com> (http://scratchdisk.com)",
+  "bugs": "https://github.com/xlni/mpaper.js/issues",
+  "author": " ",
   "main": "index.js",
   "files": [
     "index.js",
@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "jsdom": "^16.5.1",
-    "paper": "0.12.15",
+    "mpaper": "0.12.15",
     "source-map-support": "^0.5.19"
   },
   "keywords": [
@@ -36,8 +36,8 @@
     "paths",
     "canvas",
     "svg",
-    "paper",
-    "paper.js",
-    "paperjs"
+    "mpaper",
+    "mpaper.js",
+    "mpaperjs"
   ]
 }

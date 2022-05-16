@@ -582,7 +582,7 @@ test('#958', function() {
 });
 
 test('#968', function() {
-    var p1 = new paper.Path({
+    var p1 = new mpaper.Path({
         segments: [
             [352, 280, 0, -26.5, 0, 0],
             [352, 356, 0, 0, 0, 2.1999999999999886],
@@ -590,7 +590,7 @@ test('#968', function() {
         ],
         closed: true
     });
-    var p2 = new paper.Path({
+    var p2 = new mpaper.Path({
         segments: [
             [352, 344],
             [352, 356, 0, 0, 0, 2.1999999999999886],
@@ -707,7 +707,7 @@ test('#1054', function() {
 });
 
 test('#1059', function() {
-    var p1 = new paper.Path({
+    var p1 = new mpaper.Path({
         segments: [
             [428.48408954611784, 189.03444010371618, 0, 0, -21.46171522996096, 0],
             [369.18465116477694, 213.5984519858447, 16.376007921419017, -16.376007921419017, 0, 0],
@@ -716,7 +716,7 @@ test('#1059', function() {
         ],
         closed: true
     });
-    var p2 = new paper.Path({
+    var p2 = new mpaper.Path({
         segments: [
             [369.18465470031083, 213.59844845031083, 0, 0, -32.75201584283798, 32.752015842838006],
             [369.18465470031083, 332.1973252129927, -32.752015842838034, -32.75201584283809, 0, 0],
@@ -730,7 +730,7 @@ test('#1059', function() {
 });
 
 test('#1075', function() {
-    var p1 = new paper.Path({
+    var p1 = new mpaper.Path({
         segments: [
             [150, 120],
             [150, 85],
@@ -743,7 +743,7 @@ test('#1075', function() {
         ],
         closed: true
     });
-    var p2 = new paper.Path({
+    var p2 = new mpaper.Path({
         segments: [
             [350, 60],
             [350, 125],
@@ -802,7 +802,7 @@ test('#1109', function() {
         new Path({ segments: segments, closed: true })
     ]);
 
-    var p2 = new paper.CompoundPath([
+    var p2 = new mpaper.CompoundPath([
         new Path.Rectangle(210, 110, 180, 180),
         new Path({ segments: segments, closed: true })
     ]);
@@ -810,7 +810,7 @@ test('#1109', function() {
     // Rotate segments to produce different sequence that describes same shape.
     segments.push(segments.shift());
 
-    var p3 = new paper.CompoundPath([
+    var p3 = new mpaper.CompoundPath([
         new Path.Rectangle(210, 110, 180, 180),
         new Path({ segments: segments, closed: true })
     ]);
@@ -820,7 +820,7 @@ test('#1109', function() {
         [260.5870762798793, 200],
         [265.5870762798793, 201],
         [260.5870762798793, 202]);
-    var p4 = new paper.CompoundPath([
+    var p4 = new mpaper.CompoundPath([
         new Path.Rectangle(210, 110, 180, 180),
         new Path({ segments: segments, closed: true })
     ]);
@@ -834,7 +834,7 @@ test('#1109', function() {
 });
 
 test('#1123', function() {
-    var p1 = new paper.Path({
+    var p1 = new mpaper.Path({
         segments: [
             [29.562573408343212, 132.54192488999095, 0, 0, -1.417935581083043, 0.174100597711913],
             [2.5662795205536213, 124.83546947214427, 13.887634830511104, -1.705187144644185, 0, 0],
@@ -843,7 +843,7 @@ test('#1123', function() {
         ],
         closed: true
     });
-    var p2 = new paper.Path({
+    var p2 = new mpaper.Path({
         segments: [
             [5.684341886080802e-14, 132.07000000000002, 12.910000000000025, 27.075000000000017, 21.125, -21.119999999999976],
             [44.59500000000003, 130.54000000000005, 0, 2.3300000000000125, 4.816669792192272, -4.501887430254385],

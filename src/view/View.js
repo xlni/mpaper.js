@@ -45,7 +45,7 @@ var View = Base.extend(Emitter, /** @lends View# */{
             // Generate an id for this view / element if it does not have one
             this._id = element.getAttribute('id');
             if (this._id == null)
-                element.setAttribute('id', this._id = 'paper-view-' + View._id++);
+                element.setAttribute('id', this._id = 'mpaper-view-' + View._id++);
             // Install event handlers
             DomEvent.add(element, this._viewEvents);
             // Borrowed from Hammer.js:
@@ -84,11 +84,11 @@ var View = Base.extend(Emitter, /** @lends View# */{
                 document.body.appendChild(stats);
             }
         } else {
-            // For web-workers: Allow calling of `paper.setup(new Size(x, y));`
+            // For web-workers: Allow calling of `mpaper.setup(new Size(x, y));`
             size = new Size(element);
             element = null;
         }
-        // Store reference to the currently active global paper scope, and the
+        // Store reference to the currently active global mpaper scope, and the
         // active project, which will be represented by this view
         this._project = project;
         this._scope = project._scope;
@@ -117,7 +117,7 @@ var View = Base.extend(Emitter, /** @lends View# */{
         // see #_countItemEvent():
         this._itemEvents = { native: {}, virtual: {} };
         // Do not set _autoUpdate on Node.js by default:
-        this._autoUpdate = !paper.agent.node;
+        this._autoUpdate = !mpaper.agent.node;
         this._needsUpdate = false;
     },
 
@@ -157,8 +157,7 @@ var View = Base.extend(Emitter, /** @lends View# */{
             onFrame: {
                 install: function() {
                     this.play();
-                },
-
+                }, 
                 uninstall: function() {
                     this.pause();
                 }
@@ -222,7 +221,7 @@ var View = Base.extend(Emitter, /** @lends View# */{
     requestUpdate: function() {
         if (!this._requested) {
             var that = this;
-            DomEvent.requestAnimationFrame(function() {
+            anime.engine(function() {
                 that._requested = false;
                 // Only handle the frame and request the next one if we don't
                 // need to stop, e.g.  due to a call to pause(), or a request
@@ -269,11 +268,12 @@ var View = Base.extend(Emitter, /** @lends View# */{
      */
     pause: function() {
         this._animate = false;
+        this._last = 0;
     },
 
     _handleFrame: function() {
-        // Set the global paper object to the current scope
-        paper = this._scope;
+        // Set the global mpaper object to the current scope
+        mpaper = this._scope;
         var now = Date.now() / 1000,
             delta = this._last ? now - this._last : 0;
         this._last = now;
@@ -1216,7 +1216,21 @@ new function() { // Injection scope for event handling on the browser
             mouseEvent;
 
         // Returns true if the event was stopped, false otherwise.
-        function emit(obj, type) {
+        function emit(obj, type) {  
+            if(  type == 'mousedrag'  ) {  
+                if(   dragItem == obj  ) {  
+                   if(  point && prevPoint ){
+                        if( obj instanceof Item && obj.draggable ){
+                            var dif = point.subtract(prevPoint);
+                            //obj.translate(dif);
+                            obj.position  =  obj.position.__add(dif);
+                            
+                            return true;
+                        }
+                    }
+                }
+            }
+
             if (obj.responds(type)) {
                 // Only produce the event object if we really need it, and then
                 // reuse it if we're bubbling.
@@ -1329,7 +1343,7 @@ new function() { // Injection scope for event handling on the browser
             // least one of the events responds to mousedrag, convert to it.
             // NOTE: emitMouseEvent(), as well as Tool#_handleMouseEvent() fall
             // back to mousemove if the objects don't respond to mousedrag.
-            if (nativeMove && dragging && responds('mousedrag'))
+            if (nativeMove && dragging ) //&& responds('mousedrag')) 
                 type = 'mousedrag';
             if (!point)
                 point = this.getEventPoint(event);
@@ -1337,7 +1351,7 @@ new function() { // Injection scope for event handling on the browser
             // Run the hit-test on items first, but only if we're required to do
             // so for this given mouse event, see hitItems, #_countItemEvent():
             var inView = this.getBounds().contains(point),
-                hit = hitItems && inView && view._project.hitTest(point, {
+                hit = (hitItems || type == 'mousedrag') && inView && view._project.hitTest(point, {
                     tolerance: 0,
                     fill: true,
                     stroke: true
@@ -1384,9 +1398,30 @@ new function() { // Injection scope for event handling on the browser
             // Now handle mousedown / mouseup
             // We emit mousedown only when in the view, and mouseup regardless,
             // as long as the mousedown event was inside.
-            if (mouse.down && inView || mouse.up && downPoint) {
+            if (  mouse.drag && inView ){
+                dblClick = hitItem === clickItem
+                    && (Date.now() - clickTime < 300);
+                downItem = clickItem = hitItem;
+                // Only start dragging if the mousedown event has not
+                // prevented the default, and if the hitItem or any of its
+                // parents actually respond to mousedrag events.
+
+                //hanning: changed to use draggable flag
+                if (!prevented && hitItem) {
+                    // var item = hitItem;
+                    // while (item && !item.responds('mousedrag'))
+                    //     item = item._parent;
+                    // if (item)
+                    //     dragItem = hitItem;
+                    if( hitItem instanceof Item && hitItem.draggable )
+                        dragItem = hitItem;
+                }
+                downPoint = point;
                 emitMouseEvents(this, hitItem, type, event, point, downPoint);
-                if (mouse.down) {
+            }
+            else if (  /*mouse.drag && inView || */ mouse.down && inView || mouse.up && downPoint) {
+                emitMouseEvents(this, hitItem, type, event, point, downPoint);
+                if (mouse.down || mouse.drag) {
                     // See if we're clicking again on the same item, within the
                     // double-click time. Firefox uses 300ms as the max time
                     // difference:
@@ -1396,12 +1431,14 @@ new function() { // Injection scope for event handling on the browser
                     // Only start dragging if the mousedown event has not
                     // prevented the default, and if the hitItem or any of its
                     // parents actually respond to mousedrag events.
-                    if (!prevented && hitItem) {
+
+                    //hanning: changed to use draggable flag
+                    if (!prevented && hitItem) { 
                         var item = hitItem;
                         while (item && !item.responds('mousedrag'))
-                            item = item._parent;
+                           item = item._parent;
                         if (item)
-                            dragItem = hitItem;
+                           dragItem = hitItem;
                     }
                     downPoint = point;
                 } else if (mouse.up) {
@@ -1459,7 +1496,7 @@ new function() { // Injection scope for event handling on the browser
             function emit(obj) {
                 if (obj.responds(type)) {
                     // Update global reference to this scope.
-                    paper = scope;
+                    mpaper = scope;
                     // Only produce the event object if we really need it.
                     obj.emit(type, keyEvent = keyEvent
                             || new KeyEvent(type, event, key, character));

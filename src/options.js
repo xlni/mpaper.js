@@ -14,7 +14,7 @@
 // browser based compile-time preprocessing when loading the separate source
 // files directly through load.js / Prepro.js during development.
 
-// The paper.js version.
+// The mpaper.js version.
 // NOTE: Adjust value here before calling `gulp publish`, which then updates and
 // publishes the various JSON package files automatically.
 var version = '0.12.15';

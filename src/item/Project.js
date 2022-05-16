@@ -35,6 +35,7 @@ var Project = PaperScopeItem.extend(/** @lends Project# */{
     _list: 'projects',
     _reference: 'project',
     _compactSerialize: true, // Never include the class name for Project
+  
 
     // TODO: Add arguments to define pages
     /**
@@ -51,12 +52,14 @@ var Project = PaperScopeItem.extend(/** @lends Project# */{
      */
     initialize: function Project(element) {
         // Activate straight away by passing true to PaperScopeItem constructor,
-        // so paper.project is set, as required by Layer and DoumentView
+        // so mpaper.project is set, as required by Layer and DoumentView
         // constructors.
         PaperScopeItem.call(this, true);
         this._children = [];
+        this._topIndex = -1;
         this._namedChildren = {};
         this._activeLayer = null;
+        this._layerStack = [];
         this._currentStyle = new Style(null, null, this);
         // If no view is provided, we create a 1x1 px canvas view just so we
         // have something to do size calculations with.
@@ -70,7 +73,67 @@ var Project = PaperScopeItem.extend(/** @lends Project# */{
         // Change tracking, not in use for now. Activate once required:
         // this._changes = [];
         // this._changesById = {};
+        this._newimages = []; //cached images in the project 
+        this.cachedItemDefs = {};
+        this.r9timestamp = 0;
+        this.configuration = {
+            frame_width:  this._view.bounds.width || 860,
+            frame_height: this._view.bounds.height || 480,
+        }
+
+       // if( this.studio ){
+       //     this.studio.subscribe('global.message.notification', this, this.on_message, null);
+      //  }
     },
+    setStudio: function(s){
+        this._studio = s;
+        this._studio.subscribe('global.message.notification', this, this.on_message, null); 
+    },
+    getStudio: function(){
+        return this._studio;
+    },
+    getPageBus: function(){
+        return this._studio ? this._studio.pageBus : null;
+    },
+    showMessage: function(message){
+        this.on_message('', {content: message})
+    },
+   
+    on_message: function(topic, data){
+       if( this._activeLayer ){ 
+            if( data && data.content ){
+                var  that = this,  content =   data.content, 
+                    astyle =   data.style || '', 
+                    pos = data.position ||  that._view.center.__add(  [0, -150] ),
+                    type = typeof data.ani_type == 'undefined' ? 10 : data.ani_type;
+                var message_item = new StyledText({
+                    position: pos,
+                    fillColor:  'bgColor1' ,
+                    strokeColor:  'strokeColor' ,
+                    justification: 'center',
+                    bgColor:'bgColor2',
+                    borderColor:'color2',
+                    corner:5, 
+                    textXOffset:10,
+                    textYOffset:3,
+                    fontSize: 18,
+                    content: content, 
+                    r9textstyle :astyle
+                  });
+                var callback = {
+                    onEnd: function(){
+                        setTimeout(function(){
+                            RU.imageEffect2(that._activeLayer, message_item,   1, 
+                               type, 'linear', '', false, null); 
+                       },   data.duration || 2000 );
+                    }
+                }
+                RU.imageEffect2(this._activeLayer, message_item, 1, 
+                    type, 'linear', '', true,  callback ); 
+            }
+       }
+    },
+ 
 
     _serialize: function(options, dictionary) {
         // Just serialize layers to an array for now, they will be unserialized
@@ -80,6 +143,36 @@ var Project = PaperScopeItem.extend(/** @lends Project# */{
         return Base.serialize(this._children, options, true, dictionary);
     },
 
+   
+    getCacheImageByName : function(name){
+        var _newimages = this._newimages;
+        for(var img in _newimages){
+           if( _newimages[img].name  === name || _newimages[img].name  + ".png" === name || 
+               _newimages[img].name + ".jpg" === name      ){
+              return _newimages[img];
+           }
+         }  
+         for(var img in _newimages){
+           if( _newimages[img].src.indexOf("/" + name + ".png") >=0 ||
+               _newimages[img].src.indexOf("/" + name + ".jpg") >=0 ||
+               _newimages[img].src.indexOf(   name + ".png") >=0 ||
+               _newimages[img].src.indexOf(   name + ".jpg") >=0 ){
+              return _newimages[img];
+           }
+         }  
+         for(var img in _newimages){
+           if( _newimages[img].src.indexOf(   name  ) >=0  ){
+              return _newimages[img];
+           }
+         }   
+         return null;
+    },
+    markr9times: function(){
+       this.r9timestamp = new Date().getTime();
+    },
+    heartbeat: function(){
+       if( this._activeLayer ) this._activeLayer.heartbeat();
+    },
     /**
      * Private notifier that is called whenever a change occurs in the project.
      *
@@ -112,6 +205,15 @@ var Project = PaperScopeItem.extend(/** @lends Project# */{
             }
         }
     },
+    broadcast: function(props){
+        if(! this._studio ) return;
+        var obj = Base.isPlainObject(props) ;
+        if( obj ){
+            this._studio.pageBus.publish( props.topic, props);
+        } else {
+            this._studio.pageBus.publish( props , {});
+        }
+    },
 
     /**
      * Activates this project, so all newly created items will be placed
@@ -128,6 +230,7 @@ var Project = PaperScopeItem.extend(/** @lends Project# */{
         var children = this._children;
         for (var i = children.length - 1; i >= 0; i--)
             children[i].remove();
+        this._layerStack = [];
     },
 
     /**
@@ -194,6 +297,25 @@ var Project = PaperScopeItem.extend(/** @lends Project# */{
     setCurrentStyle: function(style) {
         // TODO: Style selected items with the style:
         this._currentStyle.set(style);
+        this._children.forEach(e => {
+            e._changed(/*#=*/Change.Style)
+        });
+    },
+  
+    useBuiltinStyle: function(name){
+        var s = Style.getBuiltinStyle(name, this);
+        if(s){
+            this._currentStyle.set(s);
+            if( this._activeLayer )
+                this._activeLayer._style.set(s);
+            if( this._studio ){
+                this._studio.updateStyle(this._currentStyle);
+            }
+            this.builtinStyleName = name;
+        } 
+    },
+    getBuiltInColor: function(name){
+        return this.builtinStyleName ? Style.getBuiltinColors(this.builtinStyleName, this)[name] : undefined;
     },
 
     /**
@@ -229,6 +351,116 @@ var Project = PaperScopeItem.extend(/** @lends Project# */{
         return this._children;
     },
 
+    getLayerByName: function(name){
+        var children = this._children, len = children.length, e;
+        for(var i = 0; i < len; i++) {
+            e = children[i];
+            if( e.name == name || e.id == name )
+                return e;
+        }
+        return null; 
+    },
+    showLayer: function(name, props, callback){
+        var layer = this.getLayerByName(name);
+        if( layer ){
+            this.addLayer( layer ); //move to top?
+            var mask_from, mask_to,  animType_from = props || {} , 
+                //only if has setup in new layer, we do animation for new layer.
+                animType_to = layer._sceneSetupOptions || false,
+                //if hasClip for new layer, we keep original layer visible
+                keepFromVisible = layer.sublayer || false;
+            if( this._activeLayer ) {
+                if( !keepFromVisible ){
+                    mask_from = this._activeLayer.rasterize();  
+                    this._activeLayer.visible = false; 
+                } 
+            }
+            if( this._activeLayer != layer || (this._layerStack.length == 0 && layer.name == 'main') ){
+                this._activeLayer = layer; 
+                this._layerStack.push( this._activeLayer );
+            }  
+
+            if( animType_to ){
+                mpaper.settings.insertItems = true;
+                layer.getPlayer().start(); 
+                mpaper.settings.insertItems = false;
+                layer.visible = true;
+                mask_to = layer.rasterize();   
+                layer.visible = false;
+            }  
+
+            if( mask_from || mask_to ){
+                var that = this, temp = new Layer({ project: this, insert: true }), 
+                    count = ( mask_from ? 1 : 0)  + ( mask_to ? 1 : 0);
+                var timeline = anime.timeline({ autoplay: false});
+                that._activeLayer = temp;
+                var doneCallback = function(){
+                    count --;
+                    if( count == 0 ){
+                        temp._remove(false, true);
+                        that._activeLayer = layer;
+                        that._activeLayer.visible = true;
+                        if( animType_to )
+                            that._activeLayer.getPlayer().resume();    
+                        else
+                            that._activeLayer.getPlayer().start();     
+                    }
+                }
+                if( mask_from ){
+                    temp.addChild( mask_from );
+                    animType_from.targets = mask_from;
+                    if(!animType_from.type)  animType_from.type = 'FadeOut';
+                    temp.uncreateItems( timeline,  animType_from, undefined, doneCallback);
+                }
+                if( mask_to ){
+                    mask_to.remove(); 
+                    animType_to.targets = mask_to;
+                    if(!animType_to.type)  animType_to.type = 'FadeIn';
+                    animType_to.begin = function(){
+                        temp.addChild(mask_to);
+                    }; 
+                    temp.createItems( timeline,  animType_to, undefined, doneCallback);   
+                } 
+                timeline.play(callback);
+            }
+            else {
+                this._activeLayer.visible = true;
+                this._activeLayer.getPlayer().start(callback); 
+            }  
+        }
+    },
+    hideTopLayer: function(props){
+        var stacks = this._layerStack, len = stacks.length, props = props || {};
+        if( len > 1 ){ 
+            var that = this, resume = this._activeLayer.resumeOnClose || (props && props.resumeOnClose) || false; 
+            
+            this._activeLayer.getPlayer().stop();
+            var mask  =  this._activeLayer.rasterize();   
+            this._activeLayer.visible = false;
+            stacks.pop();
+            this._activeLayer = stacks[len-2]; 
+            this._activeLayer.visible = true;
+            this._activeLayer.addChild( mask )
+            this._activeLayer._changed()  ; 
+
+            delete props.resumeOnClose;
+            props.targets = mask;
+            props.type = props.type || 'FadeOut';
+
+            this._activeLayer.uncreateItems( anime.timeline({ autoplay: true}), props, 0, function(){
+                if(  resume ){ 
+                    that._activeLayer.getPlayer().resume(); 
+                } 
+            });  
+        }
+    },
+    resetLayerStack: function(){
+        this._layerStack = [];
+        this._children.forEach( e => { e.visible = false; });
+        this._activeLayer = null;
+    },
+
+
     // TODO: Define #setLayers()?
 
     /**
@@ -240,6 +472,39 @@ var Project = PaperScopeItem.extend(/** @lends Project# */{
      */
     getActiveLayer: function() {
         return this._activeLayer || new Layer({ project: this, insert: true });
+    },
+
+    /**
+     * 
+     * @param {*} props can be a string or a setting object
+     */
+    addNewLayer: function(props){
+        var obj = Base.isPlainObject(props), layer = new Layer({ project: this, insert: true });
+        if( obj ){
+            layer.name = props.name;
+            layer.resumeOnClose = props.resumeOnClose || false;
+       //     layer.strokeColor = props.strokeColor;
+        //    layer.fillColor = props.fillColor;
+         
+            var  w =  props.width || 0,  h =  props.height || 0, pos =  props.position || this._view.center ;
+            if( w && h ){
+                if( Array.isArray( pos) )
+                    pos = new Point( pos[0], pos[1] );
+                var mask = new Path.Rectangle( pos.x - w/2, pos.y - h/2, w, h);  
+                layer.insertChild(0, mask); //after insertion, _clipItem is set to null. 
+                mask._clipMask = true;
+                mask._matrix = new Matrix();
+                layer.clipped = true;
+                layer.sublayer = true;
+                layer._style._values.sceneBgColor =  props.fillColor;
+            }
+        } else {
+            layer.name = props;
+        }
+        layer._style._values.sceneBgColor =  props.fillColor;
+        this._activeLayer = layer;
+      //  layer.activate();
+        return layer;
     },
 
     /**
@@ -329,7 +594,7 @@ var Project = PaperScopeItem.extend(/** @lends Project# */{
         for (var i in selectionItems)
             selectionItems[i].setFullySelected(false);
     },
-
+  
     /**
      * {@grouptitle Hierarchy Operations}
      *
@@ -581,7 +846,7 @@ var Project = PaperScopeItem.extend(/** @lends Project# */{
      * });
      *
      * // Fetch all items whose opacity is smaller than 1
-     * var items = paper.project.getItems({
+     * var items = mpaper.project.getItems({
      *     opacity: function(value) {
      *         return value < 1;
      *     }
@@ -651,7 +916,7 @@ var Project = PaperScopeItem.extend(/** @lends Project# */{
      *
      * // Fetch all items whose data object contains a person
      * // object whose name is john and length is 180:
-     * var items = paper.project.getItems({
+     * var items = mpaper.project.getItems({
      *     data: {
      *         person: {
      *             name: 'john',
@@ -766,9 +1031,9 @@ var Project = PaperScopeItem.extend(/** @lends Project# */{
      *     to export, either as a string ({@values 'view', content'}), or a
      *     {@link Rectangle} object: `'view'` uses the view bounds,
      *     `'content'` uses the stroke bounds of all content
-     * @option [options.matrix=paper.view.matrix] {Matrix} the matrix with which
+     * @option [options.matrix=mpaper.view.matrix] {Matrix} the matrix with which
      *     to transform the exported content: If `options.bounds` is set to
-     *     `'view'`, `paper.view.matrix` is used, for all other settings of
+     *     `'view'`, `mpaper.view.matrix` is used, for all other settings of
      *     `options.bounds` the identity matrix is used.
      * @option [options.asString=false] {Boolean} whether a SVG node or a
      *     `String` is to be returned

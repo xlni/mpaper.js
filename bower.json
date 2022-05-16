@@ -1,18 +1,17 @@
 {
-  "name": "paper",
-  "description": "The Swiss Army Knife of Vector Graphics Scripting",
+  "name": "mpaper",
+  "description": "Math extension for Paper.js",
   "license": "MIT",
-  "homepage": "http://paperjs.org",
+  "homepage": "",
   "repository": {
     "type": "git",
-    "url": "git://github.com/paperjs/paper.js"
+    "url": "git://github.com/xlni/mpaper.js.gits"
   },
-  "bugs": "https://github.com/paperjs/paper.js/issues",
+  "bugs": "https://github.com/xlni/mpaper.js/issues",
   "authors": [
-    "Jürg Lehni <juerg@scratchdisk.com> (http://juerglehni.com)",
-    "Jonathan Puckey <jonathan@puckey.studio> (http://puckey.studio)"
+    "Xianglong Ni< xlni (at) berkeley.edu>  "  
   ],
-  "main": "dist/paper-full.js",
+  "main": "dist/mpaper-full.js",
   "ignore": [
     "package.json",
     "gulpfile.js",
@@ -39,6 +38,9 @@
     "svg",
     "paper",
     "paper.js",
-    "paperjs"
+    "paperjs",
+    "mpaper",
+    "mpaper.js",
+    "mpaperjs"
   ]
 }

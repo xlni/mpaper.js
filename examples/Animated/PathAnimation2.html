@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Path Tangents</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+        mpaper.settings.insertItems = true;
+        project.useBuiltinStyle('dark'); 
+        var rect = new Path.Rectangle({
+            position:  [200, 200],
+            size: 50,  
+            strokeColor: 'white',
+            strokeWidth: 3
+        })
+       rect.start(4);
+
+        var rect2  =  new Path.Rectangle({  
+          size: 50,  
+          strokeColor: 'white',
+          strokeWidth: 3
+       }) 
+        var rect3 = rect2.clone(); 
+        var rect4 = rect2.clone(); 
+
+        var group = new Group( rect2, rect3, rect4 ).align(false, 20); 
+        group.position = [400,400]
+        group.start(10,2);
+         
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

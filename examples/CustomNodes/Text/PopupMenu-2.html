@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>PopupMenu test</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <script type="text/javascript" src="../../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+       project.useBuiltinStyle('dark'); 
+
+      
+        var menu = new PopupMenu({ 
+          keyColor: 'white', 
+          keyTextColor: 'red', 
+          borderColor: 'green',
+          keyboardColor: 'pink', 
+          margin:10,
+          fontSize: 16,
+        }); 
+
+        menu.addMenuItems( '', ['A', 'B', 'C'] , function(msg){
+             project.showMessage(msg)
+        }); 
+        
+      menu.position =  [300,300];
+      duration = 1;
+      menu.imageEffect( duration, 'blinder_v',  true );
+   
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

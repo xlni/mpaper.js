@@ -22,7 +22,7 @@ var gulp = require('gulp'),
     jsonModifier = require('gulp-json-modifier'),
     options = require('../utils/options.js');
 
-var packages = ['paper-jsdom', 'paper-jsdom-canvas'],
+var packages = ['mpaper-jsdom', 'mpaper-jsdom-canvas'],
     sitePath = path.resolve('../paperjs.org'),
     referencePath = sitePath + '/content/08-Reference',
     downloadPath = sitePath + '/content/11-Download',
@@ -95,7 +95,7 @@ packages.forEach(function(name) {
             .pipe(jsonModifier({
                 version: options.version,
                 dependencies: {
-                    paper: options.version
+                    mpaper: options.version
                 }
             }, jsonModifierOptions))
             .pipe(gulp.dest(path))
@@ -138,7 +138,7 @@ function() {
 });
 
 gulp.task('publish:website:zip', ['publish:version'], function() {
-    return gulp.src('dist/paperjs.zip')
+    return gulp.src('dist/mpaperjs.zip')
         .pipe(rename({ suffix: '-v' + options.version }))
         .pipe(gulp.dest(downloadPath));
 });
@@ -146,9 +146,9 @@ gulp.task('publish:website:zip', ['publish:version'], function() {
 gulp.task('publish:website:assets', function() {
     // Always delete the old asset first, in case it's a symlink which Gulp
     // doesn't handle well.
-    fs.unlinkSync(assetPath + '/paper.js');
-    return gulp.src('dist/paper-full.js')
-        .pipe(rename({ basename: 'paper' }))
+    fs.unlinkSync(assetPath + '/mpaper.js');
+    return gulp.src('dist/mpaper-full.js')
+        .pipe(rename({ basename: 'mpaper' }))
         .pipe(gulp.dest(assetPath));
 });
 

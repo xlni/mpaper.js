@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Bar Chart test -1</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+        //mpaper.settings.insertItems = true;
+        project.useBuiltinStyle('dark');
+        
+          center = view.center; 
+          text =  'Two roads diverged in a yellow wood,\n'+
+        'And sorry I could not travel both\n'+
+        'And be one traveler, long I stood\n'+
+        'And looked down one as far as I could\n'+
+        'To where it bent in the undergrowth;\n'+
+        '\n'+
+        'Then took the other, as just as fair,\n'+
+        'And having perhaps the better claim,\n'+
+        'Because it was grassy and wanted wear;\n'+
+        'Though as for that the passing there\n'+
+        'Had worn them really about the same,\n'+
+        '\n'+
+        'And both that morning equally lay\n'+
+        'In leaves no step had trodden black.\n'+
+        'Oh, I kept the first for another day!\n'+
+        'Yet knowing how way leads on to way,\n'+
+        'I doubted if I should ever come back.\n'+
+        '\n'+
+        'I shall be telling this with a sigh\n'+
+        'Somewhere ages and ages hence:\n'+
+        'Two roads diverged in a wood, and I—\n'+
+        'I took the one less traveled by,\n'+
+        'And that has made all the difference.';
+
+          textobj = new  StyledText({ 
+        fillColor: 'red',
+        strokeColor: 'red',
+        justification: 'center',
+        fontSize: 20,
+        content: text
+        });
+  
+         viewport = new ViewPort({
+          clips: [100,50,400,150],
+          strokeColor: 'black',
+          shadowColor: 'green',
+          shadowBlur:10,
+          strokeWidth: 2,
+          scrollPolicy: 'both',
+          padding:20
+       }) 
+       viewport.addToContentView(textobj)
+       viewport.centerIt();
+       
+
+       Create({targets: [textobj, viewport]})
+
+         button1 = new  TwoStateButton({  
+        state1_name: '[setCameraScale]', 
+        click_func: function(state){
+            viewport.setCameraScale(1.5,3)
+        },  
+        toggle: false,
+        fillColor: 'red',
+        strokeColor: 'blue', 
+        });   
+        button1.position  = [400,230];
+
+     
+          button2 = new  TwoStateButton({  
+            state1_name: '[setCameraPosition]', 
+            click_func: function(state){
+                viewport.setCameraPosition( viewport.position + [0,150],3)
+            },  
+            toggle: false,
+            fillColor: 'red',
+            strokeColor: 'blue', 
+            });   
+            button2.position  = [200,230];
+            
+            Create({targets: [button1, button2]})
+
+         textobj2 = new  StyledText({ 
+        fillColor: 'red',
+        strokeColor: 'red',
+        justification: 'center',
+        fontSize: 20,
+        content: text
+        });
+  
+         viewport2 = new ViewPort({
+          clips: [100,300,400,200],
+          strokeColor: 'blue',
+          shadowColor: 'green',
+          shadowBlur:10,
+          strokeWidth: 2,
+          scrollPolicy: 'both',
+          padding:20
+       }) 
+       viewport2.addToContentView(textobj2)
+       viewport2.centerIt();
+
+   
+       Create({targets: [textobj2, viewport2]})
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

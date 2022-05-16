@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>tex-svg</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script type="text/javascript" src="../../lib/mathjax-bridge.js"></script>
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+       
+      //mpaper.settings.insertItems = true;
+        project.useBuiltinStyle('dark');
+         
+       
+          input = ' P(E) = {n \\choose k} p^k (1-p)^{ n-k } ';  
+          item = project.importLatex(input);
+        item.scale(20); 
+        item.position = [200,200];    
+       
+          input2 = ' x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}';  
+          item2 = project.importLatex(input2);
+        item2.scale(20); 
+        item2.position = [500,500];   
+        Create({target: [item]})
+
+        MorphingTo({target: item, to: item2}); 
+
+    //    item.morphingTo(curPage.ptimer, item2, 3); 
+        
+    </script>
+</head>
+<body>
+  <div id="math"></div> 
+     
+   <canvas id="canvas" resize></canvas>
+</body>
+</html>

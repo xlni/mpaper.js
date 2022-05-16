@@ -292,6 +292,12 @@ var Point = Base.extend(/** @lends Point# */{
             );
         }
     },
+
+    morphingTo: function(to, progress){ 
+        var x = ( to.x - this.x ) * progress + this.x,
+            y = ( to.y - this.y ) * progress + this.y;
+        return new Point(x, y );
+    },
     /**
      * Returns the smaller angle between two vectors. The angle is unsigned, no
      * information about rotational direction is given.

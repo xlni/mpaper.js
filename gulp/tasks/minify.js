@@ -26,8 +26,8 @@ var uglifyOptions = {
 
 gulp.task('minify', ['build'], function() {
     return gulp.src([
-            'dist/paper-full.js',
-            'dist/paper-core.js'
+            'dist/mpaper-full.js',
+            'dist/mpaper-core.js'
         ])
         .pipe(uglify(uglifyOptions))
         .pipe(rename({

@@ -56,6 +56,7 @@ var Item = Base.extend(Emitter, /** @lends Item# */{
     _blendMode: 'normal',
     _opacity: 1,
     _locked: false,
+    _draggable:false,
     _guide: false,
     _clipMask: false,
     _selection: 0,
@@ -64,6 +65,7 @@ var Item = Base.extend(Emitter, /** @lends Item# */{
     // selected separately by setting item.bounds.selected = true;
     _selectBounds: true,
     _selectChildren: false,
+    _updaters: [],
     // Provide information about fields to be serialized, with their defaults
     // that can be omitted.
     _serializeFields: {
@@ -75,9 +77,11 @@ var Item = Base.extend(Emitter, /** @lends Item# */{
         blendMode: 'normal',
         opacity: 1,
         locked: false,
+        draggable: false,
         guide: false,
         clipMask: false,
         selected: false,
+        updaters: [],
         data: {}
     },
     // Prioritize `applyMatrix` over `matrix`:
@@ -128,8 +132,8 @@ new function() { // Injection scope for various item event handlers
      * passed props object, and apply the point translation to the internal
      * matrix.
      *
-     * @param {Object} props the properties to be applied to the item
-     * @param {Point} point the point by which to transform the internal matrix
+     * @param {Object} [props] the properties to be applied to the item
+     * @param {Point} [point] the point by which to transform the internal matrix
      * @return {Boolean} {@true if the properties were successfully be applied,
      * or if none were provided}
      */
@@ -140,8 +144,8 @@ new function() { // Injection scope for various item event handlers
             internal = hasProps && props.internal === true,
             matrix = this._matrix = new Matrix(),
             // Allow setting another project than the currently active one.
-            project = hasProps && props.project || paper.project,
-            settings = paper.settings;
+            project = hasProps && props.project || mpaper.project,
+            settings = mpaper.settings;
         this._id = internal ? null : UID.get();
         this._parent = this._index = null;
         // Inherit the applyMatrix setting from settings.applyMatrix
@@ -151,8 +155,8 @@ new function() { // Injection scope for various item event handlers
         if (point)
             matrix.translate(point);
         matrix._owner = this;
-        this._style = new Style(project._currentStyle, this, project);
-        // Do not add to the project if it's an internal path,  or if
+        this._style = new Style(project._activeLayer? project.activeLayer._style : project._currentStyle, this, project);
+         // Do not add to the project if it's an internal path,  or if
         // props.insert  or settings.isnertItems is false.
         if (internal || hasProps && props.insert == false
             || !settings.insertItems && !(hasProps && props.insert === true)) {
@@ -167,7 +171,9 @@ new function() { // Injection scope for various item event handlers
                 // Filter out these properties as they were handled above:
                 internal: true, insert: true, project: true, parent: true
             });
-        }
+        } 
+        //flag to indicate animation
+       // this.duration= 0; //number,  zero means  no animation 
         return hasProps;
     },
 
@@ -202,7 +208,37 @@ new function() { // Injection scope for various item event handlers
         // class.
         return [ this._class, props ];
     },
-
+    /**
+     * based on two standards:  leaf is children == 0;  or  leaf is not a Group.
+     */
+    getAllLeaves: function(groupLevel){
+        var alist = [];
+        if( groupLevel )
+            this._getLeavesGroupLevel(alist);
+        else
+            this._getLeavesNoChild(alist);
+        return alist;
+    }, 
+    _getLeavesNoChild: function(alist){ 
+        if( this._children && Array.isArray(this._children) && this._children.length > 0 ){  
+            this._children.forEach(e => {
+                if( typeof e._getLeavesNoChild === 'function')
+                    e._getLeavesNoChild(alist);
+            });
+        } else {
+            alist.push(this);
+        }
+    },
+    _getLeavesGroupLevel: function(alist){ 
+        if( this._children && (this instanceof Group) ){  
+            this._children.forEach(e => {
+                if( typeof e._getLeavesGroupLevel === 'function')
+                    e._getLeavesGroupLevel(alist);
+            });
+        } else {
+            alist.push(this);
+        }
+    },
     /**
      * Private notifier that is called whenever a change occurs in this item or
      * its sub-elements, such as Segments, Curves, Styles, etc.
@@ -276,6 +312,142 @@ new function() { // Injection scope for various item event handlers
     getId: function() {
         return this._id;
     },
+
+    /**
+     * control the update of updaters, pause it
+     */
+    pause: function(){
+        this._paused = true;
+    },
+    /**
+     * control the update of updaters, resume it.
+     */
+    resume: function(){
+        this._paused = false;
+    },
+
+    setProgress : function(progress) { 
+        this._progress = progress  ; 
+        this._changed(/*#=*/(Change.GEOMETRY | Change.PIXELS)); 
+    },
+    getProgress: function(){
+        return typeof this._progress == 'undefined' ? -1 : this._progress;
+    },
+    setTooltip : function(tip) { 
+        if( !this._tooltip && !tip ) return;
+        var that = this;
+        if( !that._tooltip ){ 
+            that.on('mouseenter', that._tooltipHandler1); 
+            that.on('mouseleave', that._tooltipHandler2 );
+        }
+        this._tooltip = tip; 
+        if(!tip){
+            that.off('mouseenter', that._tooltipHandler1); 
+            that.off('mouseleave', that._tooltipHandler2 );
+        }
+      
+    },
+    getTooltip: function(){
+        return this._tooltip;
+    },
+    _tooltipHandler1: function(event){
+        var that = this;
+        if(typeof that._tooltipid  == 'undefined'){
+            that._tooltipid = setTimeout(function(){
+                var type = that.tooltip_type, type = (typeof type == 'undefined') ? 10 : ( type == 'random' ? 9: type);
+                that._project._studio.publish('global.message.notification', 
+                    { content : that.tooltip, position: that.position, ani_type:type });
+            }, 1000);
+        }
+    },
+    _tooltipHandler2: function(event){
+        var that = this;
+        if(typeof that._tooltipid !== 'undefined'){
+            clearTimeout(that._tooltipid); 
+        }
+        that._tooltipid = undefined;
+    },
+    /**
+     * addd updater
+     * @name Item#addUpdater
+     * @function
+     * @param {Function} update_func
+     * @param {Number} duration  optional default value = 0. 
+     * if 0, means updater has no time duration. 
+     * if > 0, callback will receive an additional value : progress. when duration is done, updater will stop and removed.  
+     * @param {Number} index  optional    The index at which the new updater should be added in ``self.updaters``.
+            In case ``index`` is ``None`` the updater will be added at the end.
+   
+     * @return {Item} wrapped updater  .
+     * @chainable
+     *
+     * @example {@paperscript}
+       
+     */
+    addUpdater:function(update_func,  duration, index, doneCallback){ 
+        var updater;
+        if( update_func instanceof Updater){
+            updater = update_func;
+            if( typeof updater.parent == 'undefined' )
+                updater.parent = this;
+        } else {
+            updater = new Updater( { parent: this, 
+                func: update_func, 
+                duration: duration || 0 , 
+                startAniTime : 0,
+                doneCallback: doneCallback} ) 
+        }
+        if( typeof index != 'undefined' && index >= 0){
+            this._updaters.splice( index, 0, updater );
+        } else {
+            this._updaters.push( updater );
+        } 
+        if( this._updaters.length == 1 ){
+            var that = this; 
+            that.on('frame', that._onFrameHandler); 
+        } 
+        if( this._updaters.length == 0){
+            var that = this; 
+            that.off('frame', that._onFrameHandler);
+        }
+        return updater;
+    }, 
+    _onFrameHandler: function(event){
+        var that = this;
+        if(  that._paused ) return; 
+        for(var key in that._updaters){
+            var updater = that._updaters[key];
+            updater.update(event);
+        } 
+    },
+    getUpdater: function(updaterId){ 
+        for(var i = this._updaters.length-1; i>=0; i--){  
+            if( this._updaters[i].id === updaterId || this._updaters[i].name == updaterId){
+                return this._updaters[i];
+            }
+        } 
+        return null;
+    },
+    removeUpdaterById: function(updaterId){ 
+        for(var i = this._updaters.length-1; i>=0; i--){  
+            if( this._updaters[i].id === updaterId ){
+                this._updaters.splice(i, 1);
+                break;
+            }
+        } 
+    },
+    removeUpdater: function(update_func){
+        for(var i = this._updaters.length-1; i>=0; i--){  
+            if( this._updaters[i].func === update_func ){
+                this._updaters.splice(i, 1);
+                break;
+            }
+        }  
+    },
+    clearUpdaters: function(){
+        this._updaters = [];
+    },
+
 
     /**
      * The class name of the item as a string.
@@ -405,7 +577,7 @@ new function() { // Injection scope for various item event handlers
         // CompoundPaths.
         this.getStyle().set(style);
     }
-}, Base.each(['locked', 'visible', 'blendMode', 'opacity', 'guide'],
+}, Base.each(['locked', 'draggable', 'visible', 'blendMode', 'opacity', 'guide'],
     // Produce getter/setters for properties. We need setters because we want to
     // call _changed() if a property was modified.
     function(name) {
@@ -414,6 +586,7 @@ new function() { // Injection scope for various item event handlers
             flags = {
                 // #locked does not change appearance, all others do:
                 locked: /*#=*/ChangeFlag.ATTRIBUTE,
+                draggable: /*#=*/(Change.ATTRIBUTE | Change.GEOMETRY),
                 // #visible changes appearance
                 visible: /*#=*/(Change.ATTRIBUTE | Change.GEOMETRY)
             };
@@ -469,6 +642,24 @@ new function() { // Injection scope for various item event handlers
      *     point: view.center - [0, 35],
      *     justification: 'center'
      * });
+     */
+
+    /**
+     * Specifies whether the item is draggable. When set to `true`, item
+     * can be dragged 
+     *
+     * @name Item#draggable
+     * @type Boolean
+     * @default false
+     *
+     * @example {@paperscript}
+     * var unlockedItem = new Path.Circle({
+     *     center: view.center - [35, 0],
+     *     radius: 30,
+     *     fillColor: 'springgreen',
+     *     draggable: true  
+     * });
+     *  
      */
 
     /**
@@ -569,6 +760,60 @@ new function() { // Injection scope for various item event handlers
      * @default true
      * @ignore
      */
+
+    setShowHide: function(show){
+       this.visible = show;
+       if( show ){
+           this.addToViewIfNot();
+       }
+    },
+    /**
+     * show with animation
+     */
+    showing: function(duration){ 
+        var that = this, opa = that.opacity;
+        this.opacity = 0.001;
+        this.visible = true;
+        this.addToViewIfNot();
+        anime({
+            targets: that,
+            opacity: 1,
+            duration: duration || 0.5
+        });
+    },
+    /**
+     * hide with animation
+     * @param{*} removeIt,  if true, call remove() after done. it can also be a callback function
+     * @param{*} duration,  optional
+     */
+    hiding: function( removeIt, duration ){
+        var that = this, opa = that.opacity ; 
+        anime({
+            targets: that,
+            opacity: 0.001,
+            duration: duration ||  0.5,
+            complete: function(){
+                that.visible = false;
+                that.opacity = opa;
+                if( removeIt ){
+                    if( typeof removeIt === 'function' )
+                        removeIt();
+                    else
+                        that.remove();
+                }
+                   
+            }
+        });
+    },
+    addToViewIfNot: function(duration, offset){
+        var p = this, pp;
+        while( (pp = p._parent) != null)
+            p = pp;
+        if( !(p instanceof Layer)) { 
+            this._project._activeLayer.addChild(p);  
+            this._animForShowing(duration, offset)
+        }
+    },
 
     getSelection: function() {
         return this._selection;
@@ -1142,7 +1387,7 @@ new function() { // Injection scope for various item event handlers
 }), /** @lends Item# */{
     // Enforce creation of beans, as bean getters have hidden parameters.
     // See #getGlobalMatrix() below.
-    beans: true,
+    beans: true, 
 
     _decompose: function() {
         // Only decompose if the item isn't directly baking transformations into
@@ -1380,7 +1625,35 @@ new function() { // Injection scope for various item event handlers
     getView: function() {
         return this._project._view;
     },
+    
+    /**
+     * The layer that this item is contained within.
+     *
+     * @type Layer
+     * @bean
+     */
+     getLayer: function() {
+        var parent = this;
+        while (parent = parent._parent) {
+            if (parent instanceof Layer)
+                return parent;
+        }
+        return null;
+    },
 
+    getCurPage: function(){
+       return this.getTimlinePlayer() .getCurPage();
+    },
+    getTimlinePlayer: function(){
+        var layer = this.getLayer();
+        return layer != null ? layer.getPlayer() : this._project.getActiveLayer().getPlayer();
+    },
+    /**
+     * implemented and used internally
+     */
+    _animForShowing: function(){ 
+        this.visible = true;
+    },
     /**
      * Overrides Emitter#_installEvents to also call _installEvents on all
      * children.
@@ -1392,20 +1665,6 @@ new function() { // Injection scope for various item event handlers
             children[i]._installEvents(install);
     },
 
-    /**
-     * The layer that this item is contained within.
-     *
-     * @type Layer
-     * @bean
-     */
-    getLayer: function() {
-        var parent = this;
-        while (parent = parent._parent) {
-            if (parent instanceof Layer)
-                return parent;
-        }
-        return null;
-    },
 
     /**
      * The item that this item is contained within.
@@ -1531,7 +1790,8 @@ new function() { // Injection scope for various item event handlers
         this.removeChildren();
         this.addChildren(items);
     },
-
+    
+   
     /**
      * The first item contained within this item. This is a shortcut for
      * accessing `item.children[0]`.
@@ -1594,6 +1854,7 @@ new function() { // Injection scope for various item event handlers
                 && this._style.equals(item._style)
                 && this._matrix.equals(item._matrix)
                 && this._locked === item._locked
+                && this._draggable === item._draggable
                 && this._visible === item._visible
                 && this._blendMode === item._blendMode
                 && this._opacity === item._opacity
@@ -1695,6 +1956,8 @@ new function() { // Injection scope for various item event handlers
         }
     },
 
+    _copyExtraAttr: function(source, excludeMatrix){ 
+    },
     /**
      * Copies all attributes of the specified item over to this item. This
      * includes its style, visibility, matrix, pivot, blend-mode, opacity,
@@ -1710,13 +1973,14 @@ new function() { // Injection scope for various item event handlers
         // Only copy over these fields if they are actually defined in 'source',
         // meaning the default value has been overwritten (default is on
         // prototype).
-        var keys = ['_locked', '_visible', '_blendMode', '_opacity',
+        var keys = ['_locked', '_draggable', '_visible', '_blendMode', '_opacity',
                 '_clipMask', '_guide'];
         for (var i = 0, l = keys.length; i < l; i++) {
             var key = keys[i];
             if (source.hasOwnProperty(key))
                 this[key] = source[key];
         }
+        this._copyExtraAttr(source, excludeMatrix);
         // Use Matrix#initialize to easily copy over values.
         if (!excludeMatrix)
             this._matrix.set(source._matrix, true);
@@ -2432,9 +2696,9 @@ new function() { // Injection scope for hit-test functions shared with project
      *     to export, either as a string ({@values 'view', content'}), or a
      *     {@link Rectangle} object: `'view'` uses the view bounds,
      *     `'content'` uses the stroke bounds of all content
-     * @option [options.matrix=paper.view.matrix] {Matrix} the matrix with which
+     * @option [options.matrix=mpaper.view.matrix] {Matrix} the matrix with which
      *     to transform the exported content: If `options.bounds` is set to
-     *     `'view'`, `paper.view.matrix` is used, for all other settings of
+     *     `'view'`, `mpaper.view.matrix` is used, for all other settings of
      *     `options.bounds` the identity matrix is used.
      * @option [options.asString=false] {Boolean} whether a SVG node or a
      *     `String` is to be returned
@@ -2507,10 +2771,21 @@ new function() { // Injection scope for hit-test functions shared with project
      * paths and layers.
      *
      * @param {Item} item the item to be added as a child
+     * @param {boolean} [asTopLayer] the item to be added as a child
      * @return {Item} the added item, or `null` if adding was not possible
      */
-    addChild: function(item) {
-        return this.insertChild(undefined, item);
+    addChild: function(item, asTopLayer) {
+        var pos = this._children.length;
+        if( asTopLayer ){ 
+            if( this._topIndex < 0 )
+                this._topIndex = 0;
+            return this.insertChild(pos, item);
+        }
+        if( this._topIndex >= 0 )    
+            pos = this._topIndex;
+        return this.insertChild(pos, item);
+
+       // return this.insertChild(undefined, item);
     },
 
     /**
@@ -2522,7 +2797,7 @@ new function() { // Injection scope for hit-test functions shared with project
      * @param {Item} item the item to be inserted as a child
      * @return {Item} the inserted item, or `null` if inserting was not possible
      */
-    insertChild: function(index, item) {
+    insertChild: function(index, item) { 
         var res = item ? this.insertChildren(index, [item]) : null;
         return res && res[0];
     },
@@ -2533,10 +2808,17 @@ new function() { // Injection scope for hit-test functions shared with project
      * layers.
      *
      * @param {Item[]} items the items to be added as children
+      * @param {boolean} [asTopLayer]  
      * @return {Item[]} the added items, or `null` if adding was not possible
      */
-    addChildren: function(items) {
-        return this.insertChildren(this._children.length, items);
+    addChildren: function(items, asTopLayer) {
+        var pos = this._children.length;
+        if( asTopLayer ){ 
+            return this.insertChildren(pos, items);
+        }
+        if( this._topIndex >= 0 )    
+            pos = this._topIndex;
+        return this.insertChildren(pos, items);
     },
 
     /**
@@ -2550,7 +2832,9 @@ new function() { // Injection scope for hit-test functions shared with project
      *     possible
      */
     insertChildren: function(index, items) {
-        var children = this._children;
+        var children = this._children, topIndex = this._topIndex;
+        if( typeof index == 'undefined' && topIndex >= 0 ) 
+            index = topIndex;
         if (children && items && items.length > 0) {
             // We need to clone items because it may be an Item#children array.
             // Also, we're removing elements if they don't match _type.
@@ -2566,7 +2850,7 @@ new function() { // Injection scope for hit-test functions shared with project
                 // If an item was inserted already, it must be included multiple
                 // times in the items array. Only insert once.
                 if (!item || inserted[id]) {
-                    items.splice(i, 1);
+                    items.splice(i, 1); 
                 } else {
                     // Notify parent of change. Don't notify item itself yet,
                     // as we're doing so when adding it to the new owner below.
@@ -2575,6 +2859,9 @@ new function() { // Injection scope for hit-test functions shared with project
                 }
             }
             Base.splice(children, items, index, 0);
+            if( topIndex >= index ) topIndex += items.length;
+            this._topIndex = topIndex;
+
             var project = this._project,
                 // See #_remove() for an explanation of this:
                 notifySelf = project._changes;
@@ -2660,7 +2947,15 @@ new function() { // Injection scope for hit-test functions shared with project
         var owner = this._getOwner();
         return owner ? owner._insertItem(undefined, this) : null;
     },
-
+    /**
+     * Brings this item to the front of all other items within the same parent.
+     * it is different from brintToFront, as it will keep in top even a new item is added later on
+     * @returns 
+     */
+    setAsTopOne: function() {
+        var owner = this._getOwner();
+        return owner ? owner.addChild(this, true) : null;
+    },
     /**
      * Inserts the specified item as a child of this item by appending it to
      * the list of children and moving it above all other children. You can
@@ -2799,6 +3094,9 @@ new function() { // Injection scope for hit-test functions shared with project
             // the item is already removed from its list through Base.splice()
             // and index set to undefined, but the owner is still set,
             // e.g. in #removeChildren():
+            if( owner.isTopItem && owner.isTopItem( this ) ){
+                owner._topIndex --;
+            }
             if (index != null) {
                 // Only required for layers but not enough to merit an override.
                 if (project._activeLayer === this)
@@ -2876,9 +3174,21 @@ new function() { // Injection scope for hit-test functions shared with project
             // Don't notify parent each time, notify it separately after.
             removed[i]._remove(true, false);
         }
+        var topIndex = this._topIndex;
+        if( topIndex >= 0 ){
+            if( end < topIndex ) this._topIndex -= end - start;
+            else if( start < topIndex ) this._topIndex -= topIndex - start;
+
+            if(  this._topIndex >= this._children.length ) this._topIndex = -1;
+        }
         if (removed.length > 0)
             this._changed(/*#=*/Change.CHILDREN);
         return removed;
+    },
+    isTopItem: function(item){
+        if( this._topIndex < 0 ) return false;
+        var index = this._children.indexOf(item);
+        return index < 0 ? false : index >= this._topIndex;
     },
 
     // DOCS Item#clear()
@@ -4345,7 +4655,7 @@ new function() { // Injection scope for hit-test functions shared with project
                 ctx.lineCap = strokeCap;
             if (miterLimit)
                 ctx.miterLimit = miterLimit;
-            if (paper.support.nativeDash) {
+            if (mpaper.support.nativeDash) {
                 var dashArray = style.getDashArray(),
                     dashOffset = style.getDashOffset();
                 if (dashArray && dashArray.length) {
@@ -4375,6 +4685,13 @@ new function() { // Injection scope for hit-test functions shared with project
             ctx.shadowOffsetX = offset.x;
             ctx.shadowOffsetY = offset.y;
         }
+    },
+
+    imageEffect: function(duration, transType, isCreation){
+        var easing = '';
+        //'easeInOutElastic(1, 1)';
+        //'easeInOutExpo'; 
+        RU.imageEffect2(this._project._activeLayer, this, duration,  transType, easing, "", isCreation, null);
     },
 
     draw: function(ctx, param, parentStrokeMatrix) {
@@ -4606,6 +4923,13 @@ new function() { // Injection scope for hit-test functions shared with project
             }
         }
     },
+    showSelf: function( timeline, options, offset){
+        var layer = this.getLayer() || this._project._activeLayer;
+        var newops = Base.set({}, options);
+        delete newops.target; delete newops.targets;
+        newops.target = this; 
+        layer.createItems(timeline, options, offset);
+    },
 
     _canComposite: function() {
         return false;
@@ -4762,7 +5086,7 @@ new function() { // Injection scope for hit-test functions shared with project
     /**
      * {@grouptitle Tweening Functions}
      *
-     * Tween item between two states.
+     * Anime item between two states.
      *
      * @name Item#tween
      *
@@ -4772,154 +5096,79 @@ new function() { // Injection scope for hit-test functions shared with project
      * 'easeInOutQuad' 'easeInCubic' 'easeOutCubic' 'easeInOutCubic'
      * 'easeInQuart' 'easeOutQuart' 'easeInOutQuart' 'easeInQuint'
      * 'easeOutQuint' 'easeInOutQuint'}
-     * @option [options.start=true] {Boolean} whether to start tweening automatically
-     *
-     * @function
-     * @param {Object} from the state at the start of the tweening
-     * @param {Object} to the state at the end of the tweening
-     * @param {Object|Number} options the options or the duration
-     * @return {Tween}
-     *
-     * @example {@paperscript height=100}
-     * // Tween fillColor:
-     * var path = new Path.Circle({
-     *     radius: view.bounds.height * 0.4,
-     *     center: view.center
-     * });
-     * path.tween(
-     *     { fillColor: 'blue' },
-     *     { fillColor: 'red' },
-     *     3000
-     * );
-     * @example {@paperscript height=100}
-     * // Tween rotation:
-     * var path = new Shape.Rectangle({
-     *     fillColor: 'red',
-     *     center: [50, view.center.y],
-     *     size: [60, 60]
-     * });
-     * path.tween({
-     *     rotation: 180,
-     *     'position.x': view.bounds.width - 50,
-     *     'fillColor.hue': '+= 90'
-     * }, {
-     *     easing: 'easeInOutCubic',
-     *     duration: 2000
-     * });
-     */
-    /**
-     * Tween item to a state.
-     *
-     * @name Item#tween
-     *
-     * @function
-     * @param  {Object} to the state at the end of the tweening
-     * @param {Object|Number} options the options or the duration
-     * @return {Tween}
-     *
+     * 
+       var circle2 = new Path.Circle({
+        center: view.center + [100,100], 
+        radius: 50,
+        fillColor: 'red'
+      });
+
+      circle2.tween({ fillColor: 'black', duration: 3  } );
      * @example {@paperscript height=200}
-     * // Tween a nested property with relative values
-     * var path = new Path.Rectangle({
-     *     size: [100, 100],
-     *     position: view.center,
-     *     fillColor: 'red',
-     * });
-     *
-     * var delta = { x: path.bounds.width / 2, y: 0 };
-     *
-     * path.tween({
-     *     'segments[1].point': ['+=', delta],
-     *     'segments[2].point.x': '-= 50'
-     * }, 3000);
-     *
-     * @see Item#tween(from, to, options)
+      
+     
      */
-    /**
-     * Tween item.
-     *
-     * @name Item#tween
-     *
-     * @function
-     * @param  {Object|Number} options the options or the duration
-     * @return {Tween}
-     *
-     * @see Item#tween(from, to, options)
-     *
-     * @example {@paperscript height=100}
-     * // Start an empty tween and just use the update callback:
-     * var path = new Path.Circle({
-     *     fillColor: 'blue',
-     *     radius: view.bounds.height * 0.4,
-     *     center: view.center,
-     * });
-     * var pathFrom = path.clone({ insert: false })
-     * var pathTo = new Path.Rectangle({
-     *     position: view.center,
-     *     rectangle: path.bounds,
-     *     insert: false
-     * });
-     * path.tween(2000).onUpdate = function(event) {
-     *     path.interpolate(pathFrom, pathTo, event.factor)
-     * };
-     */
-    tween: function(from, to, options) {
-        if (!options) {
-            // If there are only two or one arguments, shift arguments to the
-            // left by one (omit `from`):
-            options = to;
-            to = from;
-            from = null;
-            if (!options) {
-                options = to;
-                to = null;
-            }
-        }
-        var easing = options && options.easing,
-            start = options && options.start,
-            duration = options != null && (
-                typeof options === 'number' ? options : options.duration
-            ),
-            tween = new Tween(this, from, to, duration, easing, start);
+    tween: function( options ) {
+
+        var tween_op = Base.set({}, {
+            targets: this,
+            easing: 'linear'  ,
+            duration: 1
+        },  options);
+  
+        this.project.activeLayer._timeline.add( tween_op ).play();   
+ 
+    },
+
+    make_progress: function(duration, options) { 
+        var time = 0, that = this; 
+        
         function onFrame(event) {
-            tween._handleFrame(event.time * 1000);
-            if (!tween.running) {
+            if(time == 0)
+                time = event.time;
+            var p = event.time - time;
+            that._progress_imp(p, options);
+            if ( p >= duration ) {
                 this.off('frame', onFrame);
             }
         }
         if (duration) {
             this.on('frame', onFrame);
         }
-        return tween;
+        return this;
+    },
+    //overwritten by subclass
+    _progress_imp: function(progress, options){ 
     },
 
     /**
      *
-     * Tween item to a state.
+     * Anime item to a state.
      *
      * @function
      * @param {Object} to the state at the end of the tweening
      * @param {Object|Number} options the options or the duration
-     * @return {Tween}
+     * @return {Anime}
      *
      * @see Item#tween(to, options)
      */
-    tweenTo: function(to, options) {
-        return this.tween(null, to, options);
-    },
+   // tweenTo: function(to, options) {
+    //    return this.tween(null, to, options);
+   // },
 
     /**
      *
-     * Tween item from a state to its state before the tweening.
+     * Anime item from a state to its state before the tweening.
      *
      * @function
      * @param {Object} from the state at the start of the tweening
      * @param {Object|Number} options the options or the duration
-     * @return {Tween}
+     * @return {Anime}
      *
      * @see Item#tween(from, to, options)
      *
      * @example {@paperscript height=100}
-     * // Tween fillColor from red to the path's initial fillColor:
+     * // Anime fillColor from red to the path's initial fillColor:
      * var path = new Path.Circle({
      *     fillColor: 'blue',
      *     radius: view.bounds.height * 0.4,
@@ -4927,7 +5176,9 @@ new function() { // Injection scope for hit-test functions shared with project
      * });
      * path.tweenFrom({ fillColor: 'red' }, { duration: 1000 });
      */
-    tweenFrom: function(from, options) {
-        return this.tween(from, null, options);
-    }
+    //tweenFrom: function(from, options) {
+   //     return this.tween(from, null, options);
+   // }
 });
+
+

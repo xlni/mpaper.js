@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Path Tangents</title>
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+    
+      obj = {
+         x : 1,
+         y: 2,
+         acall: function(e){
+            console.log(e + "...1..")
+         },
+         progress: function(e){
+            console.log(e + "...p1..")
+         }
+      }
+      obj2 = {
+         x : 1,
+         y: 2,
+         acall: function(e){
+            console.log("..."+ e + "...2..")
+         },
+         progress: function(e){
+            console.log("..." + e + "....p2.")
+         }
+      }
+      Play({
+         targets: [obj, obj2], 
+         progressFunc: 'progress', 
+      })
+
+      Play({
+         targets: obj,
+         eventFunc: obj.acall,
+         eventFuncParams: 'lkajsfasf'
+      })
+ 
+
+
+
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

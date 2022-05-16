@@ -105,6 +105,24 @@ new function() {
         return SvgElement.create('image', attrs, formatter);
     }
 
+    //FIXME -hanning not done yet
+    function exportSprite(item, options) {
+        var attrs = getTransform(item._matrix, true),
+            size = item.getSize(), 
+            image = item.getImage();
+        // Take into account that rasters are centered:
+        attrs.x -= size.width / 2;
+        attrs.y -= size.height / 2;
+        attrs.width = size.width;
+        attrs.height = size.height;
+        attrs.frameIndex = item._frameIndex;
+        attrs.frameRate = item._frameRate;
+        attrs._animation = item._animation;
+        attrs._animations = item._animations; 
+        attrs.href = options.embedImages == false && image && image.src
+                || item.toDataURL();
+        return SvgElement.create('image', attrs, formatter);
+    }
     function exportPath(item, options) {
         var matchShapes = options.matchShapes;
         if (matchShapes) {
@@ -268,6 +286,7 @@ new function() {
         Group: exportGroup,
         Layer: exportGroup,
         Raster: exportRaster,
+        Sprite: exportSprite,
         Path: exportPath,
         Shape: exportShape,
         CompoundPath: exportCompoundPath,
@@ -391,7 +410,7 @@ new function() {
                 node = onExport(item, node, options) || node;
             var data = JSON.stringify(item._data);
             if (data && data !== '{}' && data !== 'null')
-                node.setAttribute('data-paper-data', data);
+                node.setAttribute('data-mpaper-data', data);
         }
         return node && applyStyle(item, node, isRoot);
     }

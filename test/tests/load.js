@@ -51,6 +51,8 @@
 /*#*/ include('SymbolItem.js');
 
 /*#*/ include('Raster.js');
+/*#*/ include('Sprite.js');
+/*#*/ include('SpriteSVG.js');
 
 /*#*/ include('TextItem.js');
 

@@ -61,7 +61,7 @@ test('Item#insertAbove(item) / Item#insertBelow(item)', function() {
 
     function testType(ctor) {
         function testMove(command, indexes) {
-            paper.project.clear();
+            mpaper.project.clear();
             if (ctor !== Layer)
                 new Layer();
             item0 = new ctor();

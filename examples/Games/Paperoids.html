@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <title>Paperoids</title>
-    <script type="text/javascript" src="../../dist/paper-full.js"></script>
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
     <script type="text/paperscript" canvas="canvas">
-
+        mpaper.settings.insertItems = true;
+        project.useBuiltinStyle('dark');
     //
     //
-    // Paperoids - an Asteroids clone for paper.js
+    // Paperoids - an Asteroids clone for mpaper.js
     //
     // Sorry nerds, no enemy ships or sound just yet.
     //
@@ -489,6 +490,7 @@
             position.y = bounds.height  + itemBounds.height / 2;
         }
     }
+    Main()
     </script>
     <style type="text/css">
         html,

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>PopupMenu test</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <script type="text/javascript" src="../../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+
+  //    mpaper.settings.insertItems = true;
+      project.useBuiltinStyle('dark'); 
+     
+        var center = view.center;
+     
+        var menu = new PopupMenu({
+        //  position:  [500,300],
+      //    keyColor: 'red',
+          keyTextColor: 'blue',
+          borderColor: 'green',
+          keyboardColor: 'pink',
+          justification: 'center',
+          margin:10,
+          fontSize: 16,
+        });
+        var content = "menu -1 ";
+        menu.addMenuTextItem(  content, function(){
+            console.log( "hit one")
+        });
+        var content2 = "menu item -2 xxxx ";
+        menu.addMenuTextItem(  content2,  function(){
+          console.log( "hit 2")
+       });
+       var content3 = "menu item -3 ";
+       menu.addMenuTextItem(  content3,  function(){
+         console.log( "hit 3")
+      });
+      menu.position =  [500,300];
+
+      Create( {target: menu})
+  //    menu.draggable = true;
+      
+  var t = [];
+  var agroup = new Group( );
+  menu._children.forEach(function(w){
+    agroup.addChild(  w.clone())
+  }) 
+  agroup.position = [500,100]
+  var image5 = agroup.rasterize();
+  image5.position = [800,100]; 
+    
+    var easing = '';
+    //'easeInOutElastic(1, 1)';
+    //'easeInOutExpo';
+    var duration = 3;
+    var image = menu.rasterize();
+    image.position = [200,200];
+
+    var star =  new Path.Circle({ center: [200,200],  radius: 5,   fillColor: 'red',  strokeColor: 'blue'  });
+ 
+
+  //  RU.imageEffect2(project._activeLayer, image, duration,  1, easing, "", true, null)
+  
+ 
+        var easing = '';
+        //'easeInOutElastic(1, 1)';
+        //'easeInOutExpo';
+        var duration = 3;
+        for(var i = menu._children.length-1; i>= 0; i--){ console.log("added..." + i)
+          var c = menu._children[i];
+          var t = c.rasterize();
+          t.position = t.position.__add(new Point(100,100));
+        }
+      
+      //  var image = menu.rasterize();
+      //  image.position = [200,500];
+    
+   
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

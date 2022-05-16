@@ -1,13 +1,13 @@
-// Please note: When loading paper as a normal module installed in node_modules,
+// Please note: When loading mpaper as a normal module installed in node_modules,
 // you would use this instead:
-// var paper = require('paper-jsdom-canvas');
-var paper = require('../../dist/paper-core.js');
+// var mpaper = require('mpaper-jsdom-canvas');
+var mpaper = require('../../dist/mpaper-core.js');
 var http = require('http');
 
 http.createServer(function(request, response) {
-    var canvas = paper.createCanvas(800, 800);
-    paper.setup(canvas);
-    with(paper) {
+    var canvas = mpaper.createCanvas(800, 800);
+    mpaper.setup(canvas);
+    with(mpaper) {
         var style = {
             fillColor: new Color(1, 1, 0, 0.5),
             strokeColor: new Color(0, 0, 0),

@@ -4,23 +4,26 @@
     <meta charset="UTF-8">
     <title>Rotation Raster</title>
     <link rel="stylesheet" href="../css/style.css">
-    <script type="text/javascript" src="../../dist/paper-full.js"></script>
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
     <script type="text/paperscript" canvas="canvas">
-        var raster = new Raster('marilyn');
-        var size = new Size(50, 50);
-        var colSize = raster.size / size * 1.5;
-        var fullSize = size * colSize;
+        mpaper.settings.insertItems = true;
+        project.useBuiltinStyle('dark');
+        
+          raster = new Raster('marilyn');
+          size = new Size(50, 50);
+          colSize = raster.size / size * 1.5;
+          fullSize = size * colSize;
 
         raster.visible = false;
         raster.size = size;
-        for (var x = 0; x < size.width; x++) {
-            for (var y = 0; y < size.height; y++) {
-                var color = raster.getPixel(x, y);
-                var gray = (1 - color.gray) * 0.9;
+        for (  x = 0; x < size.width; x++) {
+            for (  y = 0; y < size.height; y++) {
+                  color = raster.getPixel(x, y);
+                  gray = (1 - color.gray) * 0.9;
                 if (gray > 0.1) {
-                    var pos = new Point(x, y) * colSize + colSize / 2;
-                    var rectSize = gray * colSize.width;
-                    var path = new Path.Rectangle({
+                      pos = new Point(x, y) * colSize + colSize / 2;
+                      rectSize = gray * colSize.width;
+                      path = new Path.Rectangle({
                         size: [rectSize, rectSize],
                         position: pos,
                         fillColor: 'black'
@@ -35,6 +38,8 @@
         function onResize(event) {
             project.activeLayer.position = view.center;
         }
+
+        Main();
     </script>
 </head>
 <body>

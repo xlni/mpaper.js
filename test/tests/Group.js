@@ -15,14 +15,14 @@ QUnit.module('Group');
 test('new Group()', function() {
     var group = new Group();
     equals(function() {
-        return paper.project.activeLayer.children[0] == group;
+        return mpaper.project.activeLayer.children[0] == group;
     }, true);
 });
 
 test('new Group([])', function() {
     var group = new Group([]);
     equals(function() {
-        return paper.project.activeLayer.children[0] == group;
+        return mpaper.project.activeLayer.children[0] == group;
     }, true);
     equals(function() {
         return group.children.length;
@@ -33,7 +33,7 @@ test('new Group([item])', function() {
     var path = new Path();
     var group = new Group([path]);
     equals(function() {
-        return paper.project.activeLayer.children.length;
+        return mpaper.project.activeLayer.children.length;
     }, 1);
     equals(function() {
         return group.children[0] == path;
@@ -46,7 +46,7 @@ test('new Group({children:[item]})', function() {
         children: [path]
     });
     equals(function() {
-        return paper.project.activeLayer.children.length;
+        return mpaper.project.activeLayer.children.length;
     }, 1);
     equals(function() {
         return path.parent == group;
@@ -57,7 +57,7 @@ test('new Group({children:[item]})', function() {
 });
 
 test('Group bounds', function() {
-    paper.project.currentStyle = {
+    mpaper.project.currentStyle = {
         strokeWidth: 5,
         strokeColor: 'black'
     };

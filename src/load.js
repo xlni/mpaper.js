@@ -10,7 +10,7 @@
  * All rights reserved.
  */
 
-// This file uses Prepro.js to preprocess the paper.js source code on the fly in
+// This file uses Prepro.js to preprocess the mpaper.js source code on the fly in
 // the browser, avoiding the step of having to manually preprocess it after each
 // change. This is very useful during development of the library itself.
 if (typeof window === 'object') {
@@ -21,9 +21,9 @@ if (typeof window === 'object') {
         var scripts = document.getElementsByTagName('script'),
             src = scripts[scripts.length - 1].getAttribute('src'),
             // Assume that we're loading from a non-root folder, either through
-            // ../../dist/paper-full.js, or directly through ../../src/load.js,
+            // ../../dist/mpaper-full.js, or directly through ../../src/load.js,
             // and match root as all the path's parts that lead to that folder,
-            // exclude the last bit (dist|src), as that's a sub-folder of paper.
+            // exclude the last bit (dist|src), as that's a sub-folder of mpaper.
             root = src.match(/^(.*\/)\w*\//)[1],
             load = function(src) {
                 document.write('<script src="' + src + '"></script>');
@@ -47,14 +47,14 @@ if (typeof window === 'object') {
         include('constants.js');
         // Automatically load stats.js while developing.
         include('../node_modules/stats.js/build/stats.min.js');
-        include('paper.js');
+        include('mpaper.js');
     }
 } else if (typeof require !== 'undefined') {
     // Node.js based loading through Prepro.js:
     var prepro = require('prepro/lib/node'),
         // Load the default browser-based options for further amendments.
         // Step out and back into src, in case this is loaded from
-        // dist/paper-node.js
+        // dist/mpaper-node.js
         options = require('../src/options.js');
     // Override Node.js specific options.
     options.load = true;
@@ -62,12 +62,12 @@ if (typeof window === 'object') {
     prepro.setup(function() {
         // Return objects to be defined in the preprocess-scope.
         // Note that this would be merge in with already existing objects.
-        // We're defining self here since the paper-scope argument is only
+        // We're defining self here since the mpaper-scope argument is only
         // available in the included scripts when the library is actually built.
         return { __options: options, self: undefined };
     });
     // Load constants.js, required by the on-the-fly preprocessing:
     prepro.include('../src/constants.js');
     // Load Paper.js library files.
-    prepro.include('../src/paper.js');
+    prepro.include('../src/mpaper.js');
 }

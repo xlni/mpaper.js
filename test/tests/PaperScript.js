@@ -14,7 +14,7 @@ QUnit.module('PaperScript');
 
 function executeCode(code, expected) {
     try {
-        equals(PaperScript.execute(code, paper), expected, code);
+        equals(PaperScript.execute(code, mpaper), expected, code);
     } catch (err) {
         ok(false, err + '');
     }

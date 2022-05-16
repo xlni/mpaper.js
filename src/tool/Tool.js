@@ -15,7 +15,7 @@
  *
  * @class The Tool object refers to a script that the user can interact with by
  *     using the mouse and keyboard and can be accessed through the global
- *     `tool` variable. All its properties are also available in the paper
+ *     `tool` variable. All its properties are also available in the mpaper
  *     scope.
  *
  * The global `tool` variable only exists in scripts that contain mouse handler
@@ -58,6 +58,12 @@ var Tool = PaperScopeItem.extend(/** @lends Tool# */{
         this._moveCount = -1;
         this._downCount = -1;
         this.set(props);
+    },
+    setStudio: function(studio){
+        this._studio = studio;
+    },
+    getStudio: function(){
+        return this._studio;
     },
 
     /**
@@ -286,7 +292,7 @@ var Tool = PaperScopeItem.extend(/** @lends Tool# */{
      */
     _handleMouseEvent: function(type, event, point, mouse) {
         // Update global reference to this scope.
-        paper = this._scope;
+        mpaper = this._scope;
         // If there is no mousedrag event installed, fall back to mousemove,
         // with which we share the actual event handling code anyhow.
         if (mouse.drag && !this.responds(type))

@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <title>Extruded</title>
     <link rel="stylesheet" href="../css/style.css">
-    <script type="text/javascript" src="../../dist/paper-full.js"></script>
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
     <script type="text/paperscript" canvas="canvas">
+        mpaper.settings.insertItems = true;
+        project.useBuiltinStyle('dark'); 
+
         var lineGroup = new Group();
         var lineCount = 100;
         for (var i = 0; i < lineCount; i++) {
@@ -42,6 +45,7 @@
                 path.lastSegment.point = path2.getPointAt(l2);
             }
         }
+        Main()
     </script>
 </head>
 <body>

@@ -111,6 +111,20 @@ var Numerical = new function() {
                 : 0;
     }
 
+    function sigmoid(x){
+        return 1.0 / (1 + Math.exp(-x));
+    }
+    function smooth(t, inflection ){
+        if( inflection == null )
+            inflection =  10.0
+        var error = sigmoid(-inflection / 2)
+        return Math.min(
+                Math.max((sigmoid(inflection * (t - 0.5)) - error) / (1 - 2 * error), 0),
+                1,
+            )
+    }
+   
+
     return /** @lends Numerical */{
         /**
          * A very small absolute value used to check if a value is very close to
@@ -187,6 +201,7 @@ var Numerical = new function() {
          */
         clamp: clamp,
 
+
         /**
          * Gauss-Legendre Numerical Integration.
          */
@@ -235,7 +250,7 @@ var Numerical = new function() {
                 }
             }
             // Return the best result even though we haven't gotten close
-            // enough to the root... (In paper.js this never seems to happen).
+            // enough to the root... (In mpaper.js this never seems to happen).
             // But make sure, that it actually is within the given range [a, b]
             return clamp(x, a, b);
         },
@@ -328,7 +343,7 @@ var Numerical = new function() {
          *  Harikrishnan G.
          *  https://gist.github.com/hkrish/9e0de1f121971ee0fbab281f5c986de9
          *
-         * W. Kahan's paper contains inferences on accuracy of cubic
+         * W. Kahan's mpaper contains inferences on accuracy of cubic
          * zero-finding methods. Also testing methods for robustness.
          *
          * @param {Number} a the cubic term (x³ term)
@@ -409,6 +424,106 @@ var Numerical = new function() {
                     && (boundless || x > min - EPSILON && x < max + EPSILON))
                 roots[count++] = boundless ? x : clamp(x, min, max);
             return count;
-        }
+        },
+        /**
+         * used for chart.  axis tick
+         * @param {Number} value 
+         * @param {Number} round_ 
+         * @returns 
+         */
+        nice_number: function( value,  round_){
+            //default value for round_ is false
+            round_ = round_ || false; 
+            var exponent = Math.floor(Math.log(value) / Math.log(10));
+            var fraction = value / Math.pow(10, exponent); 
+            var nice_fraction = 1;
+            if (round_) {  
+                if (fraction < 1.5)
+                    nice_fraction = 1;
+                else if (fraction < 3.)
+                    nice_fraction = 2;
+                else if (fraction < 7.)
+                    nice_fraction = 5;
+                else
+                    nice_fraction = 10;
+            } else {
+                if (fraction <= 1)
+                    nice_fraction = 1;
+                else if (fraction <= 2)
+                    nice_fraction = 2;
+                else if (fraction <= 5)
+                    nice_fraction = 5;
+                else
+                    nice_fraction = 10;
+            }
+            return nice_fraction * Math.pow(10, exponent);
+        },
+        /**
+         * used for chart tickers
+         * @param {Number} length 
+         * @returns 
+         */
+        numticks : function(length){
+            if( length <=0 ) return 1;
+            if( length < 100 ) return 3;
+            if( length < 300) return 6;
+            if( length < 500) return 8;
+            return 10;
+        },
+        /**
+         * used for chart tickers
+         * @param {Number} axis_start 
+         * @param {Number} axis_end 
+         * @param {Number} num_ticks 
+         * @returns 
+         */
+        nice_bounds : function(axis_start,  axis_end, num_ticks){
+            //default value is 10
+           if ( num_ticks <=1 ) num_ticks = 2;
+            var axis_width = axis_end - axis_start; 
+            if (axis_width == 0){
+                axis_start -= .5;
+                axis_end += .5;
+                axis_width = axis_end - axis_start;
+            } 
+            var nice_range = this.nice_number(axis_width, false);
+            var nice_tick = this.nice_number(nice_range / (num_ticks -1), true);
+            return nice_tick;
+        },
+       
+        calcuateStepLength: function(pixal2value) {
+            if( pixal2value <= 0 )
+                return -1;
+            if( pixal2value < 5) { 
+                var numticks = this.numticks( pixal2value * 100); 
+                return this.nice_bounds( 0,  100, numticks);
+            } else if( pixal2value < 10) { 
+                var numticks = this.numticks( pixal2value * 40); 
+                return this.nice_bounds( 0,  40, numticks);
+            } else if ( pixal2value < 20 ) {
+                var numticks = this.numticks( pixal2value * 10); 
+                return this.nice_bounds( 0,  10, numticks);
+            } else if ( pixal2value < 30 ) {
+                var numticks = this.numticks( pixal2value * 5 ); 
+                return this.nice_bounds( 0,  5, numticks);
+            } else {
+                var numticks = this.numticks( pixal2value ); 
+                return this.nice_bounds( 0,  1, numticks);
+            }
+        },
+        sigmoid: function(x){
+            return sigmoid(x);
+        },
+        smooth: function(t, inflection ){
+            return smooth(t, inflection);
+        },
+        interpolate: function(start, end, value){
+            return   (1 - value) * start + value * end;
+        },
+        inverse_interpolate: function(start, end, value){
+            return   (value - start) /( end - start );
+        },
     };
 };
+
+ 

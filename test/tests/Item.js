@@ -13,7 +13,7 @@
 QUnit.module('Item');
 
 test('copyTo(project)', function() {
-    var project = paper.project;
+    var project = mpaper.project;
     var path = new Path();
     var secondDoc = new Project();
     var copy = path.copyTo(secondDoc);
@@ -29,7 +29,7 @@ test('copyTo(project)', function() {
 });
 
 test('copyTo(layer)', function() {
-    var project = paper.project;
+    var project = mpaper.project;
     var path = new Path();
     var layer = new Layer();
     var copy = path.copyTo(layer);
@@ -42,7 +42,7 @@ test('copyTo(layer)', function() {
 });
 
 test('clone()', function() {
-    var project = paper.project;
+    var project = mpaper.project;
     var path = new Path();
     var copy = path.clone();
     equals(function() {
@@ -54,7 +54,7 @@ test('clone()', function() {
 });
 
 test('addChild(item)', function() {
-    var project = paper.project;
+    var project = mpaper.project;
     var path = new Path();
     project.activeLayer.addChild(path);
     equals(function() {
@@ -63,7 +63,7 @@ test('addChild(item)', function() {
 });
 
 test('setting item.parent', function() {
-    var layer1 = paper.project.activeLayer;
+    var layer1 = mpaper.project.activeLayer;
     var layer2 = new Layer();
     layer1.activate();
     var group = new Group();
@@ -99,7 +99,7 @@ test('setting item.parent', function() {
 });
 
 test('item.parent / item.isChild / item.isParent / item.layer', function() {
-    var project = paper.project;
+    var project = mpaper.project;
     var secondDoc = new Project();
     var path = new Path();
     project.activeLayer.addChild(path);
@@ -134,7 +134,7 @@ test('item.parent / item.isChild / item.isParent / item.layer', function() {
 });
 
 test('item.remove()', function() {
-    var project = paper.project;
+    var project = mpaper.project;
     var path = new Path();
     equals(function() {
         return project.activeLayer.children.length;
@@ -155,7 +155,7 @@ test('item.remove()', function() {
 
 
 test('item.addChildren() / item.removeChildren()', function() {
-    var project = paper.project,
+    var project = mpaper.project,
         layer = project.activeLayer,
         path1 = new Path({ insert: false }),
         path2 = new Path({ insert: false, name: 'path2' });
@@ -188,7 +188,7 @@ test('item.addChildren() / item.removeChildren()', function() {
 });
 
 test('item.lastChild / item.firstChild', function() {
-    var project = paper.project;
+    var project = mpaper.project;
     var path1 = new Path();
     var path2 = new Path();
     equals(function() {
@@ -217,7 +217,7 @@ test('item.nextSibling / item.previousSibling', function() {
 });
 
 test('item.replaceWith(other)', function() {
-    var project = paper.project;
+    var project = mpaper.project;
     var path1 = new Path();
     var path2 = new Path();
     var path3 = new Path();
@@ -252,7 +252,7 @@ test('item.replaceWith(item)', function() {
 });
 
 test('item.insertChild(0, child)', function() {
-    var project = paper.project;
+    var project = mpaper.project;
     var path1 = new Path();
     var path2 = new Path();
     project.activeLayer.insertChild(0, path2);
@@ -274,7 +274,7 @@ test('item.insertAbove(other)', function() {
         return path2.index < path1.index;
     }, true);
     equals(function() {
-        return paper.project.activeLayer.lastChild == path1;
+        return mpaper.project.activeLayer.lastChild == path1;
     }, true);
 });
 
@@ -291,7 +291,7 @@ test('item.insertBelow(other)', function() {
         return path2.index < path1.index;
     }, true);
     equals(function() {
-        return paper.project.activeLayer.lastChild == path1;
+        return mpaper.project.activeLayer.lastChild == path1;
     }, true);
 });
 
@@ -324,7 +324,7 @@ test('item.bringToFront()', function() {
 });
 
 test('item.isDescendant(other) / item.isAncestor(other)', function() {
-    var project = paper.project;
+    var project = mpaper.project;
     var path = new Path();
     equals(function() {
         return path.isDescendant(project.activeLayer);
@@ -406,18 +406,18 @@ test('item.isGroupedWith(other)', function() {
     equals(function() {
         return path.isGroupedWith(secondGroup);
     }, false);
-    paper.project.activeLayer.addChild(path);
+    mpaper.project.activeLayer.addChild(path);
     equals(function() {
         return path.isGroupedWith(path2);
     }, false);
-    paper.project.activeLayer.addChild(path2);
+    mpaper.project.activeLayer.addChild(path2);
     equals(function() {
         return path.isGroupedWith(path2);
     }, false);
 });
 
 test('reverseChildren()', function() {
-    var project = paper.project;
+    var project = mpaper.project;
     var path = new Path();
     var path2 = new Path();
     var path3 = new Path();
@@ -490,7 +490,7 @@ test('group.selected', function() {
 
 test('Check parent children object for named item', function() {
     var path1 = new Path({ name: 'test' });
-    var layer = paper.project.activeLayer;
+    var layer = mpaper.project.activeLayer;
     equals(function() {
         return layer.children['test'] === path1;
     }, true);
@@ -517,7 +517,7 @@ test('Check parent children object for named item', function() {
 test('Named child access 1', function() {
     var path1 = new Path({ name: 'test' });
     var path2 = new Path({ name: 'test' });
-    var layer = paper.project.activeLayer;
+    var layer = mpaper.project.activeLayer;
 
     equals(function() {
         return layer.children['test'] === path1;
@@ -539,7 +539,7 @@ test('Named child access 1', function() {
 test('Named child access 2', function() {
     var path1 = new Path({ name: 'test' });
     var path2 = new Path({ name: 'test' });
-    var layer = paper.project.activeLayer;
+    var layer = mpaper.project.activeLayer;
 
     var group = new Group();
 
@@ -597,7 +597,7 @@ test('Named child access 2', function() {
 test('Setting name of child back to null', function() {
     var path1 = new Path({ name: 'test' });
     var path2 = new Path({ name: 'test' });
-    var layer = paper.project.activeLayer;
+    var layer = mpaper.project.activeLayer;
 
     equals(function() {
         return layer.children['test'] == path1;
@@ -619,7 +619,7 @@ test('Setting name of child back to null', function() {
 test('Renaming item', function() {
     var path = new Path({ name: 'test' });
     path.name = 'test2';
-    var layer = paper.project.activeLayer;
+    var layer = mpaper.project.activeLayer;
 
     equals(function() {
         return layer.children['test'] === undefined;
@@ -799,22 +799,22 @@ test('Item#applyMatrix', function() {
         return new Raster({ applyMatrix: true }).applyMatrix;
     }, false);
 
-    var applyMatrix = paper.settings.applyMatrix;
-    paper.settings.applyMatrix = true;
+    var applyMatrix = mpaper.settings.applyMatrix;
+    mpaper.settings.applyMatrix = true;
     equals(function() {
         return new Path().applyMatrix;
     }, true);
     equals(function() {
         return new Raster().applyMatrix;
     }, false);
-    paper.settings.applyMatrix = false;
+    mpaper.settings.applyMatrix = false;
     equals(function() {
         return new Path().applyMatrix;
     }, false);
     equals(function() {
         return new Raster().applyMatrix;
     }, false);
-    paper.settings.applyMatrix = applyMatrix;
+    mpaper.settings.applyMatrix = applyMatrix;
 
     var path = new Path.Rectangle({
         size: [100, 100],
@@ -850,8 +850,8 @@ test('Item#applyMatrix', function() {
 });
 
 test('PaperScope#settings.insertItems', function() {
-    var insertItems = paper.settings.insertItems;
-    paper.settings.insertItems = true;
+    var insertItems = mpaper.settings.insertItems;
+    mpaper.settings.insertItems = true;
 
     var path1, path2;
 
@@ -859,7 +859,7 @@ test('PaperScope#settings.insertItems', function() {
         path1 = new Path();
         return path1.parent === project.activeLayer;
     }, true);
-    paper.settings.insertItems = false;
+    mpaper.settings.insertItems = false;
 
     equals(function() {
         path2 = new Path();
@@ -876,7 +876,7 @@ test('PaperScope#settings.insertItems', function() {
         return project.activeLayer.children.length;
     }, 2);
 
-    paper.settings.insertItems = insertItems;
+    mpaper.settings.insertItems = insertItems;
 });
 
 test('Item#pivot', function() {

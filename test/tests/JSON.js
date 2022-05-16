@@ -36,22 +36,22 @@ test('Circles', function() {
     var path = new Path.Circle(new Point(50, 50), 25);
     path.fillColor = 'red';
 
-    testExportImportJSON(paper.project);
+    testExportImportJSON(mpaper.project);
 });
 
 test('CompoundPath', function() {
-    paper.project.currentStyle.fillColor = 'black';
+    mpaper.project.currentStyle.fillColor = 'black';
     var path1 = new Path.Rectangle([200, 200], [100, 100]);
     var path2 = new Path.Rectangle([50, 50], [200, 200]);
     var path3 = new Path.Rectangle([0, 0], [400, 400]);
     new CompoundPath(path1, path2, path3);
 
-    testExportImportJSON(paper.project);
+    testExportImportJSON(mpaper.project);
 });
 
 test('Empty Path', function() {
     new Path();
-    testExportImportJSON(paper.project);
+    testExportImportJSON(mpaper.project);
 });
 
 test('Gradients', function() {
@@ -62,7 +62,7 @@ test('Gradients', function() {
     var gradientColor = new Color(gradient, from, to);
     path.fillColor = gradientColor;
     path.strokeColor = 'black';
-    testExportImportJSON(paper.project);
+    testExportImportJSON(mpaper.project);
 });
 
 test('Group transform', function() {
@@ -74,7 +74,7 @@ test('Group transform', function() {
     group.translate([100, 100]);
     group.scale(0.5);
     group.rotate(10);
-    testExportImportJSON(paper.project);
+    testExportImportJSON(mpaper.project);
 });
 
 test('Rectangle testing', function() {
@@ -112,7 +112,7 @@ test('Rectangle testing', function() {
     var path4 = new Path.Rectangle(rectangle4, cornerSize4);
     path4.strokeColor= 'yellow';
     path4.fillColor='purple';
-    testExportImportJSON(paper.project);
+    testExportImportJSON(mpaper.project);
 });
 
 test('Symbols', function() {
@@ -127,7 +127,7 @@ test('Symbols', function() {
     var p2 = definition.place([300, 200]);
     p2.rotate(-30);
 
-    testExportImportJSON(paper.project);
+    testExportImportJSON(mpaper.project);
 });
 
 test('PointText testing', function() {
@@ -143,7 +143,7 @@ test('PointText testing', function() {
     text.rotate(45);
     text.shear(0.85, 0.15);
     text.scale(0.85, 2);
-    testExportImportJSON(paper.project);
+    testExportImportJSON(mpaper.project);
 });
 
 test('transform test 1', function() {
@@ -158,7 +158,7 @@ test('transform test 1', function() {
         var clonedPath = circlePath.clone();
         clonedPath.rotate(angle * i, circlePath.bounds.topLeft);
     }
-    testExportImportJSON(paper.project);
+    testExportImportJSON(mpaper.project);
 });
 
 test('transform test 2', function() {
@@ -171,14 +171,14 @@ test('transform test 2', function() {
     copy.strokeColor = 'red';
     copy.rotate(-45);
     copy.scale(0.5);
-    testExportImportJSON(paper.project);
+    testExportImportJSON(mpaper.project);
 });
 
 test('Item#name', function() {
     var path = new Path({
         name: 'dave'
     });
-    testExportImportJSON(paper.project);
+    testExportImportJSON(mpaper.project);
 });
 
 test('Item#data', function() {
@@ -198,14 +198,14 @@ test('Item#data', function() {
             }
         }
     };
-    testExportImportJSON(paper.project);
+    testExportImportJSON(mpaper.project);
 });
 
 test('Color', function() {
     var path = new Path({
         fillColor: new Color(1, 1, 0, 0.5)
     });
-    testExportImportJSON(paper.project);
+    testExportImportJSON(mpaper.project);
 });
 
 test('Color#importJSON()', function() {

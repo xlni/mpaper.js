@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>tex-svg</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script type="text/javascript" src="../../lib/mathjax-bridge.js"></script>
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+      //  mpaper.settings.insertItems = true;
+      project.useBuiltinStyle('dark');
+    
+          format = Formatter.instance;
+          options = {};
+          input = 'this is an example latex with text  $$ x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a} $$this is a test  ' ;  
+        
+          item = project.importLatex( input   );
+        item.scale(10); 
+        item.position = [200,200];   
+
+        Create({target: item})
+        
+          tt =  format.getMathSymbol(item, 'b', 2);
+        if( tt ) { 
+          tt.fillColor = 'red';
+        }
+          item2 = item.clone();
+        item2.position = [200,300]
+
+        Create({target: item2})
+          tt2 =  format.getMathSymbolRange(item2, 'ab' );
+        if( tt2 ) {
+          for(  i in tt2){
+            tt2[i].fillColor = 'blue';
+            tt2[i].strokeColor = 'blue';
+          } 
+        }
+        
+          item3 = project.importLatex( input   );
+        item3.scale(10); 
+        item3.position = [200,400];  
+
+        Create({target: item3})
+
+          tt3 =  format.getMathSymbolRange(item3,
+                     { start_char: 'b', start_pos: 2, end_char: 'c', end_pos : 1} );
+        if( tt3 ) {
+          for(  i in tt3){
+            tt3[i].fillColor = 'green';
+            tt3[i].strokeColor = 'green';
+          } 
+        }
+
+      
+          item4 = project.importLatex( input   );
+        item4.scale(10); 
+        item4.position = [200,500];  
+
+        Create({target: item4})
+
+          tt4 =  format.getMathSymbolRange(item4,
+                     { start_char: 'b', start_pos: 2, end_char: 'c', end_pos : 1} );
+        if( tt4 ) {
+          for(  i in tt4){
+            tt4[i].fillColor = 'green';
+          } 
+        }
+        console.log(project._activeLayer.bounds)
+    </script>
+</head>
+<body>
+  <div id="math"></div> 
+     
+   <canvas id="canvas" resize></canvas>
+</body>
+</html>

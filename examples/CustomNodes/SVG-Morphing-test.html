@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Path Tangents</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+        //  mpaper.settings.insertItems = true;
+        project.useBuiltinStyle('dark');
+        
+           path =  new Path.PolyLine({
+            data:[200,500,300,100,400,1000,300,900,800,500],
+            closed:false
+        }); 
+        path.position = view.center ; 
+        path.strokeColor = 'orange';
+
+        pathcopy = path.clone();
+        pathcopy.position += [100,100];
+
+        Create({target: [path, pathcopy]})
+
+       newpoints = pathcopy. insertExtraSegments(7); 
+       cs = [];
+        for(  i in newpoints){
+            cs.push(new Path.Circle({  center: newpoints[i],   radius:   4,  fillColor:   'blue'}));
+        }
+        Create({target: cs});
+
+       
+        path2 =  new Path.Circle({
+            center : [500,500],
+            radius:200,
+        }); 
+        path2.strokeColor = 'orange';
+        Create({target: path2});
+
+
+        cs = []; newpoints =  path2. insertExtraSegments(20);
+        for(  i in newpoints){
+           cs.push( new Path.Circle({  center: newpoints[i],   radius:   4,  fillColor:   'red'}) );
+        }
+        Create({target: cs});
+      //  newpoints.forEach( e = >     new Path.Circle({  center: e,   radius:   4,  fillColor:   'red'}) );
+       
+       
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

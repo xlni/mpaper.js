@@ -1,4 +1,4 @@
-/// <reference path="../../dist/paper.d.ts" />
+/// <reference path="../../dist/mpaper.d.ts" />
 
 /**
  * This file is used as a way to test auto-generated typescript definition
@@ -10,46 +10,46 @@
  * - dedicated testing library like: https://github.com/Microsoft/dtslint
  */
 
-import * as paper from 'paper';
+import * as mpaper from 'mpaper';
 
 
 //
 // Utility variables
 //
 
-let point            = {} as paper.Point;
-let size             = {} as paper.Size;
-let rectangle        = {} as paper.Rectangle;
-let matrix           = {} as paper.Matrix;
-let project          = {} as paper.Project;
-let item             = {} as paper.Item;
-let layer            = {} as paper.Layer;
-let group            = {} as paper.Group;
-let shape            = {} as paper.Shape;
-let raster           = {} as paper.Raster;
-let pathItem         = {} as paper.PathItem;
-let path             = {} as paper.Path;
-let compoundPath     = {} as paper.CompoundPath;
-let segment          = {} as paper.Segment;
-let curve            = {} as paper.Curve;
-let curveLocation    = {} as paper.CurveLocation;
-let symbolDefinition = {} as paper.SymbolDefinition;
-let symbolItem       = {} as paper.SymbolItem;
-let style            = {} as paper.Style;
-let color            = {} as paper.Color;
-let gradient         = {} as paper.Gradient;
-let gradientStop     = {} as paper.GradientStop;
-let textItem         = {} as paper.TextItem;
-let pointText        = {} as paper.PointText;
-let view             = {} as paper.View;
-let event            = {} as paper.Event;
-let mouseEvent       = {} as paper.MouseEvent;
-let tool             = {} as paper.Tool;
-let toolEvent        = {} as paper.ToolEvent;
-let keyEvent         = {} as paper.KeyEvent;
-let paperScope       = {} as paper.PaperScope;
+let point            = {} as mpaper.Point;
+let size             = {} as mpaper.Size;
+let rectangle        = {} as mpaper.Rectangle;
+let matrix           = {} as mpaper.Matrix;
+let project          = {} as mpaper.Project;
+let item             = {} as mpaper.Item;
+let layer            = {} as mpaper.Layer;
+let group            = {} as mpaper.Group;
+let shape            = {} as mpaper.Shape;
+let raster           = {} as mpaper.Raster;
+let pathItem         = {} as mpaper.PathItem;
+let path             = {} as mpaper.Path;
+let compoundPath     = {} as mpaper.CompoundPath;
+let segment          = {} as mpaper.Segment;
+let curve            = {} as mpaper.Curve;
+let curveLocation    = {} as mpaper.CurveLocation;
+let symbolDefinition = {} as mpaper.SymbolDefinition;
+let symbolItem       = {} as mpaper.SymbolItem;
+let style            = {} as mpaper.Style;
+let color            = {} as mpaper.Color;
+let gradient         = {} as mpaper.Gradient;
+let gradientStop     = {} as mpaper.GradientStop;
+let textItem         = {} as mpaper.TextItem;
+let pointText        = {} as mpaper.PointText;
+let view             = {} as mpaper.View;
+let event            = {} as mpaper.Event;
+let mouseEvent       = {} as mpaper.MouseEvent;
+let tool             = {} as mpaper.Tool;
+let toolEvent        = {} as mpaper.ToolEvent;
+let keyEvent         = {} as mpaper.KeyEvent;
+let paperScope       = {} as mpaper.PaperScope;
 let callback         = {} as () => {};
-let hitResult        = {} as paper.HitResult;
+let hitResult        = {} as mpaper.HitResult;
 let object           = {} as object;
 
 
@@ -61,11 +61,11 @@ let object           = {} as object;
 // Point
 //
 
-new paper.Point(0, 0);
-new paper.Point([ 0, 0 ]);
-new paper.Point({ x: 0, y: 0 });
-new paper.Point(size);
-new paper.Point(point);
+new mpaper.Point(0, 0);
+new mpaper.Point([ 0, 0 ]);
+new mpaper.Point({ x: 0, y: 0 });
+new mpaper.Point(size);
+new mpaper.Point(point);
 point.x;
 point.y;
 point.length;
@@ -113,9 +113,9 @@ point.divide(0);
 point.divide(point);
 point.modulo(0);
 point.modulo(point);
-paper.Point.min(point, point);
-paper.Point.max(point, point);
-paper.Point.random();
+mpaper.Point.min(point, point);
+mpaper.Point.max(point, point);
+mpaper.Point.random();
 
 
 //
@@ -123,11 +123,11 @@ paper.Point.random();
 //
 
 
-new paper.Size(0, 0);
-new paper.Size([ 0, 0 ]);
-new paper.Size({ width: 0, height: 0 });
-new paper.Size(size);
-new paper.Size(point);
+new mpaper.Size(0, 0);
+new mpaper.Size([ 0, 0 ]);
+new mpaper.Size({ width: 0, height: 0 });
+new mpaper.Size(size);
+new mpaper.Size(point);
 size.width;
 size.height;
 size.set(0, 0);
@@ -154,9 +154,9 @@ size.divide(0);
 size.divide(size);
 size.modulo(0);
 size.modulo(size);
-paper.Size.min(size, size);
-paper.Size.max(size, size);
-paper.Size.random();
+mpaper.Size.min(size, size);
+mpaper.Size.max(size, size);
+mpaper.Size.random();
 
 
 //
@@ -164,11 +164,11 @@ paper.Size.random();
 //
 
 
-new paper.Rectangle(point, size);
-new paper.Rectangle({ point: point, size: size });
-new paper.Rectangle(0, 0, 0, 0);
-new paper.Rectangle(point, point);
-new paper.Rectangle(rectangle);
+new mpaper.Rectangle(point, size);
+new mpaper.Rectangle({ point: point, size: size });
+new mpaper.Rectangle(0, 0, 0, 0);
+new mpaper.Rectangle(point, point);
+new mpaper.Rectangle(rectangle);
 rectangle.x;
 rectangle.y;
 rectangle.width;
@@ -216,10 +216,10 @@ rectangle.scale(0, 0);
 // Matrix
 //
 
-new paper.Matrix();
-new paper.Matrix(0, 0, 0, 0, 0, 0);
-new paper.Matrix([ 0, 0, 0, 0, 0, 0 ]);
-new paper.Matrix(matrix);
+new mpaper.Matrix();
+new mpaper.Matrix(0, 0, 0, 0, 0, 0);
+new mpaper.Matrix([ 0, 0, 0, 0, 0, 0 ]);
+new mpaper.Matrix(matrix);
 matrix.a;
 matrix.b;
 matrix.c;
@@ -275,9 +275,9 @@ matrix.applyToContext({} as CanvasRenderingContext2D);
 // Project
 //
 
-new paper.Project({} as HTMLCanvasElement);
-new paper.Project('');
-new paper.Project(size);
+new mpaper.Project({} as HTMLCanvasElement);
+new mpaper.Project('');
+new mpaper.Project(size);
 project.view;
 project.currentStyle;
 project.index;
@@ -472,8 +472,8 @@ item.removeOnUp();
 // Layer
 //
 
-new paper.Layer([ item ]);
-new paper.Layer({});
+new mpaper.Layer([ item ]);
+new mpaper.Layer({});
 layer.activate();
 
 
@@ -481,8 +481,8 @@ layer.activate();
 // Group
 //
 
-new paper.Group([ item ]);
-new paper.Group({});
+new mpaper.Group([ item ]);
+new mpaper.Group({});
 group.clipped;
 
 
@@ -490,15 +490,15 @@ group.clipped;
 // Shape
 //
 
-new paper.Shape.Circle(point, 0);
-new paper.Shape.Circle({});
-new paper.Shape.Rectangle(rectangle);
-new paper.Shape.Rectangle(rectangle, size);
-new paper.Shape.Rectangle(point, size);
-new paper.Shape.Rectangle(point, point);
-new paper.Shape.Rectangle({});
-new paper.Shape.Ellipse(rectangle);
-new paper.Shape.Ellipse({});
+new mpaper.Shape.Circle(point, 0);
+new mpaper.Shape.Circle({});
+new mpaper.Shape.Rectangle(rectangle);
+new mpaper.Shape.Rectangle(rectangle, size);
+new mpaper.Shape.Rectangle(point, size);
+new mpaper.Shape.Rectangle(point, point);
+new mpaper.Shape.Rectangle({});
+new mpaper.Shape.Ellipse(rectangle);
+new mpaper.Shape.Ellipse({});
 shape.type;
 shape.size;
 shape.radius;
@@ -510,11 +510,11 @@ shape.toPath(true);
 // Raster
 //
 
-new paper.Raster();
-new paper.Raster({} as HTMLImageElement);
-new paper.Raster({} as HTMLCanvasElement);
-new paper.Raster('');
-new paper.Raster('', point);
+new mpaper.Raster();
+new mpaper.Raster({} as HTMLImageElement);
+new mpaper.Raster({} as HTMLCanvasElement);
+new mpaper.Raster('');
+new mpaper.Raster('', point);
 raster.size;
 raster.width;
 raster.height;
@@ -613,36 +613,36 @@ pathItem.curveBy(point, point);
 pathItem.curveBy(point, point, 0);
 pathItem.cubicCurveBy(point, point, point);
 pathItem.quadraticCurveBy(point, point);
-paper.PathItem.create('');
-paper.PathItem.create([ [ 0 ] ]);
-paper.PathItem.create({});
+mpaper.PathItem.create('');
+mpaper.PathItem.create([ [ 0 ] ]);
+mpaper.PathItem.create({});
 
 
 //
 // Path
 //
 
-new paper.Path();
-new paper.Path([ segment ]);
-new paper.Path(object);
-new paper.Path('');
-new paper.Path.Line(point, point);
-new paper.Path.Line(object);
-new paper.Path.Circle(point, 0);
-new paper.Path.Circle(object);
-new paper.Path.Rectangle(rectangle);
-new paper.Path.Rectangle(rectangle, size);
-new paper.Path.Rectangle(point, size);
-new paper.Path.Rectangle(point, point);
-new paper.Path.Rectangle(object);
-new paper.Path.Ellipse(rectangle);
-new paper.Path.Ellipse(object);
-new paper.Path.Arc(point, point, point);
-new paper.Path.Arc(object);
-new paper.Path.RegularPolygon(point, 0, 0);
-new paper.Path.RegularPolygon(object);
-new paper.Path.Star(point, 0, 0, 0);
-new paper.Path.Star(object);
+new mpaper.Path();
+new mpaper.Path([ segment ]);
+new mpaper.Path(object);
+new mpaper.Path('');
+new mpaper.Path.Line(point, point);
+new mpaper.Path.Line(object);
+new mpaper.Path.Circle(point, 0);
+new mpaper.Path.Circle(object);
+new mpaper.Path.Rectangle(rectangle);
+new mpaper.Path.Rectangle(rectangle, size);
+new mpaper.Path.Rectangle(point, size);
+new mpaper.Path.Rectangle(point, point);
+new mpaper.Path.Rectangle(object);
+new mpaper.Path.Ellipse(rectangle);
+new mpaper.Path.Ellipse(object);
+new mpaper.Path.Arc(point, point, point);
+new mpaper.Path.Arc(object);
+new mpaper.Path.RegularPolygon(point, 0, 0);
+new mpaper.Path.RegularPolygon(object);
+new mpaper.Path.Star(point, 0, 0, 0);
+new mpaper.Path.Star(object);
 path.segments;
 path.firstSegment;
 path.lastSegment;
@@ -697,8 +697,8 @@ path = path.off({});
 // CompoundPath
 //
 
-new paper.CompoundPath(object);
-new paper.CompoundPath('');
+new mpaper.CompoundPath(object);
+new mpaper.CompoundPath('');
 compoundPath.closed;
 compoundPath.firstSegment;
 compoundPath.lastSegment;
@@ -713,11 +713,11 @@ compoundPath.length;
 // Segment
 //
 
-new paper.Segment();
-new paper.Segment(point);
-new paper.Segment(point, point);
-new paper.Segment(point, point, point);
-new paper.Segment(object);
+new mpaper.Segment();
+new mpaper.Segment(point);
+new mpaper.Segment(point, point);
+new mpaper.Segment(point, point, point);
+new mpaper.Segment(object);
 segment.point;
 segment.handleIn;
 segment.handleOut;
@@ -747,8 +747,8 @@ segment.interpolate(segment, segment, 0);
 // Curve
 //
 
-new paper.Curve(segment, segment);
-new paper.Curve(point, point, point, point);
+new mpaper.Curve(segment, segment);
+new mpaper.Curve(point, point, point, point);
 curve.point1;
 curve.point2;
 curve.handle1;
@@ -818,8 +818,8 @@ curve.getIntersections(curve);
 // CurveLocation
 //
 
-new paper.CurveLocation(curve, 0);
-new paper.CurveLocation(curve, 0, point);
+new mpaper.CurveLocation(curve, 0);
+new mpaper.CurveLocation(curve, 0, point);
 curveLocation.segment;
 curveLocation.curve;
 curveLocation.path;
@@ -844,8 +844,8 @@ curveLocation.hasOverlap();
 // SymbolDefinition
 //
 
-new paper.SymbolDefinition(item);
-new paper.SymbolDefinition(item, true);
+new mpaper.SymbolDefinition(item);
+new mpaper.SymbolDefinition(item, true);
 symbolDefinition.project;
 symbolDefinition.item;
 symbolDefinition.place();
@@ -858,9 +858,9 @@ symbolDefinition.equals(symbolDefinition);
 // SymbolItem
 //
 
-new paper.SymbolItem(symbolDefinition);
-new paper.SymbolItem(item);
-new paper.SymbolItem(symbolDefinition, point);
+new mpaper.SymbolItem(symbolDefinition);
+new mpaper.SymbolItem(item);
+new mpaper.SymbolItem(symbolDefinition, point);
 symbolItem.definition;
 
 
@@ -868,7 +868,7 @@ symbolItem.definition;
 // Style
 //
 
-new paper.Style(object);
+new mpaper.Style(object);
 style.view;
 style.strokeColor;
 style.strokeWidth;
@@ -895,14 +895,14 @@ style.justification;
 // Color
 //
 
-new paper.Color(0, 0, 0);
-new paper.Color(0, 0, 0, 0);
-new paper.Color(0);
-new paper.Color(0, 0);
-new paper.Color(object);
-new paper.Color('');
-new paper.Color(gradient, point, point);
-new paper.Color(gradient, point, point, point);
+new mpaper.Color(0, 0, 0);
+new mpaper.Color(0, 0, 0, 0);
+new mpaper.Color(0);
+new mpaper.Color(0, 0);
+new mpaper.Color(object);
+new mpaper.Color('');
+new mpaper.Color(gradient, point, point);
+new mpaper.Color(gradient, point, point, point);
 color.type;
 color.components;
 color.alpha;
@@ -939,7 +939,7 @@ color.multiply(0);
 color.multiply(color);
 color.divide(0);
 color.divide(color);
-paper.Color.random();
+mpaper.Color.random();
 
 
 //
@@ -956,9 +956,9 @@ gradient.equals(gradient);
 // GradientStop
 //
 
-new paper.GradientStop();
-new paper.GradientStop(color);
-new paper.GradientStop(color, 0);
+new mpaper.GradientStop();
+new mpaper.GradientStop(color);
+new mpaper.GradientStop(color, 0);
 gradientStop.offset;
 gradientStop.color;
 gradientStop.clone();
@@ -980,8 +980,8 @@ textItem.justification;
 // PointText
 //
 
-new paper.PointText(point);
-new paper.PointText(object);
+new mpaper.PointText(point);
+new mpaper.PointText(object);
 pointText.point;
 
 
@@ -1111,8 +1111,8 @@ toolEvent.toString();
 // Key
 //
 
-paper.Key.modifiers;
-paper.Key.isDown('');
+mpaper.Key.modifiers;
+mpaper.Key.isDown('');
 
 
 //
@@ -1129,7 +1129,7 @@ keyEvent.toString();
 // PaperScope
 //
 
-new paper.PaperScope();
+new mpaper.PaperScope();
 paperScope.version;
 paperScope.settings;
 paperScope.settings = null;
@@ -1145,7 +1145,7 @@ paperScope.setup('');
 paperScope.setup({} as HTMLCanvasElement);
 paperScope.setup(size);
 paperScope.activate();
-paper.PaperScope.get(0);
+mpaper.PaperScope.get(0);
 new paperScope.Color('');
 new paperScope.CompoundPath('');
 new paperScope.Curve(segment, segment);
@@ -1178,7 +1178,7 @@ new paperScope.SymbolItem(symbolDefinition);
 new paperScope.TextItem();
 new paperScope.Tool();
 new paperScope.ToolEvent();
-new paperScope.Tween(object, object, object, 0);
+new paperScope.Anime(object, object, object, 0);
 new paperScope.View();
 
 
@@ -1186,29 +1186,29 @@ new paperScope.View();
 // Global PaperScope instance
 //
 
-paper.version;
-paper.settings;
-paper.project;
-paper.projects;
-paper.view;
-paper.tool;
-paper.tools;
-paper.execute('');
-paper.execute('', object);
-paper.install(object);
-paper.setup('');
-paper.setup({} as HTMLCanvasElement);
-paper.setup(size);
-paper.activate();
+mpaper.version;
+mpaper.settings;
+mpaper.project;
+mpaper.projects;
+mpaper.view;
+mpaper.tool;
+mpaper.tools;
+mpaper.execute('');
+mpaper.execute('', object);
+mpaper.install(object);
+mpaper.setup('');
+mpaper.setup({} as HTMLCanvasElement);
+mpaper.setup(size);
+mpaper.activate();
 
 
 //
 // PaperScript
 //
 
-paper.PaperScript.compile('');
-paper.PaperScript.compile('', object);
-paper.PaperScript.execute('', paperScope);
-paper.PaperScript.execute('', paperScope, object);
-paper.PaperScript.load();
-paper.PaperScript.load({} as HTMLScriptElement);
+mpaper.PaperScript.compile('');
+mpaper.PaperScript.compile('', object);
+mpaper.PaperScript.execute('', paperScope);
+mpaper.PaperScript.execute('', paperScope, object);
+mpaper.PaperScript.load();
+mpaper.PaperScript.load({} as HTMLScriptElement);

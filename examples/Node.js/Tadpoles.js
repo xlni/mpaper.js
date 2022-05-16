@@ -1,8 +1,8 @@
-// Please note: When loading paper as a normal module installed in node_modules,
+// Please note: When loading mpaper as a normal module installed in node_modules,
 // you would use this instead:
-// var paper = require('paper-jsdom-canvas');
-var paper = require('../../dist/paper-full.js');
-var scope = require('./Tadpoles.pjs')(new paper.Size(1024, 768));
+// var mpaper = require('mpaper-jsdom-canvas');
+var mpaper = require('../../dist/mpaper-full.js');
+var scope = require('./Tadpoles.pjs')(new mpaper.Size(1024, 768));
 
 scope.view.exportFrames({
     amount: 400,

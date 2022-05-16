@@ -72,11 +72,11 @@ test('CompoundPath#clone()', function() {
 
 test('Layer#clone()', function() {
     var path = new Path.Rectangle([200, 200], [100, 100]);
-    cloneAndCompare(paper.project.activeLayer);
+    cloneAndCompare(mpaper.project.activeLayer);
 });
 
 test('Layer#clone() - check activeLayer', function() {
-    var project = paper.project,
+    var project = mpaper.project,
         activeLayer = project.activeLayer,
         layer = activeLayer.clone();
     // The active layer should not change when cloning layers.

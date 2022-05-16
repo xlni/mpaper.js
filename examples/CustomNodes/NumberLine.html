@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Path Tangents</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+      //  mpaper.settings.insertItems = true;
+      project.useBuiltinStyle('dark');  
+           center = view.center;
+        
+           l1 =  new  NumberLine( {  
+            from: [100,100],
+            to: [400,100],
+            x_range:[-10, 10, 2], 
+            numberColor: 'strokeColor',
+            strokeColor: 'red',
+            include_label:true, 
+            strokeWidth: 3,
+        });
+        l1.strokeColor = 'red';
+        l1.strokeWidth = 3;
+
+        Create({target: l1});
+
+        //test  tick_length
+        l1 =  new  NumberLine( {  
+          from: [100,150],
+          to: [400,150],
+          x_range:[-10, 10, 2], 
+          numberColor: 'strokeColor',
+          strokeColor: 'red',
+          include_label:true, 
+          strokeWidth: 3,
+          tick_length : 15,
+      });
+      l1.strokeColor = 'red';
+      l1.strokeWidth = 3;
+
+      Create({target: l1});
+
+        //exclude_origin_tick and numbers_to_exclude
+        l1 =  new  NumberLine( {  
+          from: [100,200],
+          to: [400,200],
+          x_range:[-10, 10, 2], 
+          numberColor: 'strokeColor',
+          strokeColor: 'red',
+          include_label:true, 
+          strokeWidth: 3,
+          tick_length : 15,
+          exclude_origin_tick : true,
+          numbers_to_exclude: [-4,8]
+      });
+      l1.strokeColor = 'red';
+      l1.strokeWidth = 3;
+
+      Create({target: l1});
+
+      //test numbers_to_include
+      l1 =  new  NumberLine( {  
+        from: [100,250],
+        to: [400,250],
+        x_range:[-10, 10, 2], 
+        numberColor: 'strokeColor',
+        strokeColor: 'red',
+        include_label:true, 
+        strokeWidth: 3,
+        tick_length : 15, 
+        numbers_to_include:[3.3],
+        numbers_to_include_color: 'green'
+    });
+    l1.strokeColor = 'red';
+    l1.strokeWidth = 3;
+
+    Create({target: l1});
+
+    //test dynamic_step_value
+    l1 =  new  NumberLine( {  
+      from: [100,300],
+      to: [400,300],
+      x_range:[-10, 10, 2], 
+      numberColor: 'strokeColor',
+      strokeColor: 'red',
+      include_label:true, 
+      strokeWidth: 3,
+      tick_length : 15,  
+      dynamic_step_value: true,
+  });
+  l1.strokeColor = 'red';
+  l1.strokeWidth = 3;
+  l1.setVertexDraggable(true)
+
+  Create({target: l1});
+
+  //test fontSize
+  l1 =  new  NumberLine( {  
+    from: [100,350],
+    to: [400,350],
+    x_range:[-10, 10, 2], 
+    numberColor: 'strokeColor',
+    strokeColor: 'red',
+    include_label:true, 
+    strokeWidth: 3,
+    tick_length : 15,  
+    dynamic_step_value: true,
+    font_size: 25,
+});
+l1.strokeColor = 'red';
+l1.strokeWidth = 3; 
+l1.setVertexDraggable(true)
+
+ Create({target: l1});
+
+
+        //test  draggable change
+           l2 =  new  NumberLine( {  
+          from: [100,600],
+          to: [400,600],
+          x_range:[-10, 10, 2], 
+          numberColor: 'strokeColor',
+          strokeColor: 'red',
+          include_label:true, 
+          strokeWidth: 3,
+        });
+        l2.strokeColor = 'red';
+        l2.strokeWidth = 3;
+        l2.setVertexDraggable(true)
+           
+        Create({target: l2});
+
+        //test  draggable change
+           l2 =  new  NumberLine( {  
+          from: [100,650],
+          to: [400,650],
+          x_range:[-10, 10, 2], 
+          numberColor: 'strokeColor',
+          strokeColor: 'red',
+          include_label:true, 
+          strokeWidth: 3,
+          fixed_step_length:true
+        });
+        l2.strokeColor = 'red';
+        l2.strokeWidth = 3;
+        l2.setVertexDraggable(true)
+           
+        Create({target: l2});
+
+        //test  draggable change
+           l21 =  new  NumberLine( {  
+          from: [100,700],
+          to: [400,700],
+          x_range:[-10, 10, 2], 
+          numberColor: 'strokeColor',
+          strokeColor: 'red',
+          include_label:true, 
+          strokeWidth: 3, 
+        });
+        l21.strokeColor = 'red';
+        l21.strokeWidth = 3;
+     
+        Create({target: l21});
+
+           dot  =  new Path.Star({
+          center: [200, 700],
+          points: 12,
+          radius1:  5,
+          radius2: 10,
+          fillColor: 'strokeColor'
+        });
+         dot.draggable = true;
+        dot.addUpdater(new MoveRestriction({
+              host :  dot,
+              type :  'mrs_x'  
+          }))
+        dot.addUpdater(new MoveRestriction({
+            host :  dot,
+            type :  'move_tracking'  ,
+            callback : function(x_diff, y_diff){
+              l21.shift_by(x_diff)
+            }
+        }))
+        Create({target: dot});
+      
+        //test  draggable change
+           l22 =  new  NumberLine( {  
+          from: [100,750],
+          to: [400,750],
+          x_range:[-10, 10, 2], 
+          numberColor: 'strokeColor',
+          strokeColor: 'red',
+          include_label:true, 
+          strokeWidth: 3, 
+        });
+        l22.strokeColor = 'red';
+        l22.strokeWidth = 3;
+
+        Create({target: l22});
+     
+           dot2  =  new Path.Star({
+          center: [200, 750],
+          points: 12,
+          radius1:  5,
+          radius2: 10,
+          fillColor: 'strokeColor'
+        });
+         dot2.draggable = true;
+        dot2.addUpdater(new MoveRestriction({
+              host :  dot2,
+              type :  'mrs_x'  
+          }))
+        dot2.addUpdater(new MoveRestriction({
+            host :  dot2,
+            type :  'move_tracking'  ,
+            callback : function(x_diff, y_diff){
+                if(x_diff == 0) return; 
+                   p = l22.p2v * (x_diff > 0 ? 1.05 : 0.95)  ;
+                l22.adjust_ticks_by_scale_and_pos(p,0)
+            }
+        }))
+        Create({target: dot2});
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

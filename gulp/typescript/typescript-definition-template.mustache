@@ -14,7 +14,7 @@
  * This is an auto-generated type definition.
  */
 
-declare namespace paper {
+declare namespace mpaper {
     {{#classes}}
 
     {{#doc}}4{{/doc}}
@@ -52,14 +52,14 @@ declare namespace paper {
 }
 
 
-declare module 'paper/dist/paper-core'
+declare module 'mpaper/dist/mpaper-core'
 {
-    const paperCore: Pick<paper.PaperScope, Exclude<keyof paper.PaperScope, 'PaperScript'>>;
+    const paperCore: Pick<mpaper.PaperScope, Exclude<keyof mpaper.PaperScope, 'PaperScript'>>;
     export = paperCore
 }
 
-declare module 'paper'
+declare module 'mpaper'
 {
-    const paperFull: paper.PaperScope;
+    const paperFull: mpaper.PaperScope;
     export = paperFull
 }

@@ -539,6 +539,14 @@ var Rectangle = Base.extend(/** @lends Rectangle# */{
         return this.width === 0 || this.height === 0;
     },
 
+    morphingTo: function(to, progress){ 
+      var w = ( to.width - this.width ) * progress + this.width,
+          h = ( to.height - this.height ) * progress + this.height,
+          x = ( to.x - this.x ) * progress + this.x,
+          y = ( to.y - this.y ) * progress + this.y;
+      return new Rectangle(x, y, w, h);
+    },
+
     /**
      * {@grouptitle Geometric Tests}
      *

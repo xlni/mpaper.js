@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>tex-svg</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script type="text/javascript" src="../../lib/mathjax-bridge.js"></script>
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+    //  mpaper.settings.insertItems = true;
+      project.useBuiltinStyle('dark');
+       
+
+        mark = new Path.Circle({
+        center: [500,500],
+        radius:10,
+        fillColor: 'red'
+     })
+       format = Formatter.instance;
+    //    node = document.querySelector('#math');
+   //     options = MathJax.getMetricsFor(node, true);
+         options = {   };
+          input = '\\frac{2}{1-3^4}';
+          input = '1234567890';
+      //    input = 'abcdefghijklmnopqrstuvwxyz';
+        input = 'αβγδεζηθ';
+     //    input = 'Α';
+         input = 'abc'
+       
+        
+         input = 'lss'
+          item = project.importLatex( input  );
+       
+        item.position = [400,400];   
+        item.scale(20); 
+      //  console.log(item)
+     
+         input = 'a';
+          
+          item2 = project.importLatex( input );
+        
+        item2.position = [200,200];   
+        item2.scale(20); 
+        item2.visible = false;
+
+       Create( {target: [item ]})
+
+      // console.log(project._activeLayer.bounds)
+        MorphingTo({target: item, to: item2 })
+     //  item.morphingTo(curPage.ptimer, item2, 5,1)
+    </script>
+</head>
+<body>
+    <canvas id="canvas" resize></canvas>
+</body>
+</html>

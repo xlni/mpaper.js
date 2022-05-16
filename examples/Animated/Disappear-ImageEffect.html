@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Path Tangents</title>
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+        mpaper.settings.insertItems = true;
+        project.useBuiltinStyle('dark');  
+        for(var i = 9; i < 12; i++){   
+         
+               var circle =  new Path.Star({
+                    center: [ 100 +  50* i, 100 + 50* i ], 
+                    points: 25,
+                    radius1:48,
+                    radius2: 50,
+                    fillColor: 'red', 
+                    strokeColor: 'blue'
+			   });
+              // var easing = 'easeInOutExpo';
+               var easing = '';
+               //'easeInOutElastic(1, 1)';
+               //'easeInOutExpo';
+
+               var duration = 3;
+               RU.imageEffect2(project._activeLayer, circle, duration,  i, easing,  "", false, null)
+            // var image = circle.rasterize();
+            //   image.position = circle.position + [100, 0];
+           //  RU.imageEffect2(project._activeLayer, image, duration, i, easing, "",  false, null)
+            
+    }
+      
+   
+ 
+ 
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

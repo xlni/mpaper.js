@@ -16,8 +16,8 @@ var gulp = require('gulp'),
 
 gulp.task('load', ['clean:load'], function() {
     return gulp.src('src/load.js')
-        .pipe(symlink('dist/paper-full.js'))
-        .pipe(symlink('dist/paper-core.js'));
+        .pipe(symlink('dist/mpaper-full.js'))
+        .pipe(symlink('dist/mpaper-core.js'));
 });
 
 gulp.task('clean:load', function() {

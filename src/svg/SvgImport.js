@@ -13,13 +13,15 @@
 /**
  * A function scope holding all the functionality needed to convert a SVG DOM
  * to a Paper.js DOM.
+ * 
+ * 
  */
 new function() {
     // Define a couple of helper functions to easily read values from SVG
     // objects, dealing with baseVal, and item lists.
     // index is option, and if passed, causes a lookup in a list.
 
-    var definitions = {},
+    var definitions = {}, def2cache = true, idmapper,
         rootSize;
 
     function getValue(node, name, isString, allowNull, allowPercent,
@@ -86,7 +88,7 @@ new function() {
             // project's currentStyle, so it is used as a default for the
             // creation of all nested items. importSVG then needs to check for
             // items and avoid calling applyAttributes() again.
-            project._currentStyle = item._style.clone();
+             project._currentStyle = item._style.clone();
         }
         if (isRoot) {
             // Import all defs first, since in SVG they can be in any location.
@@ -112,7 +114,7 @@ new function() {
         if (isClip)
             item = applyAttributes(item.reduce(), node, isRoot);
         // Restore currentStyle
-        project._currentStyle = currentStyle;
+          project._currentStyle = currentStyle;
         if (isClip || isDefs) {
             // We don't want the defs in the DOM. But we might want to use
             // Symbols for them to save memory?
@@ -145,10 +147,19 @@ new function() {
             radial = type === 'radialgradient',
             gradient;
         if (id) {
+            var def;
+            if(  def2cache ){
+                var mappedId =  idmapper ?  idmapper(id) : id, 
+                    project = mpaper.project ;
+                    def = project.cachedItemDefs[mappedId];
+            }
+            if( !def )
+                def = definitions[id];
+
             // Gradients are always wrapped in a Color object, so get the
             // gradient object from there.
             // TODO: Handle exception if there is no definition for this id.
-            gradient = definitions[id].getGradient();
+            gradient = def.getGradient();
             // Create a clone if radial setting is different:
             if (gradient._radial ^ radial) {
                 gradient = gradient.clone();
@@ -218,6 +229,7 @@ new function() {
 
         // https://www.w3.org/TR/SVG/struct.html#ImageElement
         image: function (node) {
+            var animation = getValue(node, 'animation')
             var raster = new Raster(getValue(node, 'href', true));
             raster.on('load', function() {
                 var size = getSize(node);
@@ -243,15 +255,22 @@ new function() {
         defs: importGroup,
 
         // https://www.w3.org/TR/SVG/struct.html#UseElement
-        use: function(node) {
+        use: function(node, type, options, isRoot) {
             // Note the namespaced xlink:href attribute is just called href
             // as a property on node.
             // TODO: Support overflow and width, height, in combination with
             // overflow: hidden. Paper.js currently does not support
             // SymbolItem clipping, but perhaps it should?
-            var id = (getValue(node, 'href', true) || '').substring(1),
-                definition = definitions[id],
+            var id = (getValue(node, 'href', true) || '').substring(1), 
+                definition, 
                 point = getPoint(node);
+            if(  def2cache ){
+                var mappedId =  idmapper ?  idmapper(id) : id, 
+                    project = options && options.project || mpaper.project ;
+                definition = project.cachedItemDefs[mappedId];
+            }
+            if( !definition )
+                definition = definitions[id];
             return definition
                     ? definition instanceof SymbolDefinition
                         // When placing symbols, we need to take both point and
@@ -401,13 +420,19 @@ new function() {
             }
         };
     }, {}), {
-        id: function(item, value) {
-            definitions[value] = item;
+        id: function(item, value, options) {
+            if(  def2cache ){
+                var mappedId =  idmapper ?  idmapper(value) : value, 
+                    project = options && options.project || mpaper.project ;
+                project.cachedItemDefs[mappedId] = item;
+            }
+            else 
+                definitions[value] = item;
             if (item.setName)
                 item.setName(value);
         },
 
-        'clip-path': function(item, value) {
+        'clip-path': function(item, value, options) {
             // https://www.w3.org/TR/SVG/masking.html#ClipPathProperty
             var clip = getDefinition(value);
             if (clip) {
@@ -554,11 +579,22 @@ new function() {
         // double, so handle it all with one regular expression:
         var match = value && value.match(/\((?:["'#]*)([^"')]+)/),
             name = match && match[1],
-            res = name && definitions[window
-                    // This is required by Firefox, which can produce absolute
-                    // urls for local gradients, see #1001:
-                    ? name.replace(window.location.href.split('#')[0] + '#', '')
-                    : name];
+            nname =  name &&  window
+                // This is required by Firefox, which can produce absolute
+                // urls for local gradients, see #1001:
+                ? name.replace(window.location.href.split('#')[0] + '#', '')
+                : name, 
+            res;
+            if( nname ){
+                if( def2cache ){
+                    var mappedId =  idmapper ?  idmapper(nname) : nname, 
+                        project = mpaper.project;
+                    res = project.cachedItemDefs[mappedId]; 
+                } 
+                if( !res ){
+                    res =  definitions[nname]; 
+                }
+            } 
         // Patch in support for SVG's gradientUnits="objectBoundingBox" through
         // Color#_scaleToBounds
         if (res && res._scaleToBounds) {
@@ -579,7 +615,7 @@ new function() {
             next;
         if (isRoot && isElement) {
             // Set rootSize to view size, as getSize() may refer to it (#1242).
-            rootSize = paper.getView().getSize();
+            rootSize = mpaper.getView().getSize();
             // Now set rootSize to the root element size, and fall-back to view.
             rootSize = getSize(node, null, null, true) || rootSize;
             // We need to move the SVG node to the current document, so default
@@ -602,7 +638,7 @@ new function() {
         // content and children, as this is how SVG works too, but preserve the
         // current setting so we can restore it after. Also don't insert them
         // into the scene graph automatically, as we do so by hand.
-        var settings = paper.settings,
+        var settings = mpaper.settings,
             applyMatrix = settings.applyMatrix,
             insertItems = settings.insertItems;
         settings.applyMatrix = false;
@@ -619,7 +655,7 @@ new function() {
             // Support onImportItem callback, to provide mechanism to handle
             // special attributes (e.g. inkscape:transform-center)
             var onImport = options.onImport,
-                data = isElement && node.getAttribute('data-paper-data');
+                data = isElement && node.getAttribute('data-mpaper-data');
             if (onImport)
                 item = onImport(node, item, options) || item;
             if (options.expandShapes && item instanceof Shape) {
@@ -651,13 +687,30 @@ new function() {
         return item;
     }
 
+    /**
+     * 
+     * @param {*} source 
+     * @param {*} options 
+     * hanning: add option to put defs into global cache.
+     *        def2cache:true
+     *        idmapper: function(id){ return a new id; }
+     * @param {*} owner 
+     * @returns 
+     */
     function importSVG(source, options, owner) {
         if (!source)
             return null;
-        options = typeof options === 'function' ? { onLoad: options }
-                : options || {};
+       if( typeof options === 'function' ){
+           options = { onLoad: options }
+       } else {
+            options = options || {};  
+            if( typeof options.def2cache != 'undefined')
+               this.def2cache  = options.def2cache ;
+            this.idmapper = options.idmapper;
+       }
+               
         // Remember current scope so we can restore it in onLoad.
-        var scope = paper,
+        var scope = mpaper,
             item = null;
 
         function onLoad(svg) {
@@ -672,7 +725,7 @@ new function() {
                     node = null;
                     throw new Error('Unsupported SVG source: ' + source);
                 }
-                paper = scope;
+                mpaper = scope;
                 item = importNode(node, options, true);
                 if (!options || options.insert !== false) {
                     // TODO: Implement support for multiple Layers on Project.
@@ -742,6 +795,45 @@ new function() {
 
     // NOTE: Documentation is in Project#importSVG()
     Project.inject({
+        /**
+         * for mix of latex and word string, we use $$...$$ to specify latex,
+         * then we map  string into \\text{ this is a test } 
+         * if there is no $$, we do nothing.
+         * @param {} input 
+         * @returns 
+         */
+        importLatex: function(input){
+            if(!input) return null;
+            if( input.indexOf('$$') >=0 ){
+                var fs = input.split('$$'), len = fs.length, f, r = '';
+                for(var i = 0; i< len; i++){
+                    f = fs[i];
+                    if(f.length == 0) continue;
+                    if( i % 2 === 0) 
+                        r += '\\text{' + f  + '}';
+                    else 
+                        r += f; 
+                }
+                input = r;
+            }
+            var format = Formatter.instance, svg = format.tex2svg(input);
+            return this.importMathJax(svg);
+        },
+        importMathJax: function(node){
+            var options = {
+                applyMatrix: true , 
+                expandShapes: true, 
+                idmapper: Formatter.instance.mathjax_idmapper, 
+               insert: mpaper.settings.insertItems
+             };
+             this.activate();
+             var item = importSVG(node, options, this),  format = Formatter.instance,
+                 colors = this._activeLayer.getCurrentColors();
+             format.forceStyleChanges(item, colors.fc, colors.sc, PathItem);
+             item.fromLatex = true;
+             item.visible = mpaper.settings.insertItems;
+             return item;
+        },
         importSVG: function(node, options) {
             this.activate();
             return importSVG(node, options, this);

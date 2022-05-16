@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Path Tangents</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+     //   mpaper.settings.insertItems = true;
+        project.useBuiltinStyle('dark'); 
+
+     //   center = view.center; 
+       space =  new  CoordinateSystem.ByAxiesFullScreen( project, {   
+            x_range:[-20, 20, 2], 
+            y_range:[-20,20,2], 
+            include_tip:true,
+            include_label:true, 
+            show_grid: true,
+            grid_color: 'rgba(123,0,123,0.2)',
+            exclude_origin_tick: true,
+            strokeWidth: 3,
+            strokeColor: 'white',
+            dot_color: 'red',
+            draggable_origin: true,
+            draggable_x_dot: 1 ,
+            draggable_y_dot: 2 ,
+       });
+       Create({target: space});
+       Wait(2);
+       xx2_curve = new R9Function.ParameterFunc({
+            coord_system:  space,
+            func  : function(x){  return  0.2*x*x +2; },
+            t_range:[-10,10,2],  
+            is_param_func: false,
+            strokeWidth: 3,
+            strokeColor: 'green'
+        }); 
+       
+       xx3_curve = new R9Function.ParameterFunc({
+            coord_system:  space,
+            func  : function(x){  return  0.2*x*x*x -0.3*x*x +3; },
+            t_range:[-10,10,2],  
+            is_param_func: false,
+            strokeWidth: 3,
+            strokeColor: 'green'
+        }); 
+        Create({target: [xx2_curve, xx3_curve]});
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

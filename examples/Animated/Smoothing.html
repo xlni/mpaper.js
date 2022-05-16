@@ -4,8 +4,12 @@
     <meta charset="UTF-8">
     <title>Smoothing</title>
     <link rel="stylesheet" href="../css/style.css">
-    <script type="text/javascript" src="../../dist/paper-full.js"></script>
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
     <script type="text/paperscript" canvas="canvas">
+        mpaper.settings.insertItems = true;
+        project.useBuiltinStyle('dark'); 
+        
+
         var width, height, center;
         var points = 10;
         var smooth = true;
@@ -62,6 +66,8 @@
         function onResize(event) {
             initializePath();
         }
+
+    Main()
     </script>
 </head>
 <body>
