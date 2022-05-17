@@ -7,8 +7,8 @@
     
     <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
     <script type="text/paperscript" canvas="canvas">
-    //    mpaper.settings.insertItems = true;
-        project.useBuiltinStyle('dark');  
+    
+      project.useBuiltinStyle('dark');  
       var s = [];
       s[0] = 'ShowCreation';                           
       s[1] = 'DrawBorderThenFill';
@@ -32,12 +32,10 @@
       s[19] = 'CurlRight'; 
       s[20] = 'CurlDown'; 
       s[21] = 'ImageEffect';  
-
-       
-
-       var center = view.center; 
-       var to_target1 =  new Path.Star({
-            center: [800,200], 
+ 
+      center = view.center; 
+      to_target1 =  new Path.Star({
+            center: [600,200], 
             points: 10,
             radius1: 30,
             radius2: 60,
@@ -46,8 +44,8 @@
       });
       to_target1.fillColor = 'orange';
       to_target1.visible = false;
-      var to_target2 =  new Path.Star({
-        center: [800,400], 
+      to_target2 =  new Path.Star({
+        center: [600,400], 
         points: 10,
         radius1: 30,
         radius2: 60,
@@ -56,35 +54,33 @@
       });
       to_target2.fillColor = 'orange';
       to_target2.visible = false;
-
-       for(var i = 0; i < 5; i++){
+  
+      for(var i = 0; i < 5; i++){
            for(var j = 0; j < 5; j++){
                var pos = i * 5 + j;
-               if( pos  >21 ) continue;
-               var circle =  new Path.Star({
+               if( pos  >21 ) break;
+               var circle = new Path.Star({
                     center: [200 + 100* i, 200 + 100*j ], 
                     points: 3+ pos,
                     radius1: 20,
                     radius2: 50,
                     fillColor: 'red', 
                     strokeColor: 'blue'
-			   });
-               console.log( pos + "--" +  s[ pos ])
+			   })  ; 
                 var param = { type: s[ pos ], duration:1 }
                 if( s[ pos ] == 'FadeInFromPoint' )  param.point = center;
                 if( s[ pos ] == 'GrowFromPoint' )  param.point = center;
                 if( s[ pos ] == 'GrowFromEdge' )  param.direction = 'UP';
                 if( s[ pos ] == 'ReplacementTransform' ) {
                     param.to_target = to_target1; 
-                    param.duration = 5;
+                    param.duration = 1;
                 } 
                 if( s[ pos ] == 'TransformFromCopy' ){
                     param.to_target = to_target2;
-                    param.duration = 5; 
-                }  
-                
+                    param.duration = 1; 
+                }   
                 param.targets = circle;
-                Create(   param ) ; 
+                create(param);
            }
        } 
        

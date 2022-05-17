@@ -7,7 +7,8 @@
     
     <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
     <script type="text/paperscript" canvas="canvas">
-      mpaper.settings.insertItems = true;
+          //mpaper.settings.insertItems = true;
+  
           project.useBuiltinStyle('dark'); 
 
            obj = new LabeledDot({
@@ -22,34 +23,38 @@
             padding:5,
             content: 'X'
         });
+        Create({target :obj})
           //flash 3 times
          Indicate({target: obj, times:3});
         
           obj2 =   obj.clone();
-         obj2.useNextSymbol()
-         obj2.position = [600,200]
+          obj2.useNextSymbol()
+          obj2.position = [600,200]
+          Create({target :obj2})
           //flash forever
           Indicate({target: obj2 });
        
  
-           obj5 = obj2.clone();
-          obj5.useNextSymbol()
-          obj5.position = [400,400]
-         //change color 3 times
-          
-          Flash({ target: obj5, times:3, color_array:  ['blue', 'green']}  );
+           obj3 = obj2.clone();
+          obj3.useNextSymbol()
+          obj3.position = [400,400]
+          Create({target :obj3})
+         //change color 3 times 
+          Flash({ target: obj3, times:3, color_array:  ['blue', 'green']}  );
 
-           obj6 =   obj5.clone();
-          obj6.useNextSymbol()
-          obj6.position = [600,400]
+           obj4 =   obj3.clone();
+          obj4.useNextSymbol()
+          obj4.position = [600,400]
+          Create({target :obj4})
           //change color forever 
-           Flash({ target: obj6, times:0, color_array:  ['blue', 'white']}  );
+           Flash({ target: obj4, times:0, color_array:  ['blue', 'white']}  );
 
-           obj7 =  obj6.clone();
-          obj7.useNextSymbol()
-          obj7.position = [800,400]
+           obj5 =  obj4.clone();
+          obj5.useNextSymbol()
+          obj5.position = [800,400]
+          Create({target :obj5})
           //change opacity  forever
-          Flash({ target: obj7, times:0 }  );
+          Flash({ target: obj5, times:0 }  );
 
  
     </script>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Pause </title>
+    <link rel="stylesheet" href="../../css/style.css">
+    
+    <script type="text/javascript" src="../../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+
+        project.useBuiltinStyle('dark');  
+        rect = new Path.Rectangle({
+            position:  [400, 200],
+            size: 100,  
+            fillColor: 'blue'
+        }) 
+        Create( {target: rect, type: 'FadeIn', duration: 1} )   
+       
+        rect.on('click', function(){
+            resumeAnimation( );
+        }) 
+      
+        Pause()  
+        Focus( { target: rect , color: 'white'}) ; 
+    
+
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

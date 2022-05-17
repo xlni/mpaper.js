@@ -8,23 +8,21 @@
     <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
     <script type="text/paperscript" canvas="canvas">
       //  mpaper.settings.insertItems = true;
-        project.useBuiltinStyle('dark');  
+          project.useBuiltinStyle('dark');  
 
           rect = new Path.Rectangle({
               position:  [400, 200],
-              size: 200,  
+              size: 100,  
               fillColor: 'blue'
           })
           Create( {target: rect, type: 'FadeIn', duration: 1} )   
+          Wait(1) 
+          Focus( { target: rect , color: 'white'}) ; 
+          Wait(1) 
+          Circumscribe( { target: rect , duration: 2, color: 'red'}) ; 
           Wait(1)
-
-      //    Focus( { target: rect , color: 'white'}) ; 
-     //     Wait(1)
-
-       //   Circumscribe( { target: rect , duration: 3, color: 'white'}) ; 
-       //   Wait(1)
-        //  ShowPassingFlash( { target: rect , tips: 'arrow',  duration: 3, color: 'white'}) ;   
-        //  Wait(1)
+          ShowPassingFlash( { target: rect , tips: 'arrow',  duration: 1, color: 'white'}) ;   
+          Wait(1)
 
           ApplyingWaves( { target: rect ,   duration: 2, color: 'white'}) ;   
           Wait(1)

@@ -337,11 +337,13 @@ Base.exports.PaperScript = function() {
                                 }, ' \n;project.hideTopLayer');
                                 break;
                             case 'Clear':
+                            case 'clear':
                                 replaceCode({
                                     range: [node.start, node.end]
                                 }, ' \n;curPage.cly.removeChildren(); ');
                                 break;
                             case 'Broadcast':
+                            case 'broadcast':
                                 replaceCode({
                                     range: [node.callee.start, node.callee.end]
                                 }, ' \n;project.broadcast');
@@ -357,16 +359,19 @@ Base.exports.PaperScript = function() {
                                 }, '}; \n curPage.blockAnimation = true;  \n curPage = new Page(curLayer); \n curPage.setup2=function(curPage, curLayer, curTimeline){ ');
                                 break;
                             case 'Play':
+                            case 'play':
                                 replaceCode({
                                     range: [node.callee.start, node.callee.end]
                                 }, ' \n curPage.add_to_tl');
                                 break;
                             case 'Create':
+                            case 'create':
                                 replaceCode({
                                     range: [node.callee.start, node.callee.end]
                                 }, ' \n curPage.createItems');
                                 break;
                             case 'Uncreate':
+                            case 'uncreate':
                                 replaceCode({
                                     range: [node.callee.start, node.callee.end]
                                 }, ' \n curPage.uncreateItems');
@@ -380,6 +385,14 @@ Base.exports.PaperScript = function() {
                             case 'Homotopy':
                             case 'ApplyingWaves':
                             case 'MorphingTo':
+                            case 'focus':
+                            case 'indicate':
+                            case 'flash':
+                            case 'circumscribe':
+                            case 'showPassingflash':
+                            case 'homotopy':
+                            case 'applyingwaves':
+                            case 'morphingto':
                                 var code = getCode(node), tag = node.callee.name;
                                 code = insertOptions(code, 'page : curPage, ');
                                 code = code.replace(tag, 'RU.' + tag)
@@ -388,6 +401,7 @@ Base.exports.PaperScript = function() {
                                 }, code);
                                 break;  
                             case 'PlayCode':
+                            case 'playcode':
                                 var code = getCode(node), numops = node.arguments.length,
                                     op0 = node.arguments[0].raw, op0len = op0.length, op1 = numops > 1 ? node.arguments[1].raw : undefined;
                                 op0 = op0.substring(1,op0len-1); 
@@ -408,7 +422,11 @@ Base.exports.PaperScript = function() {
                                     range: [node.callee.start, node.callee.end]
                                 }, 'anime.stagger');
                                 break; 
-                           
+                            case 'resumeAnimation':
+                                replaceCode({
+                                    range: [node.callee.start, node.callee.end]
+                                }, ' curPage.cly._player.nextStep');
+                                break; 
                         }
                         switch(node.callee.name ){
                             case 'Wait': 
@@ -433,9 +451,9 @@ Base.exports.PaperScript = function() {
                                 }, ' } ; \n  curPage = new Page(curLayer); \n curPage.setup2=function(curPage, curLayer, curTimeline){  \n');
                                 break;  
                             case 'Scene': 
-                                replaceCode({
-                                    range: [node.start, node.start]
-                                }, ' }; ');
+                              //  replaceCode({
+                              //      range: [node.start, node.start]
+                             //   }, ' }; ');
                                 replaceCode({
                                     range: [node.end, node.end]
                                 }, ';  curLayer  =  project.getActiveLayer(); \n'   

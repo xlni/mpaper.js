@@ -7,43 +7,33 @@
     
     <script type="text/javascript" src="../../../dist/mpaper-full.js"></script>
     <script type="text/paperscript" canvas="canvas">
-          project.useBuiltinStyle('dark');  
-          rect = new Path.Rectangle({
-              position:  [400, 200],
-              size: 200,  
-              fillColor: 'blue'
-          })
-          rect2 = rect.clone();
-          rect3 = rect.clone();
-          rect4 = rect.clone();
-          group = new Group(rect, rect2, rect3, rect4 );
-          group.align(false, 30);
-          group.position = [600,300]
+    project.useBuiltinStyle('dark');  
+    rect = new Path.Rectangle({ 
+        size: 50,  
+        fillColor: 'blue'
+    });
+    rect2 = rect.clone();
+    rect3 = rect.clone();
+    rect4 = rect.clone();
+    group = new Group(rect, rect2, rect3, rect4 );
+    group.align(false, 30);
+    group.position = [300,300]
 
-          Create( {target: group, type: 'FadeIn', duration: 1} )   
-          Wait(1)
+    Create( {target: group, type: 'FadeIn', duration: 1} )   
+    Wait(1)
 
-           Focus( { target: rect , color: 'white'}) ; 
-           Wait(1)
+    Focus( { target: rect , color: 'white'}) ; 
+    Wait(1)
 
-           rect4.on('click', function(){
-               enterScene('story-1' );
-           })
-           Pause()
-          Circumscribe( { target: rect , duration: 3, color: 'white'}) ; 
-          Wait(1)
-          ShowPassingFlash( { target: rect , tips: 'arrow',  duration: 3, color: 'white'}) ;   
-          Wait(1)
-
-      //    ApplyingWaves( { target: group ,  ripples: 3, amplitude: 50, time_width: 30,  duration: 5, color: 'white'}) ;   
-      //    Wait(1)
- 
-     //     Uncreate( {target: group, type: 'FadeOut', duration: 1} )   
-
+    rect4.on('click', function(){
+        enterScene( 'story-1' );
+    })
+    Pause();
+    Circumscribe( { target: rect , duration: 3, color: 'white'}) ; 
+    
    Scene('story-1')
-     circle = new Path.Circle({
-        center:  [400, 200],
-        radius: 100,  
+     circle = new Path.Circle({ 
+        radius: 50,  
         fillColor: 'blue'
     })
     circle2 = circle.clone();
@@ -51,7 +41,7 @@
     circle4 = circle.clone();
     group2 = new Group(circle, circle2, circle3, circle4 );
     group2.align(false, 30);
-    group2.position = [600,600]
+    group2.position = [300,400]
 
     Create( {target: group2, type: 'FadeIn', duration: 1} )   
     Wait(1)

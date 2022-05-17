@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Style testing</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <script type="text/javascript" src="../../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+ 
+        project.useBuiltinStyle('dark'); 
+ 
+        Main()
+
+        text = new StyledText({ 
+            fillColor: 'red',
+            strokeColor: 'blue', 
+            fontSize: 20,  
+            bgColor:'pink',
+            borderColor:'green',
+            corner:5,
+            borderWidth:1,
+            textXOffset:10,
+            textYOffset:3,
+            content: 'Hello World'
+        });
+        text.position = view.center;
+
+        Create( {target: text, type: 'GrowFromCenter', duration: 3})
+        
+
+    </script>
+</head>
+<body>
+    <canvas id="canvas" resize stats></canvas>
+</body>
+</html>

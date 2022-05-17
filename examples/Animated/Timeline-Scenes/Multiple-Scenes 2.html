@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Scenes </title>
+    <link rel="stylesheet" href="../../css/style.css">
+    
+    <script type="text/javascript" src="../../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+        project.useBuiltinStyle('dark');  
+         
+   Scene('story-1')
+     circle = new Path.Circle({
+       // center:  [400, 200],
+        radius: 50,  
+        fillColor: 'blue'
+    }) 
+    Create( {target: circle, type: 'FadeIn', duration: 1} )   
+   
+    circle.on('click', function(){ 
+        leaveScene({resumeOnClose: true});
+       });
+
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>
