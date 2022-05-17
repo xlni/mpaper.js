@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Path Tangents</title>
+    <link rel="stylesheet" href="../css/style.css"> 
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+        mpaper.settings.insertItems = true;
+        project.useBuiltinStyle('dark'); 
+
+        var center = view.center;
+        var line1 = new Path.Line(center, center + [400,0]);  
+      //  line1.fitBounds(view.bounds.scale(0.7));
+        line1.strokeColor = 'orange';
+        line1.fillColor = 'orange'; 
+
+        var path = new Path.Star({
+               center: [50, 50],
+               points: 12,
+               radius1: 25,
+               radius2: 40,
+               fillColor: 'white'
+           });
+ 
+        var  totalLen = line1.length; 
+        var aupdater = function(event, progress){  
+              var preLoc =  line1.getLocationAt(totalLen*progress);
+              path.position = new Point(preLoc.point.x, preLoc.point.y);
+              console.log(path.position ) 
+        };
+        
+        path.addUpdater( aupdater , 5);
+ 
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

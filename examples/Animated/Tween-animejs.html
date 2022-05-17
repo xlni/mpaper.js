@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Path Tangents</title>
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+      mpaper.settings.insertItems = true;
+      project.useBuiltinStyle('dark'); 
+       var center = view.center;
+          // Tweens chaining:
+       var circle = new Path.Circle({
+           center: view.center, 
+           radius: 50,
+           fillColor: 'red'
+       });
+
+        project.activeLayer._timeline.add({
+           targets: circle,  
+           position: new Point(100,200), 
+        fillColor: 'blue',
+         easing: 'linear'  ,
+          duration: 3
+      }).play();  
+  
+   var circle2 = new Path.Circle({
+         center: view.center, 
+      radius: 50,
+      fillColor: 'red'
+   });
+ 
+     //resize , scale?
+      project.activeLayer._timeline.add({
+          targets: circle2,   
+          scaleX: 2,
+          scaleY: 1.5,
+     //     'bounds.size': new Size([200,100]), 
+      //    position: circle2.center,
+           fillColor: 'green',
+          easing: 'linear'  ,
+         duration: 3
+        }).play();  
+   
+
+
+
+
+    //   var circle2 = new Path.Circle({
+    //    center: view.center + [100,100], 
+    //    radius: 50,
+   //     fillColor: 'red'
+    //  });
+
+    //  circle2.tween({ fillColor: 'black', duration: 3  } );
+      
+ 
+ 
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

@@ -1,0 +1,43 @@
+{
+  "name": "mpaper-jsdom",
+  "version": "0.12.15",
+  "description": "Math extension of popular Paper.js",
+  "license": "MIT",
+  "homepage": "http://mpaperjs.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xlni/mpaper-jsdom"
+  },
+  "bugs": "https://github.com/xlni/mpaper.js/issues",
+  "author": " ",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "dependencies": {
+    "jsdom": "^16.5.1",
+    "mpaper": "0.12.15",
+    "source-map-support": "^0.5.19"
+  },
+  "keywords": [
+    "vector",
+    "graphic",
+    "graphics",
+    "2d",
+    "geometry",
+    "bezier",
+    "curve",
+    "curves",
+    "path",
+    "paths",
+    "canvas",
+    "svg",
+    "mpaper",
+    "mpaper.js",
+    "mpaperjs"
+  ]
+}

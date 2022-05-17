@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Path Tangents</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+      //  mpaper.settings.insertItems = true;
+      project.useBuiltinStyle('dark');
+      
+          center = view.center;
+          line1 = new R9Line(center, center + [200,0]);  
+      //  line1.fitBounds(view.bounds.scale(0.7));
+        line1.strokeColor = 'orange';
+        line1.fillColor = 'orange';
+
+        Create({target: line1})
+
+          acircle  = new Path.Circle({
+          center: [200,200],
+          radius: 100,
+          strokeColor: 'red'
+        });
+        Create({target: acircle})
+          line1 = new R9TangentLine( {
+                 host: acircle,
+                 point: [100,200],
+                 t_len: 100,
+          });   
+          line1.strokeColor = 'orange';
+          line1.fillColor = 'orange';
+
+        Create({target: line1})
+
+          line1 = new R9TangentLine( {
+            host: acircle,
+            point: [300,200],
+            t_len: 100,
+            vertexDraggable : true
+          });   
+          line1.strokeColor = 'orange';
+          line1.fillColor = 'orange';
+          line1.strokeWidth = 4;
+          Create({target: line1})
+          
+
+            line2 = new Path.Line([200,200],   [400,150]);   
+          line2.strokeColor = 'orange';
+          line2.fillColor = 'orange'; 
+            line3 = new Path.Line([200,200],  [300, 50]);   
+          line3.strokeColor = 'orange';
+          line3.fillColor = 'orange'; 
+          line3.setVertexDraggable(true)
+
+          Create({target: [line2, line3 ]})
+
+            anggle = new R9Angle( {  vertex:  [200,200],
+                                       from:   [400,150],
+                                       to:    {  
+                                          type : 'segment',
+                                          order: 1,
+                                          shape: line3,
+                                       },
+                                       show_label: true ,
+                                       dash:   true ,
+                                       show_arrow:  true,
+                                       strokeColor: 'black'
+                           });
+         Create({target: [ anggle ]})             
+
+          line2 = new R9Line(center, center + [200,50]);  
+        //  line1.fitBounds(view.bounds.scale(0.7));
+          line2.strokeColor = 'orange';
+          line2.fillColor = 'orange';
+          line2.setTips('circle');
+  
+
+            line3 = new R9Line(center, center + [200,100]);  
+          //  line1.fitBounds(view.bounds.scale(0.7));
+            line3.strokeColor = 'orange';
+            line3.fillColor = 'orange';
+            line3.setTips('star');
+      
+              line4 = new R9DashLine(center, center + [200,150]);  
+            //  line1.fitBounds(view.bounds.scale(0.7));
+              line4.strokeColor = 'orange';
+              line4.fillColor = 'orange';
+              line4.setTips('polygon');
+
+                line5 = new R9DashLine(center, center + [200,200]);  
+              //  line1.fitBounds(view.bounds.scale(0.7));
+              line5.strokeColor = 'orange';
+              line5.fillColor = 'orange';
+              line5.setTips('square');
+  
+
+                line6 = new R9Line(center, center + [200,250]);  
+              //  line1.fitBounds(view.bounds.scale(0.7));
+              line6.strokeColor = 'orange';
+              line6.fillColor = 'orange';
+              line6.setTips('arrow');
+
+        Create({target: [line2, line3, line4, line5, line6]})             
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

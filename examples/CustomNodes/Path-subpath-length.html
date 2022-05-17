@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Path Tangents</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+        //  mpaper.settings.insertItems = true;
+        project.useBuiltinStyle('dark');
+
+           path =  new Path.PolyLine({
+            data:[200,500,300,100,400,1000,300,900,800,500],
+            closed:false
+        }); 
+        path.position = view.center; 
+        path.strokeColor = 'orange';
+
+          subpath = path.cloneSubPath(100,900);
+        subpath.strokColor= 'blue';
+        subpath.strokeWidth = 4;  
+        console.log('length = ' + subpath.length)
+       
+           path2 =  new Path.Circle({
+            center : [500,500],
+            radius:200,
+        }); 
+        path2.strokeColor = 'orange';
+
+          subpath2 = path2.cloneSubPath(100,300);
+        subpath2.strokColor= 'blue';
+        subpath2.strokeWidth = 4;  
+        console.log('length = ' + subpath2.length)
+       
+        Create({targets: [path, subpath, path2, subpath2]})
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

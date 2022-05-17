@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Path Tangents</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+      //  mpaper.settings.insertItems = true;
+      project.useBuiltinStyle('dark')
+
+    //test dynamic_step_value
+    l1 =  new  NumberLine( {  
+      from: [100,300],
+      to: [400,300],
+      x_range:[-10, 10, 2], 
+      numberColor: 'blue',
+      strokeColor: 'red',
+      include_label:true, 
+      strokeWidth: 3,
+      tick_length : 15,  
+      dynamic_step_value: true,
+  });
+  l1.strokeColor = 'red';
+  l1.strokeWidth = 3;
+  l1.setVertexDraggable(true)
+
+  Create({target: l1})
+ 
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Scenes </title>
+    <link rel="stylesheet" href="../../css/style.css">
+    
+    <script type="text/javascript" src="../../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+
+        project.useBuiltinStyle('dark');  
+        rect = new Path.Rectangle({
+            position:  [400, 200],
+            size: 200,  
+            fillColor: 'blue'
+        })
+        rect2 = rect.clone();
+        rect3 = rect.clone();
+        rect4 = rect.clone();
+        group = new Group(rect, rect2, rect3, rect4 );
+        group.align(false, 30);
+        group.position = [600,200]
+
+        Create( {target: group, type: 'FadeIn', duration: 1} )   
+        Wait(1)
+
+        Focus( { target: rect , color: 'white'}) ; 
+        Wait(1)
+
+        //used to bring up new scene
+        rect4.on('click', function(){
+            enterScene('story-1', {  type: 'DisappearToCenter' } );
+        })
+        
+        //stop animation here, waiting for new scene....
+        Pause() 
+
+        Circumscribe( { target: rect , duration: 3, color: 'white'}) ; 
+        Wait(1)
+        ShowPassingFlash( { target: rect , tips: 'arrow',  duration: 3, color: 'white'}) ;   
+        Wait(1)
+
+      
+   //we can define multiple scenes, or story line.
+   Scene('story-1')
+     circle = new Path.Circle({
+        center:  [400, 200],
+        radius: 50,  
+        fillColor: 'red'
+    })
+    circle2 = circle.clone();
+    circle3 = circle.clone();
+    circle4 = circle.clone();
+    group2 = new Group(circle, circle2, circle3, circle4 );
+    group2.align(false, 30);
+    group2.position = [600,400]
+
+    End_Scene_Setup({ type: 'FadeIn' });
+
+    circle = new Path.Circle({
+        center:  [400, 200],
+        radius: 100,  
+        fillColor: 'blue'
+    })
+    circle2 = circle.clone();
+    circle3 = circle.clone();
+    circle4 = circle.clone();
+    group2 = new Group(circle, circle2, circle3, circle4 );
+    group2.align(false, 30);
+    group2.position = [600,600]
+
+    Create( {target: group2, type: 'FadeIn', duration: 1} )   
+    Wait(1)
+
+     Focus( { target: group2 , color: 'white'}) ; 
+     Wait(1)
+
+    circle4.on('click', function(){ 
+        leaveScene({resumeOnClose: true});
+    });
+
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

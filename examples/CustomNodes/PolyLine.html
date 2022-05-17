@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Path Tangents</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+        //  mpaper.settings.insertItems = true;
+        project.useBuiltinStyle('dark');
+
+        function onResize() { 
+            path2.position = view.center + [0,  50];
+        }
+        Main();
+        // draw path
+           path =  new Path.PolyLine({
+            data:[20,50,30,10,40,100,30,90,80,50],
+            closed:false
+        });
+        
+        path.position = view.center;
+        path.fitBounds(view.bounds.scale(0.7));
+        path.strokeColor = 'orange';
+
+           path2 =  new Path.PolyLine({
+            data:[20,50,30,10,40,100,30,90,80,50],
+            closed:true
+        });
+        
+        path2.position = view.center+ [0,  50];
+        path2.fitBounds(view.bounds.scale(0.5));
+        path2.fillColor = 'red';
+      
+        Create({target: [path, path2]})
+      
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

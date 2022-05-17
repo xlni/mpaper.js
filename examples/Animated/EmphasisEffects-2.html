@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Path Tangents</title>
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+
+        mpaper.settings.insertItems = true;
+        project.useBuiltinStyle('dark');  
+        
+        var obj7 =  new LabeledDot({ 
+            fillColor: 'red',
+            strokeColor: 'blue', 
+            fontSize: 20,
+            bgColor:'pink',
+            borderColor:'green',
+            corner:5,
+            borderWidth:1, 
+            padding:4,
+            content: 'X'
+        });
+        obj7.position =  [400, 200];
+        Flash({ target: obj7, times: 0}  );
+
+          var rect = new Path.Rectangle({
+              position:  [400, 200],
+              size: 26, 
+              opacity: 0.3,
+              fillColor: 'blue'
+          })
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

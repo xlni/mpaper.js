@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Path Tangents</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+
+      mpaper.settings.insertItems = true;
+      project.useBuiltinStyle('dark'); 
+      
+        var center = view.center;
+        var line1 = new Path.Line(center, center + [200,0]);  
+      //  line1.fitBounds(view.bounds.scale(0.7));
+        line1.strokeColor = 'orange';
+        line1.fillColor = 'orange'; 
+        line1.start(5);
+
+
+        var line2 = new Path.Line(center, center + [200,50]);  
+        //  line1.fitBounds(view.bounds.scale(0.7));
+          line2.strokeColor = 'orange';
+          line2.fillColor = 'orange';
+          line2.setTips('circle'); 
+          line2.start(5);
+
+  
+          var line3 = new Path.Line(center, center + [200,100]);  
+          //  line1.fitBounds(view.bounds.scale(0.7));
+            line3.strokeColor = 'orange';
+            line3.fillColor = 'orange';
+            line3.setTips('star'); 
+            line3.start(5);
+
+            var line4 = new Path.Line(center, center + [200,150]);  
+            //  line1.fitBounds(view.bounds.scale(0.7));
+              line4.strokeColor = 'orange';
+              line4.fillColor = 'orange';
+              line4.setTips('polygon'); 
+              line4.start(5);
+
+              var line5 = new Path.Line(center, center + [200,200]);  
+              //  line1.fitBounds(view.bounds.scale(0.7));
+              line5.strokeColor = 'orange';
+              line5.fillColor = 'orange';
+              line5.setTips('arrow');
+              line5.duration = 5;
+              line5.start(3);
+
+              var rect = new Path.Rectangle({
+                position:  [200, 200],
+                size: 50,  
+                strokeColor: 'black',
+                strokeWidth: 3
+            })
+            rect.start(3);
+         
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

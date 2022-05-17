@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Path Tangents</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+      //  mpaper.settings.insertItems = true;
+      project.useBuiltinStyle('dark');  
+
+           center = view.center;
+           line1 = new Path.Line(center, center + [200,0]);   
+        line1.strokeColor = 'orange';
+        line1.fillColor = 'orange';
+        line1.strokeWidth = 5;
+        line1.setVertexDraggable(true)
+
+           line2 = new Path.Line(center, center + [200,50]);  
+        //  line1.fitBounds(view.bounds.scale(0.7));
+          line2.strokeColor = 'orange';
+          line2.fillColor = 'orange';
+          line2.setTips('circle');
+          line2.setVertexDraggable(true)
+             line3 = new Path.Line(center, center + [200,100]);  
+          //  line1.fitBounds(view.bounds.scale(0.7));
+            line3.strokeColor = 'orange';
+            line3.fillColor = 'orange';
+            line3.setTips('star');
+            line3.setVertexDraggable(true)
+               line4 = new Path.Line(center, center + [200,150]);  
+            //  line1.fitBounds(view.bounds.scale(0.7));
+              line4.strokeColor = 'orange';
+              line4.fillColor = 'orange';
+              line4.setTips('polygon');
+              line4.setVertexDraggable(true)
+                 line5 = new Path.Line(center, center + [200,200]);  
+              //  line1.fitBounds(view.bounds.scale(0.7));
+              line5.strokeColor = 'orange';
+              line5.fillColor = 'orange';
+              line5.setTips('square');
+              line5.setVertexDraggable(true)
+
+                 line6 = new Path.Line(center, center + [200,250]);  
+              //  line1.fitBounds(view.bounds.scale(0.7));
+              line6.strokeColor = 'orange';
+              line6.fillColor = 'orange';
+              line6.strokeWidth = 5;
+              line6.setTips('arrow');
+             
+              line6.setVertexDraggable(true)
+
+
+            path7 =  new Path.PolyLine({
+                data:[20,50,30,10,40,100,30,90,80,50],
+                closed:false
+            });
+            
+            path7.position = view.center- [200,200];
+            path7.fitBounds(view.bounds.scale(0.3));
+            path7.strokeColor = 'orange';
+            path7.setVertexDraggable(true)
+
+            Create({targets: [line1, line2, line3, line4, line5, line6, path7]})
+    
+    
+          </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

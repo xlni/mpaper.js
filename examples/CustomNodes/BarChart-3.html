@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Bar Chart test -1</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+      //  mpaper.settings.insertItems = true;
+      //  project.useBuiltinStyle('dark'); 
+         center = view.center; 
+        //test 
+         bar =  new  CoordinateSystem.createBarChart( {  
+                 render: [100, 100, 300, 300], 
+                 y_range:[-10,20,5],  
+                strokeWidth: 3,
+                strokeColor: 'red',
+                values :[[-4,5,7 ],[ 4,15,7 ],[-4,-5,4 ],[14,15,17 ],[-4,15,-7 ]],
+                bar_names : ['a','b', 'c', 'd', 'sdfs'], 
+                bar_name_size : 12, 
+                bar_colors :['red'],  
+                bar_fill_opacity : 0.5  
+        });
+        Create({target: bar, duration:3}) 
+      // bar.strokeColor = 'red';
+      // bar.strokeWidth = 3;
+        Wait(1);
+        c = new Path.Circle({ 
+          center: [300,300],
+           radius: 20,
+           fillColor: 'red',
+           strokeColor: 'red'
+       });
+       Create(   {targets: c, type: 'FadeIn', duration: 1} )
+
+       Wait(3);
+        v =  [[-6,8,2 ],[ 4,15,7 ],[ 4, 5,9 ],[ 4, 5, 7 ],[ 4, 5,17 ]];
+        PlayCode( ' bar.changeValue( v, 3  ) ' );
+      
+   
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

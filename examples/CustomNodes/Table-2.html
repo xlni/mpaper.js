@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Bar Chart test -1</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+      //mpaper.settings.insertItems = true;
+      project.useBuiltinStyle('dark');
+      
+          center = view.center; 
+        //test 
+          table =  new  Table( {  
+          area: [100,100,300,200],
+           data: [["First", "Second"],  ["Third","Fourth"]],
+           row_labels:  [ "R1", "R2" ],
+           col_labels:  [ "C1" ,  "C2" ],
+           strokeColor: 'red',
+           fillColor: 'blue',
+           strokeWidth: 1
+        });
+       table.showSelf(curPage.ptimer, {type: 'Write', duration: 4})
+ 
+       Wait(1);
+        //test 
+          table2 =  new  Table( {  
+          area: [450,100,300,200],
+          data: [["First", "Second"],  ["Third","Fourth"]],
+          row_labels:  [ "R1", "R2" ],
+          col_labels:  [ "C1" ,  "C2" ],
+          strokeColor: 'red',
+          fillColor: 'blue',
+          strokeWidth: 1,
+          include_outer_lines: true
+        });
+        table2.showSelf(curPage.ptimer,  {type: 'FadeInFromUp', duration: 1}, 0)
+
+        Wait(1);
+
+          table3 =  new  Table( {  
+          area: [800,100,300,200],
+          data: [["First", "Second"],  ["Third","Fourth"]],
+          row_labels:  [ "R1", "R2" ],
+          col_labels:  [ "C1" ,  "C2" ],
+          strokeColor: 'red',
+          fillColor: 'blue',
+          strokeWidth: 1,
+          include_outer_lines: true,
+          background_rectangle_color: 'pink'
+        });
+        table3.showSelf(curPage.ptimer,  {type: 'FadeIn', duration: 1}, '-=0.5')
+ Wait(1);
+
+          table4 =  new  Table( {  
+          area: [100,350,300,200],
+           data: [["First", "Second"],  ["Third","Fourth"]],
+           row_labels:  [ "R1", "R2" ],
+           col_labels:  [ "C1" ,  "C2" ],
+           strokeColor: 'red',
+           fillColor: 'blue',
+           strokeWidth: 1,
+           row_config:[0.2,0.3,0.5],
+           col_config:[0.2, 0.5,0.3]
+        });
+        table4.showSelf(curPage.ptimer,  {type: 'GrowFromCenter', duration: 1}, '+=0.5')
+ Wait(1);
+          table5 =  new  Table( {  
+          area: [450,350,300,200],
+           data: [["First", "Second"],  ["Third","Fourth"]],
+           row_labels:  [ "R1", "R2" ],
+           col_labels:  [ "C1" ,  "C2" ],
+           strokeColor: 'red',
+           fillColor: 'blue',
+           strokeWidth: 1, 
+           line_config: {
+               strokeColor: 'green',
+               strokeWidth: 5,
+           },
+           text_config: {
+              strokeColor: 'blue',
+              fontSize: 15,
+           },
+        });
+        table5.showSelf(curPage.ptimer,  {type: 'Write', duration: 1}, '+=0.5')
+        Wait(1);
+          table6 =  new  Table( {  
+          area: [800,350,300,200],
+           data: [["First", "Second"],  ["Third","Fourth"]],
+           row_labels:  [ "R1", "R2" ],
+           col_labels:  [ "C1" ,  "C2" ],
+           strokeColor: 'red',
+           fillColor: 'blue',
+           strokeWidth: 1, 
+           cell_bg_color: 'yellow',
+           line_config: {
+               strokeColor: 'green',
+               strokeWidth: 5,
+           },
+           text_config: {
+              strokeColor: 'purple',
+              fontSize: 12,
+           },
+        });
+        table6.showSelf(curPage.ptimer,  {type: 'Write', duration: 1}, '+=0.5')
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

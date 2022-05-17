@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Path Tangents</title>
+    <link rel="stylesheet" href="../css/style.css"> 
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+        mpaper.settings.insertItems = true;
+        project.useBuiltinStyle('dark'); 
+
+        var center = view.center;
+      
+
+        var path = new Path.Star({
+               center: [50, 50],
+               points: 12,
+               radius1: 25,
+               radius2: 40,
+               fillColor: 'white',
+               tooltip: 'this is a tooltip.....'
+           });
+        path.draggable = true;
+        path.addUpdater(new MoveRestriction({
+            host :  path,
+            type :  'mrs_x' 
+        }))
+
+        var line1 = new Path.Line(path.position, path.position + [1000,0]);   
+          line1.strokeColor = 'orange';
+          line1.fillColor = 'orange'; 
+
+ 
+        var path2 = new Path.Star({
+            center: [150, 150],
+            points: 12,
+            radius1: 25,
+            radius2: 40,
+            fillColor: 'white',
+            tooltip: 'this is a tooltip.....',
+            tooltip_type: 11
+        });
+        path2.draggable = true;
+        path2.addUpdater(new MoveRestriction({
+            host :  path2,
+            type :  'mrs_y' 
+        }));
+
+        line1 = new Path.Line(path2.position, path2.position + [0,1000 ]);   
+        line1.strokeColor = 'orange';
+        line1.fillColor = 'orange'; 
+
+
+        var path3 = new Path.Star({
+            center: [250, 250],
+            points: 12,
+            radius1: 25,
+            radius2: 40,
+            fillColor: 'white',
+            tooltip: 'this is a tooltip.....',
+            tooltip_type: 7
+        });
+        path3.draggable = true;
+        path3.addUpdater(new MoveRestriction({
+            host :  path3,
+            type :  'mrs_range_x' ,
+            min: 100,
+            max: 500
+        }))
+        line1 = new Path.Line([ 100, 250], [ 500, 250]);   
+        line1.strokeColor = 'orange';
+        line1.fillColor = 'orange'; 
+
+        var path4 = new Path.Star({
+            center: [350, 350],
+            points: 12,
+            radius1: 25,
+            radius2: 40,
+            fillColor: 'white',
+            tooltip: 'this is a tooltip.....',
+            tooltip_type: 8
+        });
+        path4.draggable = true;
+        path4.addUpdater(new MoveRestriction({
+            host :  path4,
+            type :  'mrs_range_y' ,
+            min: 100,
+            max: 500
+        }))
+        line1 = new Path.Line([  350, 100], [ 350, 500]);   
+        line1.strokeColor = 'orange';
+        line1.fillColor = 'orange'; 
+ 
+        line1 = new Path.Rectangle(new Point(450,450), [450,450]);   
+        line1.strokeColor = 'orange';
+        line1.fillColor = 'rgba(122,122,0,0.5)'; 
+
+        var path5 = new Path.Star({
+            center: [450, 450],
+            points: 12,
+            radius1: 25,
+            radius2: 40,
+            fillColor: 'white',
+            tooltip_type: 2
+        });
+        path5.draggable = true;
+        path5.addUpdater(new MoveRestriction({
+            host :  path5,
+            type :  'mrs_range' ,
+            min: 450,
+            max: 900,
+            min2: 450,
+            max2: 900
+        }))
+     
+        var shape = new Path.Circle({
+            center: [600, 300],
+            radius: 150,
+            fillColor: 'green'
+        });
+
+        var path6 = new Path.Star({
+            center: [600, 350],
+            points: 12,
+            radius1: 5,
+            radius2: 15,
+            fillColor: 'white'
+        });
+        path6.draggable = true;
+        path6.addUpdater(new MoveRestriction({
+            host :  path6,
+            type :  'mrs_shape' , 
+            shape:  shape,
+            onborder: false
+        }))
+
+        var path7 = new Path.Star({
+            center: [600, 250],
+            points: 12,
+            radius1: 5,
+            radius2: 15,
+            fillColor: 'red'
+        });
+        path7.draggable = true;
+        path7.addUpdater(new MoveRestriction({
+            host :  path7,
+            type :  'mrs_shape' , 
+            shape:  shape,
+            onborder: true
+        }))
+
+        var path8 = new Path.Star({
+            center: [500, 250],
+            points: 12,
+            radius1: 5,
+            radius2: 15,
+            fillColor: 'blue'
+        });
+        path8.addUpdater(new MoveRestriction({
+            host :  path8,
+            type :  'mrs_move_with' , 
+            shape:  path7, 
+        }))
+
+
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

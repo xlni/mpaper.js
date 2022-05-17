@@ -1,0 +1,28 @@
+######
+ // Evaluate constants.js inside the precompilation scope before
+                // the actual precompilation, so all the constants substitution
+                // statements in the code can work (look for: /*#=*/):
+
+
+#####
+2. mpaper.js is based on a separate project straps.js
+https://github.com/lehni/straps.js
+Class Inheritance library with support for simple accessors and AOP patterns.
+
+
+it defines Base class , forEach, forIn , each, setter getter, inject ,extend 
+set, each ,create, define, describe.
+
+initialize  is a constructor name defined in straps.js
+"#XXX"  is aliases to property "XXX",   this shortcut is defined in straps.js
+
+
+##### scale and rotate problem 
+"set the size, then scale the shape and after that call the rotate function"
+https://stackoverflow.com/questions/67956791/mpaper-js-closed-arc-changes-its-dimensions-on-rotation
+
+
+#### tween code changes
+1. rename Tween  to Anime
+2. try to change to Animejs code for tween 
+

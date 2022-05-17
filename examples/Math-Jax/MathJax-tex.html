@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>tex-svg</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script type="text/javascript" src="../../lib/mathjax-bridge.js"></script>
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+      
+        //  mpaper.settings.insertItems = true;
+        project.useBuiltinStyle('dark');
+      
+
+        format = Formatter.instance;
+    
+         input =   ' P(E) = {n \\choose k} p^k (1-p)^{ n-k } ';
+        
+         item = new Path.Tex({
+             content : input,
+             scale: 20,
+             position: view.center
+         })
+         Create( {target: item, type: 'FadeIn', duration: 1} )   
+     
+     //   var item = project.importLatex(input);
+    //    item.scale(10); 
+    //    item.position = view.center;   
+
+        /** select a symbol 'k' occured second time **/
+    //   tt =  format.getMathSymbol(item, 'k', 2);
+    //   tt.color = 'red';  
+       /** select all symbols in 'np' , that's n & p  **/
+   //    tt =  format.getMathSymbolRange(item, 'np' );
+   //     for(var i in tt){
+   //        tt[i].color = 'blue'; 
+   //     }  
+
+       Wait(2);
+
+       ApplyingWaves( { target: item , amplitude: 30, ripples: 3,   duration: 5, color: 'white'}) ;   
+       Wait(1)
+
+       Uncreate( {target: item, type: 'FadeOut', duration: 1} )   
+
+
+      
+    </script>
+</head>
+<body>
+  <div id="math"></div> 
+     
+   <canvas id="canvas" resize></canvas>
+</body>
+</html>

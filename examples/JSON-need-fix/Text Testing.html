@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Text Testing</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas1">
+        var text = new PointText(new Point(400,400));
+        text.fillColor = 'black';
+        text.content = 'This is a test \nxxx xxx  xxx \nxxx xxx  xxx';
+       // text.justification = 'left';
+
+        text.onMouseDown = function(e){
+            console.log(e);
+        }
+
+        var circle =  new Path.Star({
+            center: [400,400], 
+            points: 10,
+            radius1: 5,
+            radius2: 10,
+            fillColor: 'red', 
+            strokeColor: 'blue'
+       });
+
+
+        var text = new PointText(new Point(600,400));
+        text.fillColor = 'red';
+        text.strokeWidth = '1';
+        text.content = 'This is also a test \nxxx xxx  xxx \nxxx xxx  xxx \nxxx xxx  xxx';
+        text.justification = 'center';
+
+        text.onMouseDown = function(e){
+            console.log(e);
+        }
+        var circle2 =  new Path.Star({
+            center: [600,400], 
+            points: 10,
+            radius1: 5,
+            radius2: 10,
+            fillColor: 'red', 
+            strokeColor: 'blue'
+       });
+      //  text.scale(5);
+     //   text.translate(15, 15);
+      //  text.rotate(20);
+      //  text.shear(20, 5);
+       
+      //  text.rotate(45);
+      //  text.shear(.85, .15);
+      //  text.scale(.85, 2);
+         
+     //   window._json = project.exportJSON();
+      //  console.log(window._json);
+    </script>
+    <script type="text/paperscript" canvas="canvas2">
+     //   project.importJSON(window._json);
+    </script>
+</head>
+<body>
+    <canvas id="canvas1" width="800" height="800"></canvas>
+    <canvas id="canvas2" width="500" height="500"></canvas>
+</body>
+</html>

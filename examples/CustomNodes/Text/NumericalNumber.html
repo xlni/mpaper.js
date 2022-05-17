@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Boolean Operations</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <script type="text/javascript" src="../../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+      
+        project.useBuiltinStyle('dark'); 
+       
+
+        var text = new DecimalNumber({
+       //     position: view.center + [-100, -200],
+            fillColor: 'red',
+            strokeColor: 'blue',
+            justification: 'center',
+            fontSize: 20,
+             animType: 'writing',
+          //  duration:10.0,
+            number: 123
+        });
+        text.position = view.center;
+        Create( { target: text, type: 'GrowFromCenter', duration:3  }) ; 
+         
+ 
+    </script>
+</head>
+<body>
+    <canvas id="canvas" resize stats></canvas>
+</body>
+</html>

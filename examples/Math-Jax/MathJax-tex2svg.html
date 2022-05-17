@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>tex-svg</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script type="text/javascript" src="../../lib/mathjax-bridge.js"></script>
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+      //  mpaper.settings.insertItems = true;
+      project.useBuiltinStyle('dark');
+    
+      
+      function printRecursive(obj, level, index){ 
+         if( obj._class == 'Group' ){
+              for(  g in obj._children){
+                printRecursive(  obj._children[g], level+1 , g)
+              }
+         } else {
+             obj.strokeColor = 'red';
+           //  if( index == 'MJX-1-TEX-I-1D44E 1')
+              //   obj.fillColor = 'red';
+             if( obj._class )
+                 console.log(level + " : " + index + " = (_class) "  + (obj._class  ) );
+             if( obj._name )
+                 console.log(level + " : " + index + " =  (_name) "  + ( obj._name) );
+         }
+      } 
+  Main();
+
+        mark = new Path.Circle({
+         center: [200,200],
+         radius:10,
+         fillColor: 'red'
+      })
+        format = Formatter.instance;
+    //    node = document.querySelector('#math');
+   //     options = MathJax.getMetricsFor(node, true);
+          options = {  };
+   
+          input = '1234567890';
+      //    input = 'abcdefghijklmnopqrstuvwxyz';
+        input = 'αβγδεζηθ';
+         input = 'Α';
+     
+         input = '\\frac{2}{1-3^4}';
+         input = 'x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}';  
+         input = 'aaa'
+
+     
+          item = project.importLatex( input   );
+        item.scale(10); 
+        item.position = view.center;   
+     Create({target: item})
+       
+          tt =  format.getMathSymbol(item, 'a', 2);
+        if( tt ) {
+          console.log(tt )
+       //   tt.fillColor = 'red';
+          tt.remove();
+          project._activeLayer.addChild(tt)
+          tt.position  = [100,100]
+        }
+        console.log(project._activeLayer.bounds)
+    </script>
+</head>
+<body>
+  <div id="math"></div> 
+     
+   <canvas id="canvas" resize></canvas>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Path Tangents</title>
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+      mpaper.settings.insertItems = true;
+      project.useBuiltinStyle('dark'); 
+       var center = view.center;
+          // Tweens chaining:
+          var i = 5,  j = 5;
+          var circle =  new Path.Star({
+            center: [200 + 100* i, 200 + 100*j ], 
+            points: 3,
+            radius1: 20,
+            radius2: 50,
+            fillColor: 'red',
+            strokeColor: 'blue'
+        });
+        circle.applyMatrix = false;
+        project.activeLayer._timeline.add({
+           targets: circle,   
+           rotation: 360,
+         easing: 'linear'  ,
+          duration: 3
+      }).play();  
+  
+  
+ 
+ 
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

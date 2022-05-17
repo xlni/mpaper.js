@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Path Tangents</title>
+    <link rel="stylesheet" href="../css/style.css"> 
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+
+        mpaper.settings.insertItems = true;
+        project.useBuiltinStyle('dark'); 
+
+       
+        dot = new Path.Circle({
+            center: [100,200],
+            radius:10,
+            strokeColor: 'white'
+        });
+
+        
+        tp = new TracedPath({
+            traced_func : dot,
+            tail_time: 0.5,
+            strokeWidth: 1,
+            strokeColor: 'white',
+            shadowColor: 'red',
+            shadowBlur: 1,
+        })
+        function r(){
+            dot.position.x += 2;
+            dot.position.y = 200+ Math.sin(dot.position.x/20)*40
+        };
+
+        dot.addUpdater( r , 3)
+ 
+ 
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

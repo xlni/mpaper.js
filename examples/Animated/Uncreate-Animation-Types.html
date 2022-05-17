@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Create Animation</title>
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+        mpaper.settings.insertItems = true;
+        project.useBuiltinStyle('dark'); 
+      var s = [];
+      s[0] = 'Uncreate';                           
+      s[1] = 'Unwrite';
+      s[2] = 'DisappearToCenter';
+      //point
+      s[3] = 'DisappearToPoint';  
+      s[4] = 'SpinInToNothing';                   
+      s[5] = 'FadeOut';
+      s[6] = 'FadeOutToLarge';   
+      //point               
+      s[7] = 'FadeOutToPoint';   
+      s[8 ] = 'ImageEffect';     
+       
+
+       var center = view.center;  
+       for(var i = 0; i < 9; i++){  
+            var circle =  new Path.Star({
+                center: [200 + 100* (i/5), 200 + 100*(i%5) ], 
+                points: 20,
+                radius1: 20,
+                radius2: 50,
+                fillColor: 'red', 
+                strokeColor: 'blue'
+            }); 
+            project._activeLayer.addChild( circle );
+            var param = { type: s[ i ], duration:1 }
+            if( s[ i ] == 'DisappearToPoint' )  param.point = center;
+            if( s[ i ] == 'FadeOutToPoint' )  param.point = center; 
+            
+            param.targets = circle;
+            Uncreate(   param ) ; 
+        } 
+    
+  
+   
+ 
+ 
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

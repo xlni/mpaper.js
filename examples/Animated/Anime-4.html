@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Animate 3</title>
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+      _timeline = anime.timeline({ 
+            autoplay: false,
+            complete: function(){
+               console.log("done.....................")
+            }
+          });
+
+      objs = new Path.Circle({ 
+            radius: 10,
+            fillColor: 'red',
+            strokeColor: 'red'
+      });
+      project._activeLayer.addChild(objs);
+      for(var i = 0; i < 10; i++){ 
+            _timeline.add({
+                  targets: objs,
+                  position: "+=[20,20]",
+                  duration: 0.5
+            })
+      }
+      _timeline.add({
+            targets: objs,
+            position: "+=[20,-200]",
+            duration: 0.5
+      }, 10)
+      
+      _timeline.play();
+       
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

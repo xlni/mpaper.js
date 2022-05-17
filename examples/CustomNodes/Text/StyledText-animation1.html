@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Boolean Operations</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <script type="text/javascript" src="../../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+        var text = new StyledText({
+       //     position: view.center + [-100, -200],
+            fillColor: 'red',
+            strokeColor: 'blue',
+            justification: 'center',
+            fontSize: 20,
+            //0 static, 1 writing, 2 rewriting, 3 underline, 4 karaoka,  5 manim 
+             animType:'karaoka',  
+            // karaokaWidth : 100, 
+            content: 'anim type-1 de fg hi jk lnm  '
+        });
+        text.position = view.center;
+        Create({target: text, duration: 10, type: 'Text'});
+         
+ 
+    </script>
+</head>
+<body>
+    <canvas id="canvas" resize stats></canvas>
+</body>
+</html>
