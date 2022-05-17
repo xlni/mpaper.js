@@ -1,4 +1,4 @@
-# MPaper.js - is an math extension of the popular Paper.js(https://travis-ci.org/paperjs/mpaper.js) [![NPM](https://img.shields.io/npm/v/mpaper.svg)](https://www.npmjs.com/package/mpaper) project
+# MPaper.js - is an math extension of the popular [Paper.js](https://travis-ci.org/paperjs/mpaper.js)  project
 
 MPaper.js integrate Paper.js with Anime.js(https://animejs.com/) for animation API. it also borrow some API design ideas and codes from Manim Community(https://docs.manim.community/en/stable/index.html)
  
