@@ -2,8 +2,7 @@
 
 MPaper.js integrate Paper.js with Anime.js(https://animejs.com/) for animation API. it also borrow some API design ideas and codes from Manim Community(https://docs.manim.community/en/stable/index.html)
  
-## Tutorial
-
+## Tutorial 
 ### Code Structure-1
  
      
@@ -102,8 +101,10 @@ first, we need to include two additional js libraries :
 ![latex-morphing](https://user-images.githubusercontent.com/25872192/168629258-8495de05-0117-4263-9cc4-30c6cca7cd48.gif)
 
 
+## The following sections are for development only.
+(some unit testing code is broken, so please use --no-verify flag for dist)
 
-## Installing Paper.js 
+### Installing Paper.js 
 
 The various distributions come with two different pre-build versions of
 Paper.js, in minified and normal variants:
