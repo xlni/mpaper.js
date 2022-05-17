@@ -2,6 +2,7 @@
 
 MPaper.js integrate Paper.js with Anime.js(https://animejs.com/) for animation API. it also borrow some API design ideas and codes from Manim Community(https://docs.manim.community/en/stable/index.html)
  
+Detailed tutorial at [wikipage](https://github.com/xlni/mpaper.js/wiki/Animation-Scripting-for-teaching-K12-math)
 ## Tutorial 
 ### Code Structure-1
  
