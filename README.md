@@ -1,9 +1,9 @@
-# MPaper.js - is an math extension of the popular Paper.js(https://travis-ci.org/paperjs/mpaper.js) [![NPM](https://img.shields.io/npm/v/mpaper.svg)](https://www.npmjs.com/package/mpaper) project
+# MPaper.js - is an math extension of the popular [Paper.js](https://travis-ci.org/paperjs/mpaper.js)  project
 
 MPaper.js integrate Paper.js with Anime.js(https://animejs.com/) for animation API. it also borrow some API design ideas and codes from Manim Community(https://docs.manim.community/en/stable/index.html)
  
-## Tutorial
-
+Detailed tutorial at [wikipage](https://github.com/xlni/mpaper.js/wiki/Animation-Scripting-for-teaching-K12-math)
+## Tutorial 
 ### Code Structure-1
  
      
@@ -70,9 +70,10 @@ As we use Anime.js for controlling animation process, we can directly invoke Ani
 * PlayCode()
 * Anime()
 
-#### some special requirement for coding in mpaper:
+## some special requirement for coding in mpaper:
 * all reserved words starting with UpperCase letter must be at top level. they should not be inside any code blocks,
 like {}, or function body, for-loop...
+* if we have to use reserved words within code blocks, most of them have corresponding lower-case version. for example: Create -> create, Uncreate -> uncreate.
 * all declared variable should omit keyword 'var' as mpaper automatically promote variables into top-level scope.
 
 #### switch among different scenes:
@@ -102,8 +103,10 @@ first, we need to include two additional js libraries :
 ![latex-morphing](https://user-images.githubusercontent.com/25872192/168629258-8495de05-0117-4263-9cc4-30c6cca7cd48.gif)
 
 
+## The following sections are for development only.
+(some unit testing code is broken, so please use --no-verify flag for dist)
 
-## Installing Paper.js 
+### Installing Paper.js 
 
 The various distributions come with two different pre-build versions of
 Paper.js, in minified and normal variants:
