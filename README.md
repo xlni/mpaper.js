@@ -70,9 +70,10 @@ As we use Anime.js for controlling animation process, we can directly invoke Ani
 * PlayCode()
 * Anime()
 
-#### some special requirement for coding in mpaper:
+## some special requirement for coding in mpaper:
 * all reserved words starting with UpperCase letter must be at top level. they should not be inside any code blocks,
 like {}, or function body, for-loop...
+* if we have to use reserved words within code blocks, most of them have corresponding lower-case version. for example: Create -> create, Uncreate -> uncreate.
 * all declared variable should omit keyword 'var' as mpaper automatically promote variables into top-level scope.
 
 #### switch among different scenes:
