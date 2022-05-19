@@ -7,16 +7,8 @@
     
     <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
     <script type="text/paperscript" canvas="canvas">
-       project.useBuiltinStyle('dark'); 
-
-       c = new Path.Circle({ 
-         center: [300,300],
-          radius: 20,
-          fillColor: 'red',
-          strokeColor: 'red'
-      });
-      Create(   {targets: c, type: 'FadeIn', duration: 1} )
-
+      
+      project.useBuiltinStyle('dark');  
       objs = []; 
       for(var i = 0; i < 10; i++){
          for( var j = 0; j < 5; j++ ){
@@ -27,10 +19,8 @@
                   strokeColor: 'red'
             }))
          }
-      }
-
-      Wait(10);
-
+      } 
+      Wait(1); 
      Play({
           targets: objs,
           position: '+=[100,100]',

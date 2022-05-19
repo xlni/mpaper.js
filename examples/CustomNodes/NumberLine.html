@@ -7,10 +7,10 @@
     <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
     <script type="text/paperscript" canvas="canvas">
       //  mpaper.settings.insertItems = true;
-      project.useBuiltinStyle('dark');  
-           center = view.center;
+       project.useBuiltinStyle('dark');  
+       center = view.center;
         
-           l1 =  new  NumberLine( {  
+        l1 =  new  NumberLine( {  
             from: [100,100],
             to: [400,100],
             x_range:[-10, 10, 2], 
@@ -25,7 +25,7 @@
         Create({target: l1});
 
         //test  tick_length
-        l1 =  new  NumberLine( {  
+        l2 =  new  NumberLine( {  
           from: [100,150],
           to: [400,150],
           x_range:[-10, 10, 2], 
@@ -35,13 +35,13 @@
           strokeWidth: 3,
           tick_length : 15,
       });
-      l1.strokeColor = 'red';
-      l1.strokeWidth = 3;
+      l2.strokeColor = 'red';
+      l2.strokeWidth = 3;
 
-      Create({target: l1});
+      Create({target: l2});
 
         //exclude_origin_tick and numbers_to_exclude
-        l1 =  new  NumberLine( {  
+        l3 =  new  NumberLine( {  
           from: [100,200],
           to: [400,200],
           x_range:[-10, 10, 2], 
@@ -53,13 +53,13 @@
           exclude_origin_tick : true,
           numbers_to_exclude: [-4,8]
       });
-      l1.strokeColor = 'red';
-      l1.strokeWidth = 3;
+      l3.strokeColor = 'red';
+      l3.strokeWidth = 3;
 
-      Create({target: l1});
+      Create({target: l3});
 
       //test numbers_to_include
-      l1 =  new  NumberLine( {  
+      l4 =  new  NumberLine( {  
         from: [100,250],
         to: [400,250],
         x_range:[-10, 10, 2], 
@@ -71,15 +71,33 @@
         numbers_to_include:[3.3],
         numbers_to_include_color: 'green'
     });
-    l1.strokeColor = 'red';
-    l1.strokeWidth = 3;
+    l4.strokeColor = 'red';
+    l4.strokeWidth = 3;
+
+    Create({target: l4});
+
+      //test dynamic_step_value
+      l5 =  new  NumberLine( {  
+        from: [100,300],
+        to: [400,300],
+        x_range:[-10, 10, 2], 
+        numberColor: 'strokeColor',
+        strokeColor: 'red',
+        include_label:true, 
+        strokeWidth: 3,
+        tick_length : 15,  
+        dynamic_step_value: true,
+    });
+    l5.strokeColor = 'red';
+    l5.strokeWidth = 3;
+    l5.setVertexDraggable(true)
 
     Create({target: l1});
 
-    //test dynamic_step_value
-    l1 =  new  NumberLine( {  
-      from: [100,300],
-      to: [400,300],
+    //test fontSize
+    l6 =  new  NumberLine( {  
+      from: [100,350],
+      to: [400,350],
       x_range:[-10, 10, 2], 
       numberColor: 'strokeColor',
       strokeColor: 'red',
@@ -87,31 +105,13 @@
       strokeWidth: 3,
       tick_length : 15,  
       dynamic_step_value: true,
-  });
-  l1.strokeColor = 'red';
-  l1.strokeWidth = 3;
-  l1.setVertexDraggable(true)
+      font_size: 25,
+    });
+    l6.strokeColor = 'red';
+    l6.strokeWidth = 3; 
+    l6.setVertexDraggable(true)
 
-  Create({target: l1});
-
-  //test fontSize
-  l1 =  new  NumberLine( {  
-    from: [100,350],
-    to: [400,350],
-    x_range:[-10, 10, 2], 
-    numberColor: 'strokeColor',
-    strokeColor: 'red',
-    include_label:true, 
-    strokeWidth: 3,
-    tick_length : 15,  
-    dynamic_step_value: true,
-    font_size: 25,
-});
-l1.strokeColor = 'red';
-l1.strokeWidth = 3; 
-l1.setVertexDraggable(true)
-
- Create({target: l1});
+    Create({target: l1});
 
 
         //test  draggable change

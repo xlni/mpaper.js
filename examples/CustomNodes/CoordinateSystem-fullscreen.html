@@ -9,6 +9,7 @@
      //   mpaper.settings.insertItems = true;
         project.useBuiltinStyle('dark'); 
 
+       
      //   center = view.center; 
        space =  new  CoordinateSystem.ByAxiesFullScreen( project, {   
             x_range:[-20, 20, 2], 
@@ -35,7 +36,7 @@
             strokeWidth: 3,
             strokeColor: 'green'
         }); 
-       
+        Create({target: [xx2_curve   ]});
        xx3_curve = new R9Function.ParameterFunc({
             coord_system:  space,
             func  : function(x){  return  0.2*x*x*x -0.3*x*x +3; },
@@ -44,7 +45,7 @@
             strokeWidth: 3,
             strokeColor: 'green'
         }); 
-        Create({target: [xx2_curve, xx3_curve]});
+        Create({target: [  xx3_curve]});
     </script>
 </head>
 <body>

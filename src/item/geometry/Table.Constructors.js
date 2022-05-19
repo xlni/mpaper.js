@@ -1,7 +1,7 @@
 Table.inject({ statics: new function() {
 
       
-    function _createTable(axis_x, axis_y,  origin_render, show_grid, show_grid_color, asGroup) {
+    function _createTable(axis_x, axis_y,  origin_render, show_grid,  grid_color, asGroup) {
        
     }
 

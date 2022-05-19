@@ -180,8 +180,26 @@ var SpriteSVG = Item.extend(/** @lends SpriteSVG# */{
         //             todata:  svg2 
         //           morphtime:  //in second.
         //          yoyo: true|false
-        var fromdata = that.getStates()[animsetting.fromdata].adjusted;
+        var fromdata = that.getStates()[animsetting.fromdata].adjusted; 
         var todata = that.getStates()[animsetting.todata].adjusted;
+        if( !fromdata || !todata ){
+            var f = new Path(that.getStates()[animsetting.fromdata].data);
+            var t = new Path(that.getStates()[animsetting.todata].data);
+            var  from_segs = f.segments.length, to_segs = t.segments.length;   
+            if( from_segs < 20 && to_segs < 20 ){ 
+               f.insertExtraSegments( 20 - from_segs );  
+               t.insertExtraSegments( 20 - to_segs ); 
+            } else if( from_segs < to_segs ){ 
+               f.insertExtraSegments( to_segs - from_segs );  
+            } else if( from_segs > to_segs ){ 
+               t.insertExtraSegments( from_segs - to_segs ); 
+            } 
+            fromdata = f.pathData;
+            todata = t .pathData;
+            that.getStates()[animsetting.fromdata].adjusted = fromdata;
+            that.getStates()[animsetting.todata].adjusted = todata;
+            
+        }
         if( that.startAniTime == 0 || event.time - that.startAniTime < animsetting.morphtime ){
             var f = new Path(fromdata, Item.NO_INSERT);
             var t = new Path(todata, Item.NO_INSERT);

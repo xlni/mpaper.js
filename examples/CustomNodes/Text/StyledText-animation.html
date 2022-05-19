@@ -7,72 +7,48 @@
     <script type="text/javascript" src="../../../dist/mpaper-full.js"></script>
     <script type="text/paperscript" canvas="canvas">
         //   0 static, 1 writing, 2 rewriting, 3 underline, 4 karaoka,  5 manim 
-         text = new StyledText({
+       
+        text = new StyledText({
             position: view.center + [0, -200],
             fillColor: 'red',
-            strokeColor: 'blue',
-            justification: 'center',
-            fontSize: 20,
-            animType:'writing',
-            duration:3.0,
-            content: 'anim type-1 de fg hi jk lnm de fg hi jk lnm de fg hi jk lnm '
+            strokeColor: 'blue', 
+            fontSize: 20, 
+            content: 'anim type-1 writing ..Two roads diverged in a yellow wood,And sorry I ...'
         });
          text2 = new StyledText({
             position: view.center + [0, -150],
             fillColor: 'red',
-            strokeColor: 'blue',
-            justification: 'center',
-            fontSize: 20,
-            animType:'rewriting',
-            duration:3.0,
-            content: 'anim type-2 dde fg hi jk lnm de fg hi jk lnm de fg hi jk lnm '
+            strokeColor: 'blue', 
+            fontSize: 20, 
+            content: 'anim type-2 rewrite Two roads diverged in a yellow wood,And sorry I ...'
         });
          text3 = new StyledText({
             position: view.center + [0, -100],
             fillColor: 'red',
-            strokeColor: 'blue',
-            justification: 'center',
-            fontSize: 20,
-            animType:'underline',
-            duration:3.0,
-            content: 'anim type-3 dde fg hi jk lnm de fg hi jk lnm de fg hi jk lnm '
+            strokeColor: 'blue', 
+            fontSize: 20, 
+            content: 'anim type-3 underline Two roads diverged in a yellow wood,And sorry I ... '
         });
          text4 = new StyledText({
             position: view.center + [0, -50],
             fillColor: 'red',
-            strokeColor: 'blue',
-            justification: 'center',
-            fontSize: 20,
-            animType:'karaoka',
-            duration:3.0,
-            content: 'anim type-4 dde fg hi jk lnm de fg hi jk lnm de fg hi jk lnm '
+            strokeColor: 'blue', 
+            fontSize: 20, 
+            content: 'anim type-4 karaoka  Two roads diverged in a yellow wood,And sorry I  could not travel both...'
         });
          text5 = new StyledText({
             position: view.center + [0, -0],
             fillColor: 'red',
-            strokeColor: 'blue',
-            justification: 'center',
-            fontSize: 20,
-            animType:'manim',
-            duration:3.0,
-            content: 'anim type-5 dde fg hi jk lnm de fg hi jk lnm de fg hi jk lnm '
+            strokeColor: 'blue', 
+            fontSize: 20, 
+            content: 'anim type-5 manim Two roads diverged in a yellow wood,And sorry I... '
         });
-         text6 = new StyledText({
-            position: view.center + [0, 50],
-            fillColor: 'red',
-            strokeColor: 'blue',
-            justification: 'center',
-            fontSize: 20,
-            animType:'manim',
-            duration:3.0,
-            content: 'anim type-6 dde fg hi jk lnm de fg hi jk lnm de fg hi jk lnm '
-        });
-        Create({target: text, type: 'Write'});
-        Create({target: text2, type: 'Write'});
-        Create({target: text3, type: 'Write'});
-        Create({target: text4, type: 'Write'});
-        Create({target: text5, type: 'Write'});
-        Create({target: text6, type: 'Write'});
+ 
+        Create({target: text, type: 'Text', animType:'writing', duration:3.0});
+        Create({target: text2, type: 'Text', animType:'rewriting', duration:3.0});
+        Create({target: text3, type: 'Text', animType:'underline', duration:3.0});
+        Create({target: text4, type: 'Text' , animType:'karaoka', duration:3.0});
+        Create({target: text5, type: 'Text', animType:'manim', duration:3.0}); 
  
 
  

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Tool Tips</title>
+    <link rel="stylesheet" href="../css/style.css"> 
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+        mpaper.settings.insertItems = true;
+       project.useBuiltinStyle('dark'); 
+
+        center = view.center;  
+        path1 = new Path.Star({
+               center: center + [50, 100],
+               points: 12,
+               radius1: 10,
+               radius2: 20,
+               fillColor: 'color1', 
+               tooltip: 'this is a tooltip.....',
+               tooltip_type: 5
+           });  
+         path2 = new Path.Star({
+            center: center +  [100, 100],
+            points: 20,
+            radius1: 10,
+            radius2: 20,
+            fillColor: 'color1',
+            tooltip: 'this is a tooltip.....',
+            tooltip_type: 11
+        }); 
+         path3 = new Path.Star({
+            center: center +  [150, 100],
+            points: 30,
+            radius1: 10,
+            radius2: 20,
+            fillColor: 'white',
+            tooltip: 'this is a tooltip.....',
+            tooltip_type: 7
+        }); 
+         path4 = new Path.Star({
+            center: center +  [200, 100],
+            points: 25,
+            radius1: 10,
+            radius2: 20,
+            fillColor: 'white',
+            tooltip: 'this is a tooltip.....',
+            tooltip_type: 8
+        });  
+        Create({target: [path1, path2, path3, path4]})
+
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

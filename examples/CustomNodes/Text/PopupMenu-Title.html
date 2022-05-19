@@ -8,19 +8,13 @@
     <script type="text/paperscript" canvas="canvas">
        project.useBuiltinStyle('dark'); 
  
-       menu = new PopupMenu({   
-          //  title: "i am a title"
-        }); 
-
-        menu.addMenuItems('i am a title',  ['A', 'B', 'C'] , function(msg){
+       menu = new PopupMenu( );  
+        menu.addMenuItems('i am a problem',  ['i think so', 'maybe yes, maybe not', 'i will resolve u'] , function(msg){
              project.showMessage(msg)
-        }); 
-        
+        });  
       menu.position =  [300,300];
       Create({target: menu, duration:3})
-     // duration = 1;
-     // menu.imageEffect( duration, 'blinder_v',  true );
-   
+      
     </script>
 </head>
 <body>

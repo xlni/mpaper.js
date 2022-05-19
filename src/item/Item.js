@@ -356,8 +356,8 @@ new function() { // Injection scope for various item event handlers
             that._tooltipid = setTimeout(function(){
                 var type = that.tooltip_type, type = (typeof type == 'undefined') ? 10 : ( type == 'random' ? 9: type);
                 that._project._studio.publish('global.message.notification', 
-                    { content : that.tooltip, position: that.position, ani_type:type });
-            }, 1000);
+                    { content : that.tooltip, position: that.position, ani_type:type  });
+            }, 2000);
         }
     },
     _tooltipHandler2: function(event){
@@ -375,7 +375,7 @@ new function() { // Injection scope for various item event handlers
      * @param {Number} duration  optional default value = 0. 
      * if 0, means updater has no time duration. 
      * if > 0, callback will receive an additional value : progress. when duration is done, updater will stop and removed.  
-     * @param {Number} index  optional    The index at which the new updater should be added in ``self.updaters``.
+     * @param {Number} index  optional    The index at which the new updater should be added in ``this.updaters``.
             In case ``index`` is ``None`` the updater will be added at the end.
    
      * @return {Item} wrapped updater  .

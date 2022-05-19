@@ -36,6 +36,11 @@
         }); 
     }, 
 
+    _animForShowing: function(duration, offset){ 
+        this.visible = true;
+        this.space.addToViewIfNot(duration, '==');
+    },
+
     registerFunctionCurve: function( funcCurve ){
         this.space ._registeredFuncs.push(funcCurve);
         funcCurve.remove();

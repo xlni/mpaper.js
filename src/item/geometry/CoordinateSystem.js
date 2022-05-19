@@ -14,13 +14,13 @@
 var CoordinateSystem = Item.extend(/** @lends CoordinateSystem# */{
     _class: 'CoordinateSystem',  
 
-    initialize: function CoordinateSystem(axis_x, axis_y,    show_grid, show_grid_color) {
+    initialize: function CoordinateSystem(axis_x, axis_y,    show_grid,  grid_color) {
         this._initialize( ); 
         this._axis = []; 
         this._axis[0] = axis_x; 
         this._axis[1] = axis_y;  
         this.show_grid = show_grid;
-        this.show_grid_color = show_grid_color || this._project.getBuiltInColor('color1') || 'black';
+        this. grid_color =  grid_color || this._project.getBuiltInColor('color1') || 'black';
         //create grid...
         var that = this;
         var ticks_x_range = axis_x.get_ticks_global_range();
@@ -40,7 +40,7 @@ var CoordinateSystem = Item.extend(/** @lends CoordinateSystem# */{
     _copyExtraAttr: function(source, excludeMatrix){ 
         this._axis = source._axis;  
         this.show_grid = source.show_grid;
-        this.show_grid_color = source.show_grid_color  ;
+        this. grid_color = source. grid_color  ;
         //create grid...  
         this.x_min = source.x_min;
         this.x_max = source.x_max;
@@ -56,8 +56,8 @@ var CoordinateSystem = Item.extend(/** @lends CoordinateSystem# */{
         if( that.show_grid ){ 
             var ticks_on_x = axis_x.get_ticks_global_pos();  
             var ticks_on_y = axis_y.get_ticks_global_pos();     
-            ctx.strokeStyle = this.show_grid_color;
-            ctx.fillStyle = this.show_grid_color; 
+            ctx.strokeStyle = this. grid_color;
+            ctx.fillStyle = this. grid_color; 
             ctx.strokeWidth = 1; 
             ticks_on_x.forEach(function(value, index) {
                  ctx.beginPath();
@@ -73,6 +73,11 @@ var CoordinateSystem = Item.extend(/** @lends CoordinateSystem# */{
            });
         }
        // _draw.base.call(this, ctx, param);
+    },
+    _animForShowing: function(duration, offset){ 
+        this.visible = true;
+        this._axis[0].addToViewIfNot(duration, '==');
+        this._axis[1].addToViewIfNot(duration, '==');
     },
 
     _getBounds: function(matrix, options) { 
@@ -213,8 +218,8 @@ var CoordinateSystem = Item.extend(/** @lends CoordinateSystem# */{
     setShow_grid: function(show){
         this.show_grid = show;
     },
-    setShow_grid_color: function(color){
-         this.show_grid_color = color;
+    setGrid_color: function(color){
+         this. grid_color = color;
     },
     getAxis_X: function(){
         return this._axis[0];

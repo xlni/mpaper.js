@@ -7,24 +7,30 @@
     <script type="text/javascript" src="../../../dist/mpaper-full.js"></script>
     <script type="text/paperscript" canvas="canvas">
        project.useBuiltinStyle('dark'); 
-
-      
-        var menu = new PopupMenu({ 
+ 
+       menu = new PopupMenu({ 
           keyColor: 'white', 
           keyTextColor: 'red', 
           borderColor: 'green',
           keyboardColor: 'pink', 
           margin:10,
           fontSize: 16,
-        }); 
-
-        menu.addMenuItems( '', ['A', 'B', 'C'] , function(msg){
-             project.showMessage(msg)
-        }); 
+        });  
+       content = "menu -1 ";
+        menu.addMenuTextItem(  content, function(){
+            console.log( "hit one")
+        });
+       content2 = "menu item -2 xxxx ";
+        menu.addMenuTextItem(  content2,  function(){
+          console.log( "hit 2")
+       });
+      content3 = "menu item -3 ";
+       menu.addMenuTextItem(  content3,  function(){
+         console.log( "hit 3")
+      });
         
       menu.position =  [300,300];
-      duration = 1;
-      menu.imageEffect( duration, 'blinder_v',  true );
+      Create({target: menu, duration:3})
    
     </script>
 </head>

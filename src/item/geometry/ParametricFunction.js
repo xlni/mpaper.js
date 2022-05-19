@@ -1,6 +1,7 @@
 /*
  *  
  */
+ 
 
 /**
  * @name R9Function
@@ -51,6 +52,8 @@
         if( typeof this.discontinuities == 'undefined') this.discontinuities = [];
         if( typeof this.dt == 'undefined') this.dt = 1e-08;
 
+        this.closed = false;
+        this.fillColor = 'rgba(0,0,0,0)';
         this.coord_system.registerFunctionCurve(this);
       //  this.generate_points();
     },
@@ -141,6 +144,7 @@
             cur_path = new Path();
             cur_path.strokeColor = that.strokeColor;
             cur_path.strokeWidth = that.strokeWidth;
+            cur_path.fillColor = that.fillColor;
             while(cur_v <= x_max){
                  output = this.scale_func ? this.scale_func.scale_it(this.func(cur_v)) : this.func(cur_v);
                  if( output == null ) continue;
@@ -202,6 +206,9 @@
         } 
         var that = this, space = that.coord_system.space,  t_step = that.t_range[2] , cur_v,  cur_pos; 
         var temp_path = new CompoundPath({pathData: that.path_data});
+        temp_path.fillColor = that.fillColor;
+        temp_path.strokeColor = that.strokeColor;
+        temp_path.strokeWidth = that.strokeWidth;
         temp_path.visible = false;
         var children = temp_path._children, length = 0;
         for (var i = 0, l = children.length; i < l; i++){
@@ -248,6 +255,9 @@
         cur_y = this.scale_func ? this.scale_func.scale_it(cur_y) : cur_y;
         var cur_pos = space. getGlobalRenderPosByValue(x_min, cur_y );
         var path = new Path();
+        path.fillColor = that.fillColor;
+        path.strokeColor = that.strokeColor;
+        path.strokeWidth = that.strokeWidth;
         path.add( new Segment(cur_pos) ); 
         cur_y = this.func(x_max);
         cur_y = this.scale_func ? this.scale_func.scale_it(cur_y) : cur_y;
@@ -299,6 +309,7 @@
             center: center,
             radius: [r_x, r_y],
             strokeColor:  that.strokeColor,
+            fillColor: that.fillColor,
             strokeWidth: that.strokeWidth
         }); 
         this.addChild( path ); 

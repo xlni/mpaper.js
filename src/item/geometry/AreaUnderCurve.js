@@ -28,6 +28,7 @@
         
     createShapes: function(){
         this.resetPathData('');
+        
         var that = this, space = that.space, curve = that.curve, start_x = that.start_x, end_x = that.end_x,
             num_rects = that.num_rects;
         var    start_x_r = space.getGlobalRenderPosByValue_X(start_x),
@@ -38,14 +39,18 @@
          //   end_y = curve.get_value_y_from_value_x(end_x, true),
             end_y_r = curve.get_render_y_from_render_x(end_x_r, true)[0],
             y_zero_r = space.getGlobalRenderPosByValue_Y(0);
-
+ 
         var offset_s = curve.getOffsetOf(new Point(start_x_r,start_y_r),1), 
-            offset_e = curve.getOffsetOf(new Point(end_x_r,end_y_r),1),
-            partial_curve = curve. cloneSubPath(offset_s, offset_e),
-            path = partial_curve.children[0], segments = path.segments;
+            offset_e = curve.getOffsetOf(new Point(end_x_r,end_y_r),1);
+
+        
+        var   partial_curve = curve. cloneSubPath(offset_s, offset_e, false),
+             path = partial_curve.children[0];
+        
+            
         that.add(new Segment(start_x_r, y_zero_r));
-        segments.forEach(e => {
-            that.add( e );
+        path.segments.forEach(e => { 
+            that.add( e.clone() );
         });
         that.add(new Segment(end_x_r, y_zero_r));
         that.closed = true; 
@@ -54,7 +59,7 @@
         curves[0].clearHandles();
         curves[curves.length-2].clearHandles(); 
         curves[curves.length-1].clearHandles(); 
-
+        
        
         if( that.colors.length < num_rects ){
             var hue = Math.random() * 360; 
@@ -102,7 +107,7 @@
     },
     setPostionControl: function( ){
        if( this.dot_left ) return; 
-       var that = this, space = that.space, curve = that.curve, start_x = that.start_x, end_x = that.end_x;
+       var that = this, space = that.space,  start_x = that.start_x, end_x = that.end_x;
        this.dot_left = space.registerDote(  start_x, 0);
        this.dot_right = space.registerDote( end_x, 0); 
 

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Animate</title>
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+       mpaper.settings.insertItems = true;
+       project.useBuiltinStyle('dark'); 
+
+       objs = new Path.Circle({ 
+         center: [100,300],
+          radius: 20,
+          fillColor: 'red',
+          strokeColor: 'red'
+      });
+     // Create(   {targets: objs, type: 'FadeIn', duration: 1} ) 
+      
+   //   Wait(1);
+
+      Play({
+            targets: objs,
+            position:   [400,300] ,
+            positionFunc :  function(from, to, curpos, easing){
+               return new Point(curpos.x , 
+                                curpos.y+ Math.sin( Math.PI*2 *easing ) * 100 * (1-easing)  );
+            },
+            duration: 2,  
+      })
+     
+
+    </script>
+</head>
+<body>
+<canvas id='canvas' resize></canvas>
+</body>
+</html>

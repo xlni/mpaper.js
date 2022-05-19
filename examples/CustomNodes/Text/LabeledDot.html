@@ -7,60 +7,53 @@
     <script type="text/javascript" src="../../../dist/mpaper-full.js"></script>
     <script type="text/paperscript" canvas="canvas">
 
-        mpaper.settings.insertItems = true;
-        project.useBuiltinStyle('dark'); 
        
+        project.useBuiltinStyle('dark');  
 
-
-        var text = new LabeledDot({
-            position:  [200,200],
-            fillColor: 'red',
-            strokeColor: 'blue', 
+        text1 = new LabeledDot({ 
+            fillColor: 'bgColor1',
+            strokeColor: 'color1', 
             fontSize: 20,
             content: 'A'
-        });
-
-        var text2 = new LabeledDot({
-            position: [400,400],
-            fillColor: 'white',
-            strokeColor: 'white', 
+        }); 
+        text2 = new LabeledDot({ 
+            fillColor: 'bgColor2',
+            strokeColor: 'color2', 
             fontSize: 20,
             content: 'de fg hi jk lnm', 
             r9textstyle :  [{"ry": 1, "rh": 30, "start": 0, "end": 2 },{"b": 1, "stroke": "rgba(255, 59,0, 1.0)", "ry": 1, "rh": 30, "start": 3, "end": 4 },{"ry": 1, "rh": 30, "start": 5, "end": 8 },{"stroke": "rgba(0, 76,227, 1.0)", "ry": 1, "rh": 30, "start": 9, "end": 10 },{"ry": 1, "rh": 30, "start": 11, "end": 14 }]
           });
-        var text3 = new LabeledDot({
-            position:   [200, 300],
-            fillColor: 'red',
-            strokeColor: 'blue', 
+        text3 = new LabeledDot({   
             fontSize: 20,
-            bgColor:'pink',
-            borderColor:'green',
+            fillColor: 'bgColor1',
+            strokeColor: 'color2', 
             corner:5,
             borderWidth:1,
             textXOffset:10,
             textYOffset:3,
             content: 'text'
         });
-        var text4 = new LabeledDot({
-            position:  [200, 400],
-            fillColor: 'red',
-            strokeColor: 'blue', 
+        text4 = new LabeledDot({ 
+            fillColor: 'fillColor',
+            strokeColor: 'strokeColor', 
             fontSize: 20,
-            bgColor:'pink',
-            borderColor:'green',
+            bgColor:'green',
+            borderColor:'pink',
             corner:5, 
             textXOffset:10,
             textYOffset:3,
             content: '2'
         });
-        var text5 = new LabeledDot({
-            position:  [200,  500],
+        text5 = new LabeledDot({ 
             fillColor: 'red',
             strokeColor: 'blue', 
+            bgColor:'green',
             fontSize: 20,
             content: 'sA2'
         });
-       
+        group = new Group(text1, text2, text3, text4, text5);
+        group.align(false, 20);
+        Create({target: group});
  
     </script>
 </head>

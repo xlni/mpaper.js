@@ -372,7 +372,7 @@ var Layer = Group.extend(/** @lends Layer# */{
                     e.showChildOneByOne(timeline,  options.duration || 1, offset, doneCallback);
                  }
                  else if ( e instanceof StyledText ){
-                     e.animType =  e.animType || options.animType || 'writing';
+                     e.animType =  e.animType != 'static' ? e.animType : (options.animType || 'writing');
                      e.write( timeline, options.duration || 1, offset, doneCallback) 
                  }
             });  

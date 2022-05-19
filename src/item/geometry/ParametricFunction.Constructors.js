@@ -1,9 +1,9 @@
 R9Function.inject({ statics: new function() {
 
       
-    function createR9Function(axis_x, axis_y,  origin_render, show_grid, show_grid_color) {
-         return cs;
-    }
+    // function createR9Function(axis_x, axis_y,  origin_render, show_grid,  grid_color) {
+    //      return cs;
+    // }
 
   
   

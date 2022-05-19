@@ -586,7 +586,10 @@ function getProperties(tweenSettings, params) {
   const properties = []; 
   
   for (let p in params) {
-    if (is.key(p)) {
+    if( p == 'position' && is.arr(params[p])){
+      params[p] = new Point(params[p]);
+    }
+    if (is.key(p)) { 
       properties.push({
         name: p,
         tweens: normalizePropertyTweens(params[p], tweenSettings)
@@ -611,6 +614,7 @@ function normalizeTweenValues(tween, animatable) {
     } else {
       for (let p in tween) {
         if( p === 'progressFunc') continue;
+       
         let value = getFunctionValue(tween[p], animatable);
         if (is.arr(value)) {
           value = value.map(v => getFunctionValue(v, animatable));

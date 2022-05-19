@@ -6,19 +6,16 @@
     <link rel="stylesheet" href="../css/style.css"> 
     <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
     <script type="text/paperscript" canvas="canvas">
-        mpaper.settings.insertItems = true;
+      //  mpaper.settings.insertItems = true;
         project.useBuiltinStyle('dark'); 
 
-        var center = view.center;
-      
-
-        var path = new Path.Star({
+        center = view.center;  
+        path = new Path.Star({
                center: [50, 50],
                points: 12,
-               radius1: 25,
-               radius2: 40,
-               fillColor: 'white',
-               tooltip: 'this is a tooltip.....'
+               radius1: 10,
+               radius2: 20,
+               fillColor: 'color1', 
            });
         path.draggable = true;
         path.addUpdater(new MoveRestriction({
@@ -26,19 +23,18 @@
             type :  'mrs_x' 
         }))
 
-        var line1 = new Path.Line(path.position, path.position + [1000,0]);   
-          line1.strokeColor = 'orange';
-          line1.fillColor = 'orange'; 
-
+        line1 = new Path.Line(path.position, path.position + [1000,0]);   
+        line1.strokeColor = 'orange';
+        line1.fillColor = 'orange'; 
  
-        var path2 = new Path.Star({
+        Create({targets: [path, line1]});
+
+         path2 = new Path.Star({
             center: [150, 150],
             points: 12,
             radius1: 25,
             radius2: 40,
-            fillColor: 'white',
-            tooltip: 'this is a tooltip.....',
-            tooltip_type: 11
+            fillColor: 'color1', 
         });
         path2.draggable = true;
         path2.addUpdater(new MoveRestriction({
@@ -46,12 +42,21 @@
             type :  'mrs_y' 
         }));
 
+        line1 = new Path.Line(path.position, path.position + [0, 1000]);   
+        line1.strokeColor = 'orange';
+        line1.fillColor = 'orange'; 
+ 
+        Create({targets: [path, line1]});
+
+        Create({targets: [path2, line1]});
+
+
         line1 = new Path.Line(path2.position, path2.position + [0,1000 ]);   
         line1.strokeColor = 'orange';
         line1.fillColor = 'orange'; 
 
 
-        var path3 = new Path.Star({
+         path3 = new Path.Star({
             center: [250, 250],
             points: 12,
             radius1: 25,
@@ -60,6 +65,8 @@
             tooltip: 'this is a tooltip.....',
             tooltip_type: 7
         });
+      
+
         path3.draggable = true;
         path3.addUpdater(new MoveRestriction({
             host :  path3,
@@ -71,14 +78,14 @@
         line1.strokeColor = 'orange';
         line1.fillColor = 'orange'; 
 
-        var path4 = new Path.Star({
+        Create({targets: [path3, line1]});
+
+         path4 = new Path.Star({
             center: [350, 350],
             points: 12,
             radius1: 25,
             radius2: 40,
-            fillColor: 'white',
-            tooltip: 'this is a tooltip.....',
-            tooltip_type: 8
+            fillColor: 'white', 
         });
         path4.draggable = true;
         path4.addUpdater(new MoveRestriction({
@@ -90,12 +97,14 @@
         line1 = new Path.Line([  350, 100], [ 350, 500]);   
         line1.strokeColor = 'orange';
         line1.fillColor = 'orange'; 
- 
-        line1 = new Path.Rectangle(new Point(450,450), [450,450]);   
-        line1.strokeColor = 'orange';
-        line1.fillColor = 'rgba(122,122,0,0.5)'; 
 
-        var path5 = new Path.Star({
+        Create({targets: [path4, line1]});
+ 
+        rect = new Path.Rectangle(new Point(450,450), [450,450]);   
+        rect.strokeColor = 'orange';
+        rect.fillColor = 'rgba(122,122,0,0.5)'; 
+
+         path5 = new Path.Star({
             center: [450, 450],
             points: 12,
             radius1: 25,
@@ -112,14 +121,15 @@
             min2: 450,
             max2: 900
         }))
+        Create({targets: [rect, path5]});
      
-        var shape = new Path.Circle({
+         shape = new Path.Circle({
             center: [600, 300],
             radius: 150,
             fillColor: 'green'
         });
 
-        var path6 = new Path.Star({
+         path6 = new Path.Star({
             center: [600, 350],
             points: 12,
             radius1: 5,
@@ -133,8 +143,9 @@
             shape:  shape,
             onborder: false
         }))
+        Create({targets: [path6, shape]});
 
-        var path7 = new Path.Star({
+         path7 = new Path.Star({
             center: [600, 250],
             points: 12,
             radius1: 5,
@@ -148,8 +159,8 @@
             shape:  shape,
             onborder: true
         }))
-
-        var path8 = new Path.Star({
+        Create({targets: [path7, shape]});
+         path8 = new Path.Star({
             center: [500, 250],
             points: 12,
             radius1: 5,
@@ -161,7 +172,7 @@
             type :  'mrs_move_with' , 
             shape:  path7, 
         }))
-
+        Create({targets: [path8, shape]});
 
     </script>
 </head>

@@ -17,6 +17,7 @@
    
 
     initialize: function PopupMenu( params ) {
+        params = params || {}
       //  Group.apply(this, arguments); 
       //   this._initialize( params ); 
         this.cornerRadius = params.cornerRadius || 4;
@@ -265,7 +266,7 @@
 
                 if( e.feedback ) {
                     that._project._studio.publish('global.message.notification', 
-                    { content : e.feedback, position: that.position, ani_type:10 });
+                    { content : e.feedback, position: that.position, ani_type:10  });
                 }
                 else if( e.toScene ){
                     that._project.showLayer( event.toScene );

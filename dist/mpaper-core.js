@@ -9,7 +9,7 @@
  *
  * All rights reserved.
  *
- * Date: Tue May 17 13:20:59 2022 +0800
+ * Date: Wed May 18 00:08:28 2022 +0800
  *
  ***
  *
@@ -2353,7 +2353,8 @@ var UID = {
 	 }
 	 function handleImageTrans(layer, item, duration, transType, easing, positionFunc, isCreation, callback , sentToBackOnFinish){
 
-		var timeline = layer.getCurPage().ptimer, boxWidth= item.bounds.width, boxHeight = item.bounds.height;
+		var timeline = layer ? layer.getCurPage().ptimer :  anime.timeline({ autoplay: false  }),
+			 boxWidth= item.bounds.width, boxHeight = item.bounds.height;
 		var isRaster = item instanceof Raster;
 		var kimage = isRaster ? item :  item.rasterize();
 		if( !isRaster ){
@@ -2417,11 +2418,14 @@ var UID = {
 			}
 			timeline.add(tweenwrap) ;
 		}
+		if(! layer )
+			timeline.play();
 	}
 
 	 function imgBoxEffect(layer, item, duration, transType, easing, positionFunc, isCreation, callback , sentToBackOnFinish){
 
-		 var boxList, boxWidth,boxHeight, boxRows, boxCols, result, timeline = layer.getCurPage().ptimer;
+		 var boxList, boxWidth,boxHeight, boxRows, boxCols, result,
+			 timeline = layer ? layer.getCurPage().ptimer : anime.timeline({ autoplay: false  });;
 		 var isRaster = item instanceof Raster;
 		 var kimage = isRaster ? item :  item.rasterize();
 		 if( transType == 9 ) transType = Math.floor(Math.random() * 9);
@@ -2433,12 +2437,14 @@ var UID = {
 		 }   else {
 			 return;
 		 }
-		   if( isCreation )
-			   item.setShowHide(false);
-		   else
+		   item.setShowHide(false);
+		   if( !isCreation ) {
 			   item.remove();
-		   if(! isRaster )
+		   }
+		   if(! isRaster ){
+			   kimage.setShowHide(false);
 			   kimage.remove();
+		   }
 		 if( callback && callback.onStart ){
 			 callback.onStart();
 		 }
@@ -2460,6 +2466,7 @@ var UID = {
 					 if( sentToBackOnFinish  ){
 						 item.sendToBack();
 					 }
+				 } else {
 				 }
 				 if( callback && callback.onEnd ){
 					 callback.onEnd();
@@ -2467,6 +2474,7 @@ var UID = {
 				 if(removenimages){
 					 for( var b = 0; b < boxList.length; b++){
 						 var nimage = boxList[b];
+						  nimage.visible = false;
 						  nimage.remove();
 					 }
 				 }
@@ -2573,6 +2581,9 @@ var UID = {
 				var startPos = transType == 4 ? boxCols -1 : boxRows -1;
 			   _one_dir(timeline, duration, tweens, startPos, transType - 3, boxRows, boxCols);
 		 }
+
+		 if(! layer )
+			timeline.play();
 	 }
 	 function  TL2BR1(timeline, tweens, colIndex, boxRows, boxCols){
 		 var toffset = 0;
@@ -2711,20 +2722,33 @@ var UID = {
 			});
 		},
 
-		handleDelayedDelete: function(  item, duration, callback ){
-			setTimeout(function(){
-				item.remove();
-				if( callback && callback.onEnd ){
-					callback.onEnd();
-				}
-			},duration);
+		handleDelayedDelete: function( layer, item, duration, callback ){
+			if( layer ){
+				var timeline =   layer.getCurPage().ptimer;
+				timeline.add({
+				   target : item,
+				   eventFunc : function(){
+						item.remove();
+						if( callback && callback.onEnd ){
+							callback.onEnd();
+						}
+				   }
+				}, '+=' +duration);
+			} else {
+				setTimeout(function(){
+					item.remove();
+					if( callback && callback.onEnd ){
+						callback.onEnd();
+					}
+				},duration);
+			}
 		 },
 		 imageEffect2: function(layer, item, duration, transType, easing, positionFunc, isCreation, callback){
 			if( typeof transType != 'number' )
 			   transType = Ani_Types.indexOf(transType)
 			if( transType < 0 ) transType = 0;
 			  if( transType == 13 )
-				this.handleDelayedDelete(item, duration, callback);
+				this.handleDelayedDelete(layer, item, duration, callback);
 			 else if ( transType == 15 )
 				  handleImageTrans(layer, item, duration, transType, easing || 'linear', positionFunc, isCreation, callback);
 			 else
@@ -2738,7 +2762,8 @@ var UID = {
 				rmv_2 = new CroppedImage(img_rmv, bd.width/2, 0, bd.width/2, bd.height),
 				img_add= added instanceof Raster ? added : added.rasterize(),
 				add_1 = new CroppedImage(img_add, 0, 0, bd.width/2, bd.height),
-				timeline =  layer.getCurPage().ptimer;
+				layer = layer || project._activeLayer;
+				timeline =   layer.getCurPage().ptimer;
 			removed.remove();
 			if(!(removed instanceof Raster)) img_rmv.remove();
 			if(!(added instanceof Raster)) img_add.remove();
@@ -5214,12 +5239,12 @@ var Project = PaperScopeItem.extend({
 				var callback = {
 					onEnd: function(){
 						setTimeout(function(){
-							RU.imageEffect2(that._activeLayer, message_item,   1,
-							   type, 'linear', '', false, null);
+							 message_item.remove();
+							 message_item.visible = false;
 					   },   data.duration || 2000 );
 					}
 				}
-				RU.imageEffect2(this._activeLayer, message_item, 1,
+				RU.imageEffect2(null, message_item, 1,
 					type, 'linear', '', true,  callback );
 			}
 	   }
@@ -5867,8 +5892,8 @@ new function() {
 			that._tooltipid = setTimeout(function(){
 				var type = that.tooltip_type, type = (typeof type == 'undefined') ? 10 : ( type == 'random' ? 9: type);
 				that._project._studio.publish('global.message.notification',
-					{ content : that.tooltip, position: that.position, ani_type:type });
-			}, 1000);
+					{ content : that.tooltip, position: that.position, ani_type:type  });
+			}, 2000);
 		}
 	},
 	_tooltipHandler2: function(event){
@@ -8163,7 +8188,7 @@ var Layer = Group.extend({
 					e.showChildOneByOne(timeline,  options.duration || 1, offset, doneCallback);
 				 }
 				 else if ( e instanceof StyledText ){
-					 e.animType =  e.animType || options.animType || 'writing';
+					 e.animType =  e.animType != 'static' ? e.animType : (options.animType || 'writing');
 					 e.write( timeline, options.duration || 1, offset, doneCallback)
 				 }
 			});
@@ -9892,6 +9917,23 @@ var SpriteSVG = Item.extend({
 		if( !anim ) return;
 		var fromdata = that.getStates()[animsetting.fromdata].adjusted;
 		var todata = that.getStates()[animsetting.todata].adjusted;
+		if( !fromdata || !todata ){
+			var f = new Path(that.getStates()[animsetting.fromdata].data);
+			var t = new Path(that.getStates()[animsetting.todata].data);
+			var  from_segs = f.segments.length, to_segs = t.segments.length;
+			if( from_segs < 20 && to_segs < 20 ){
+			   f.insertExtraSegments( 20 - from_segs );
+			   t.insertExtraSegments( 20 - to_segs );
+			} else if( from_segs < to_segs ){
+			   f.insertExtraSegments( to_segs - from_segs );
+			} else if( from_segs > to_segs ){
+			   t.insertExtraSegments( from_segs - to_segs );
+			}
+			fromdata = f.pathData;
+			todata = t .pathData;
+			that.getStates()[animsetting.fromdata].adjusted = fromdata;
+			that.getStates()[animsetting.todata].adjusted = todata;
+		}
 		if( that.startAniTime == 0 || event.time - that.startAniTime < animsetting.morphtime ){
 			var f = new Path(fromdata, Item.NO_INSERT);
 			var t = new Path(todata, Item.NO_INSERT);
@@ -10805,13 +10847,13 @@ var Curve = Base.extend({
 		return res;
 	},
 
-	splitAt: function(location) {
+	splitAt: function(location, copyAttributes) {
 		var path = this._path;
-		return path ? path.splitAt(location) : null;
+		return path ? path.splitAt(location, copyAttributes) : null;
 	},
 
-	splitAtTime: function(time) {
-		return this.splitAt(this.getLocationAtTime(time));
+	splitAtTime: function(time, copyAttributes) {
+		return this.splitAt(this.getLocationAtTime(time), copyAttributes);
 	},
 
 	divide: function(offset, isTime) {
@@ -13236,7 +13278,7 @@ var Path = PathItem.extend({
 				: null;
 	},
 
-	cloneSubPath: function(start_offset, end_offset){
+	cloneSubPath: function(start_offset, end_offset, copyAttributes){
 		var loc0 = this.getLocationAt(start_offset), index0 = loc0 && loc0.index, time0 = loc0 && loc0.time,
 			loc1 = this.getLocationAt(end_offset), index1 = loc1 && loc1.index, time1 = loc1 && loc1.time,
 			tMin = 1e-8,
@@ -13250,8 +13292,10 @@ var Path = PathItem.extend({
 			time1 = 0;
 		}
 		var path = new Path(Item.NO_INSERT);
-		 path.insertAbove(this);
-		path.copyAttributes(this);
+		if( copyAttributes ){
+			path.insertAbove(this);
+			path.copyAttributes(this);
+		}
 		var segments = this._segments, selength = segments.length,  curves = this._curves;
 		for(var i = index0; i <= index1 ; i++){
 			var seg = segments[i].clone();
@@ -13278,14 +13322,14 @@ var Path = PathItem.extend({
 		for(var i = 0; i < index0; i++){
 			offset += curves[i].length;
 		}
-		var path2 = path.splitAt(end_offset - offset);
+		var path2 = path.splitAt(end_offset - offset,copyAttributes);
 		if( path2 )  path2.remove();
-		var path3 = path.splitAt(start_offset - offset );
+		var path3 = path.splitAt(start_offset - offset ,copyAttributes);
 		path.remove();
 		return path3;
 	},
 
-	splitAt: function(location) {
+	splitAt: function(location, copyAttributes) {
 		var loc = this.getLocationAt(location),
 			index = loc && loc.index,
 			time = loc && loc.time,
@@ -13307,8 +13351,10 @@ var Path = PathItem.extend({
 				path = this;
 			} else {
 				path = new Path(Item.NO_INSERT);
-				path.insertAbove(this);
-				path.copyAttributes(this);
+				if( copyAttributes ){
+					path.insertAbove(this);
+					path.copyAttributes(this);
+				}
 			}
 			path._add(segs, 0);
 			this.addSegment(segs[0]);
@@ -15170,7 +15216,7 @@ var CompoundPath = PathItem.extend({
 		}
 	},
 
-	cloneSubPath: function(start_offset, end_offset){
+	cloneSubPath: function(start_offset, end_offset, copyAttributes){
 		var len = this.getLength(),  children = this._children, accLen = 0;
 		var r = new CompoundPath();
 		 for (var i = 0, l = children.length; i < l; i++){
@@ -15179,10 +15225,10 @@ var CompoundPath = PathItem.extend({
 			if( accLen > end_offset ) { break; }
 			var start_offset_adjust = accLen_e >= end_offset ? start_offset-accLen : 0;
 			if( accLen_e >= end_offset ){
-				r.addChild( c.cloneSubPath(start_offset_adjust, end_offset-accLen) );
+				r.addChild( c.cloneSubPath(start_offset_adjust, end_offset-accLen, copyAttributes) );
 				break;
 			} else {
-				r.addChild(  c.cloneSubPath(start_offset_adjust, clen)  )
+				r.addChild(  c.cloneSubPath(start_offset_adjust, clen, copyAttributes)  )
 				accLen = accLen_e;
 				continue;
 			}
@@ -17334,13 +17380,13 @@ var NumberLine = R9Line.extend({
 var CoordinateSystem = Item.extend({
 	_class: 'CoordinateSystem',
 
-	initialize: function CoordinateSystem(axis_x, axis_y,    show_grid, show_grid_color) {
+	initialize: function CoordinateSystem(axis_x, axis_y,    show_grid,  grid_color) {
 		this._initialize( );
 		this._axis = [];
 		this._axis[0] = axis_x;
 		this._axis[1] = axis_y;
 		this.show_grid = show_grid;
-		this.show_grid_color = show_grid_color || this._project.getBuiltInColor('color1') || 'black';
+		this. grid_color =  grid_color || this._project.getBuiltInColor('color1') || 'black';
 		var that = this;
 		var ticks_x_range = axis_x.get_ticks_global_range();
 		this.x_min = ticks_x_range[0].x;
@@ -17357,7 +17403,7 @@ var CoordinateSystem = Item.extend({
 	_copyExtraAttr: function(source, excludeMatrix){
 		this._axis = source._axis;
 		this.show_grid = source.show_grid;
-		this.show_grid_color = source.show_grid_color  ;
+		this. grid_color = source. grid_color  ;
 		this.x_min = source.x_min;
 		this.x_max = source.x_max;
 		 this.y_min = source.y_min;
@@ -17372,8 +17418,8 @@ var CoordinateSystem = Item.extend({
 		if( that.show_grid ){
 			var ticks_on_x = axis_x.get_ticks_global_pos();
 			var ticks_on_y = axis_y.get_ticks_global_pos();
-			ctx.strokeStyle = this.show_grid_color;
-			ctx.fillStyle = this.show_grid_color;
+			ctx.strokeStyle = this. grid_color;
+			ctx.fillStyle = this. grid_color;
 			ctx.strokeWidth = 1;
 			ticks_on_x.forEach(function(value, index) {
 				 ctx.beginPath();
@@ -17388,6 +17434,11 @@ var CoordinateSystem = Item.extend({
 				ctx.stroke();
 		   });
 		}
+	},
+	_animForShowing: function(duration, offset){
+		this.visible = true;
+		this._axis[0].addToViewIfNot(duration, '==');
+		this._axis[1].addToViewIfNot(duration, '==');
 	},
 
 	_getBounds: function(matrix, options) {
@@ -17507,8 +17558,8 @@ var CoordinateSystem = Item.extend({
 	setShow_grid: function(show){
 		this.show_grid = show;
 	},
-	setShow_grid_color: function(color){
-		 this.show_grid_color = color;
+	setGrid_color: function(color){
+		 this. grid_color = color;
 	},
 	getAxis_X: function(){
 		return this._axis[0];
@@ -17555,6 +17606,11 @@ var CoordinateSystem = Item.extend({
 			c.remove();
 			that.addChild(c);
 		});
+	},
+
+	_animForShowing: function(duration, offset){
+		this.visible = true;
+		this.space.addToViewIfNot(duration, '==');
 	},
 
 	registerFunctionCurve: function( funcCurve ){
@@ -18035,7 +18091,7 @@ var NumericTable = Table.extend({
 });
 Table.inject({ statics: new function() {
 
-	function _createTable(axis_x, axis_y,  origin_render, show_grid, show_grid_color, asGroup) {
+	function _createTable(axis_x, axis_y,  origin_render, show_grid,  grid_color, asGroup) {
 	}
 
 	return {
@@ -18062,8 +18118,8 @@ Table.inject({ statics: new function() {
 
 CoordinateSystem.inject({ statics: new function() {
 
-	function _createCoordinateSystem(axis_x, axis_y,  origin_render, show_grid, show_grid_color, asGroup) {
-		var cs = new CoordinateSystem(axis_x, axis_y,  origin_render, show_grid, show_grid_color);
+	function _createCoordinateSystem(axis_x, axis_y,  origin_render, show_grid,  grid_color, asGroup) {
+		var cs = new CoordinateSystem(axis_x, axis_y,  origin_render, show_grid,  grid_color);
 		return asGroup ? new CoordinateSystemUnit(cs) : cs;
 	}
 
@@ -18105,7 +18161,7 @@ CoordinateSystem.inject({ statics: new function() {
 	function _ByRenderAreaAndAxies(asGroup, params) {
 		var  strokeColor = params.strokeColor || mpaper.project.getBuiltInColor('strokeColor')  ,
 			show_grid = params.show_grid || false,
-			 grid_color = params.grid_color || strokeColor;
+			 grid_color = params.grid_color || mpaper.project.getBuiltInColor('color1') ;
 		var axies = _createTwoAxis(params);
 		return _createCoordinateSystem(axies[0], axies[1],   show_grid, grid_color, asGroup);
 	}
@@ -18190,6 +18246,8 @@ CoordinateSystem.inject({ statics: new function() {
 		if( typeof this.discontinuities == 'undefined') this.discontinuities = [];
 		if( typeof this.dt == 'undefined') this.dt = 1e-08;
 
+		this.closed = false;
+		this.fillColor = 'rgba(0,0,0,0)';
 		this.coord_system.registerFunctionCurve(this);
 	},
 	_copyExtraAttr: function(source, excludeMatrix){
@@ -18258,6 +18316,7 @@ CoordinateSystem.inject({ statics: new function() {
 			cur_path = new Path();
 			cur_path.strokeColor = that.strokeColor;
 			cur_path.strokeWidth = that.strokeWidth;
+			cur_path.fillColor = that.fillColor;
 			while(cur_v <= x_max){
 				 output = this.scale_func ? this.scale_func.scale_it(this.func(cur_v)) : this.func(cur_v);
 				 if( output == null ) continue;
@@ -18299,6 +18358,9 @@ CoordinateSystem.inject({ statics: new function() {
 		}
 		var that = this, space = that.coord_system.space,  t_step = that.t_range[2] , cur_v,  cur_pos;
 		var temp_path = new CompoundPath({pathData: that.path_data});
+		temp_path.fillColor = that.fillColor;
+		temp_path.strokeColor = that.strokeColor;
+		temp_path.strokeWidth = that.strokeWidth;
 		temp_path.visible = false;
 		var children = temp_path._children, length = 0;
 		for (var i = 0, l = children.length; i < l; i++){
@@ -18331,6 +18393,9 @@ CoordinateSystem.inject({ statics: new function() {
 		cur_y = this.scale_func ? this.scale_func.scale_it(cur_y) : cur_y;
 		var cur_pos = space. getGlobalRenderPosByValue(x_min, cur_y );
 		var path = new Path();
+		path.fillColor = that.fillColor;
+		path.strokeColor = that.strokeColor;
+		path.strokeWidth = that.strokeWidth;
 		path.add( new Segment(cur_pos) );
 		cur_y = this.func(x_max);
 		cur_y = this.scale_func ? this.scale_func.scale_it(cur_y) : cur_y;
@@ -18367,6 +18432,7 @@ CoordinateSystem.inject({ statics: new function() {
 			center: center,
 			radius: [r_x, r_y],
 			strokeColor:  that.strokeColor,
+			fillColor: that.fillColor,
 			strokeWidth: that.strokeWidth
 		});
 		this.addChild( path );
@@ -18374,10 +18440,6 @@ CoordinateSystem.inject({ statics: new function() {
 	}
 });
 R9Function.inject({ statics: new function() {
-
-	function createR9Function(axis_x, axis_y,  origin_render, show_grid, show_grid_color) {
-		 return cs;
-	}
 
 	return {
 		Linear: function(params) {
@@ -18431,14 +18493,14 @@ R9Function.inject({ statics: new function() {
 
 			end_y_r = curve.get_render_y_from_render_x(end_x_r, true)[0],
 			y_zero_r = space.getGlobalRenderPosByValue_Y(0);
-
 		var offset_s = curve.getOffsetOf(new Point(start_x_r,start_y_r),1),
-			offset_e = curve.getOffsetOf(new Point(end_x_r,end_y_r),1),
-			partial_curve = curve. cloneSubPath(offset_s, offset_e),
-			path = partial_curve.children[0], segments = path.segments;
+			offset_e = curve.getOffsetOf(new Point(end_x_r,end_y_r),1);
+
+		var   partial_curve = curve. cloneSubPath(offset_s, offset_e, false),
+			 path = partial_curve.children[0];
 		that.add(new Segment(start_x_r, y_zero_r));
-		segments.forEach(e => {
-			that.add( e );
+		path.segments.forEach(e => {
+			that.add( e.clone() );
 		});
 		that.add(new Segment(end_x_r, y_zero_r));
 		that.closed = true;
@@ -18446,7 +18508,6 @@ R9Function.inject({ statics: new function() {
 		curves[0].clearHandles();
 		curves[curves.length-2].clearHandles();
 		curves[curves.length-1].clearHandles();
-
 		if( that.colors.length < num_rects ){
 			var hue = Math.random() * 360;
 			if( that._style && that._style.fillColor )
@@ -18491,7 +18552,7 @@ R9Function.inject({ statics: new function() {
 	},
 	setPostionControl: function( ){
 	   if( this.dot_left ) return;
-	   var that = this, space = that.space, curve = that.curve, start_x = that.start_x, end_x = that.end_x;
+	   var that = this, space = that.space,  start_x = that.start_x, end_x = that.end_x;
 	   this.dot_left = space.registerDote(  start_x, 0);
 	   this.dot_right = space.registerDote( end_x, 0);
 
@@ -18521,6 +18582,7 @@ R9Function.inject({ statics: new function() {
 	_class: 'PopupMenu',
 
 	initialize: function PopupMenu( params ) {
+		params = params || {}
 		this.cornerRadius = params.cornerRadius || 4;
 		this.menuItems = [];
 		Group.apply(this, arguments);
@@ -18697,7 +18759,7 @@ R9Function.inject({ statics: new function() {
 
 				if( e.feedback ) {
 					that._project._studio.publish('global.message.notification',
-					{ content : e.feedback, position: that.position, ani_type:10 });
+					{ content : e.feedback, position: that.position, ani_type:10  });
 				}
 				else if( e.toScene ){
 					that._project.showLayer( event.toScene );
@@ -20872,8 +20934,8 @@ Style.inject({ statics: new function() {
 			textColor: 'rgba( 255,255,255,1)',
 			correctColor : 'rgba(0,173,0,1)',
 			wrongColor: 'rgba( 255,36,36,1)',
-			bgColor1: 'rgba( 80,179,226,0.5)',
-			bgColor2: 'rgba( 128,236,85,0.5)',
+			bgColor1: 'rgba( 80,179,226,0.8)',
+			bgColor2: 'rgba( 128,236,85,0.8)',
 			color1: 'rgba( 80,179,226,1)',
 			color2: 'rgba( 128,236,85,1)',
 			color3: 'rgba( 0,221,225,0.6)',
@@ -23403,6 +23465,9 @@ function normalizePropertyTweens(prop, tweenSettings) {
 function getProperties(tweenSettings, params) {
   const properties = [];
   for (let p in params) {
+	if( p == 'position' && is.arr(params[p])){
+	  params[p] = new Point(params[p]);
+	}
 	if (is.key(p)) {
 	  properties.push({
 		name: p,

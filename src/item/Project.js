@@ -61,6 +61,7 @@ var Project = PaperScopeItem.extend(/** @lends Project# */{
         this._activeLayer = null;
         this._layerStack = [];
         this._currentStyle = new Style(null, null, this);
+      //  this.useBuiltinStyle('light');  
         // If no view is provided, we create a 1x1 px canvas view just so we
         // have something to do size calculations with.
         // (e.g. PointText#_getBounds)
@@ -103,7 +104,7 @@ var Project = PaperScopeItem.extend(/** @lends Project# */{
        if( this._activeLayer ){ 
             if( data && data.content ){
                 var  that = this,  content =   data.content, 
-                    astyle =   data.style || '', 
+                    astyle =   data.style || '',  
                     pos = data.position ||  that._view.center.__add(  [0, -150] ),
                     type = typeof data.ani_type == 'undefined' ? 10 : data.ani_type;
                 var message_item = new StyledText({
@@ -123,13 +124,16 @@ var Project = PaperScopeItem.extend(/** @lends Project# */{
                 var callback = {
                     onEnd: function(){
                         setTimeout(function(){
-                            RU.imageEffect2(that._activeLayer, message_item,   1, 
-                               type, 'linear', '', false, null); 
+                             message_item.remove();
+                             message_item.visible = false;
+                           // RU.imageEffect2(that._activeLayer, message_item,   1, 
+                          //     type, 'linear', '', false, null);  
                        },   data.duration || 2000 );
                     }
                 }
-                RU.imageEffect2(this._activeLayer, message_item, 1, 
+                RU.imageEffect2(null, message_item, 1, 
                     type, 'linear', '', true,  callback ); 
+                
             }
        }
     },

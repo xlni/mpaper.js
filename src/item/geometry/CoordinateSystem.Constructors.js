@@ -1,8 +1,8 @@
 CoordinateSystem.inject({ statics: new function() {
 
       
-    function _createCoordinateSystem(axis_x, axis_y,  origin_render, show_grid, show_grid_color, asGroup) {
-        var cs = new CoordinateSystem(axis_x, axis_y,  origin_render, show_grid, show_grid_color);
+    function _createCoordinateSystem(axis_x, axis_y,  origin_render, show_grid,  grid_color, asGroup) {
+        var cs = new CoordinateSystem(axis_x, axis_y,  origin_render, show_grid,  grid_color);
         return asGroup ? new CoordinateSystemUnit(cs) : cs;
     }
 
@@ -44,7 +44,7 @@ CoordinateSystem.inject({ statics: new function() {
     function _ByRenderAreaAndAxies(asGroup, params) { 
         var  strokeColor = params.strokeColor || mpaper.project.getBuiltInColor('strokeColor')  , 
             show_grid = params.show_grid || false,
-             grid_color = params.grid_color || strokeColor;
+             grid_color = params.grid_color || mpaper.project.getBuiltInColor('color1') ;
         var axies = _createTwoAxis(params); 
         return _createCoordinateSystem(axies[0], axies[1],   show_grid, grid_color, asGroup);
     } 

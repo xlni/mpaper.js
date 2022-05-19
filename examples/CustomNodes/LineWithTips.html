@@ -8,43 +8,24 @@
     <script type="text/paperscript" canvas="canvas">
       //  mpaper.settings.insertItems = true;
       project.useBuiltinStyle('dark');  
-           center = view.center;
-           line1 = new Path.Line({ from: center,  to: center + [200,0]});  
-      //  line1.fitBounds(view.bounds.scale(0.7));
-        line1.strokeColor = 'orange';
-        line1.fillColor = 'orange';
-
-           line2 = new Path.Line(center, center + [200,50]);  
-        //  line1.fitBounds(view.bounds.scale(0.7));
-          line2.strokeColor = 'orange';
-          line2.fillColor = 'orange';
-          line2.setTips('circle');
-  
-             line3 = new Path.Line(center, center + [200,100]);  
-          //  line1.fitBounds(view.bounds.scale(0.7));
-            line3.strokeColor = 'orange';
-            line3.fillColor = 'orange';
-            line3.setTips('star');
-      
-               line4 = new Path.Line(center, center + [200,150]);  
-            //  line1.fitBounds(view.bounds.scale(0.7));
-              line4.strokeColor = 'orange';
-              line4.fillColor = 'orange';
-              line4.setTips('polygon');
-
-                 line5 = new Path.Line(center, center + [200,200]);  
-              //  line1.fitBounds(view.bounds.scale(0.7));
-              line5.strokeColor = 'orange';
-              line5.fillColor = 'orange';
-              line5.setTips('square');
-  
-
-                 line6 = new Path.Line(center, center + [200,250]);  
-              //  line1.fitBounds(view.bounds.scale(0.7));
-              line6.strokeColor = 'orange';
-              line6.fillColor = 'orange';
-              line6.setTips('arrow');
-              Create({targets: [line1, line2, line3, line4, line5, line6]})
+      center = view.center;
+      line1 = new Path.Line({ from: center,  to: center + [200,0]});   
+      line1.strokeColor = 'orange';
+      line1.fillColor = 'orange'; 
+      line2 =  line1.clone();
+      line2.setTips('circle'); 
+      line3 = line1.clone();
+      line3.setTips('star'); 
+      line4 =  line1.clone();
+      line4.setTips('polygon');
+      ine5 =  line1.clone()
+      line5.setTips('square'); 
+      line6 =  line1.clone();
+      line6.setTips('arrow');
+      group = new Group(line1, line2, line3, line4, line5, line6);
+      group.align(true, 25);
+      group.position = view.center;
+      Create({targets: group})
     
         
     </script>

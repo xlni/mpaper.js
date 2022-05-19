@@ -8,8 +8,7 @@
     <script type="text/paperscript" canvas="canvas">
       //  mpaper.settings.insertItems = true;
       //  project.useBuiltinStyle('dark'); 
-         center = view.center; 
-        //test 
+         center = view.center;  
          bar =  new  CoordinateSystem.createBarChart( {  
                  render: [100, 100, 300, 300], 
                  y_range:[-10,20,5],  
@@ -21,19 +20,8 @@
                 bar_colors :['red'],  
                 bar_fill_opacity : 0.5  
         });
-        Create({target: bar, duration:3}) 
-      // bar.strokeColor = 'red';
-      // bar.strokeWidth = 3;
+        Create({target: bar, duration:2})   
         Wait(1);
-        c = new Path.Circle({ 
-          center: [300,300],
-           radius: 20,
-           fillColor: 'red',
-           strokeColor: 'red'
-       });
-       Create(   {targets: c, type: 'FadeIn', duration: 1} )
-
-       Wait(3);
         v =  [[-6,8,2 ],[ 4,15,7 ],[ 4, 5,9 ],[ 4, 5, 7 ],[ 4, 5,17 ]];
         PlayCode( ' bar.changeValue( v, 3  ) ' );
       

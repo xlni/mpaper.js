@@ -393,7 +393,7 @@ var CompoundPath = PathItem.extend(/** @lends CompoundPath# */{
         }
     },
 
-    cloneSubPath: function(start_offset, end_offset){
+    cloneSubPath: function(start_offset, end_offset, copyAttributes){
         var len = this.getLength(),  children = this._children, accLen = 0;
         var r = new CompoundPath();
          for (var i = 0, l = children.length; i < l; i++){
@@ -402,10 +402,10 @@ var CompoundPath = PathItem.extend(/** @lends CompoundPath# */{
             if( accLen > end_offset ) { break; }
             var start_offset_adjust = accLen_e >= end_offset ? start_offset-accLen : 0;
             if( accLen_e >= end_offset ){
-                r.addChild( c.cloneSubPath(start_offset_adjust, end_offset-accLen) );
+                r.addChild( c.cloneSubPath(start_offset_adjust, end_offset-accLen, copyAttributes) );
                 break;
             } else {
-                r.addChild(  c.cloneSubPath(start_offset_adjust, clen)  )
+                r.addChild(  c.cloneSubPath(start_offset_adjust, clen, copyAttributes)  )
                 accLen = accLen_e; 
                 continue;
             }  

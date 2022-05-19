@@ -149,9 +149,22 @@
           else
             return {list : boxList, width: boxWidth, height: boxHeight, boxRows: boxCols, boxCols: 1};
      }
+     /**
+      * 
+      * @param {*} layer if layer is null, invoke animation directly, do not put it into page's timeline
+      * @param {*} item 
+      * @param {*} duration 
+      * @param {*} transType 
+      * @param {*} easing 
+      * @param {*} positionFunc 
+      * @param {*} isCreation 
+      * @param {*} callback 
+      * @param {*} sentToBackOnFinish 
+      */
      function handleImageTrans(layer, item, duration, transType, easing, positionFunc, isCreation, callback , sentToBackOnFinish){ 
 
-        var timeline = layer.getCurPage().ptimer, boxWidth= item.bounds.width, boxHeight = item.bounds.height; 
+        var timeline = layer ? layer.getCurPage().ptimer :  anime.timeline({ autoplay: false  }),
+             boxWidth= item.bounds.width, boxHeight = item.bounds.height; 
         var isRaster = item instanceof Raster;
         var kimage = isRaster ? item :  item.rasterize();
           
@@ -223,11 +236,27 @@
             }  
             timeline.add(tweenwrap) ;
         } 
+        if(! layer ) 
+            timeline.play();
     }
 
+    /**
+     * 
+     * @param {*} layer if layer is null , invoke animation immediately, (do not put it into page's timeline)
+     * @param {*} item 
+     * @param {*} duration 
+     * @param {*} transType 
+     * @param {*} easing 
+     * @param {*} positionFunc 
+     * @param {*} isCreation 
+     * @param {*} callback 
+     * @param {*} sentToBackOnFinish 
+     * @returns 
+     */
      function imgBoxEffect(layer, item, duration, transType, easing, positionFunc, isCreation, callback , sentToBackOnFinish){ 
 
-         var boxList, boxWidth,boxHeight, boxRows, boxCols, result, timeline = layer.getCurPage().ptimer;  
+         var boxList, boxWidth,boxHeight, boxRows, boxCols, result,  
+             timeline = layer ? layer.getCurPage().ptimer : anime.timeline({ autoplay: false  });;  
          var isRaster = item instanceof Raster;
          var kimage = isRaster ? item :  item.rasterize();
          if( transType == 9 ) transType = Math.floor(Math.random() * 9);
@@ -240,12 +269,16 @@
              return;
          } 
            //remove item at begining
-           if( isCreation )
-               item.setShowHide(false);
-           else
-               item.remove(); //delete
-           if(! isRaster )
+           item.setShowHide(false);
+           if( !isCreation ) {
+               item.remove(); //delete 
+           }
+              
+           if(! isRaster ){
+               kimage.setShowHide(false);
                kimage.remove();
+           }
+               
  
          if( callback && callback.onStart ){
              callback.onStart();
@@ -271,13 +304,16 @@
                      if( sentToBackOnFinish  ){
                          item.sendToBack(); //FIXME? if item is a group?
                      }
-                 } 
+                 } else {
+                  //   item.setShowHide(false);
+                 }
                  if( callback && callback.onEnd ){
                      callback.onEnd();
                  }
                  if(removenimages){
                      for( var b = 0; b < boxList.length; b++){
                          var nimage = boxList[b];
+                          nimage.visible = false;
                           nimage.remove();
                      }
                  }
@@ -285,8 +321,7 @@
          };  
          
          for( var b = 0; b < size; b++){
-             var nimage = boxList[b];
-           //  layer.addChild( nimage );
+             var nimage = boxList[b]; 
 
              if( transType == 7 ){ 
                 var tweenwrap = {   targets: nimage, 
@@ -367,10 +402,7 @@
              }
              tweens.push(   tweenwrap );
          }
-       //  if ( !isCreation  )
-         //    item.remove();
-         
-         
+           
          if ( transType ==  0 || transType == 7 || transType == 8 || transType == 10 ){
              tweens.forEach(e => {  timeline.add(e, 0)  ; } ); 
          } else if ( transType == 1){ /**  box random */
@@ -390,7 +422,9 @@
                 var startPos = transType == 4 ? boxCols -1 : boxRows -1;
                _one_dir(timeline, duration, tweens, startPos, transType - 3, boxRows, boxCols);
          }
-         
+
+         if(! layer )
+            timeline.play(); 
      }
       
      function  TL2BR1(timeline, tweens, colIndex, boxRows, boxCols){  
@@ -541,13 +575,33 @@
             });  
         },
 
-        handleDelayedDelete: function(  item, duration, callback ){
-            setTimeout(function(){    
-                item.remove();  
-                if( callback && callback.onEnd ){
-                    callback.onEnd();
-                }
-            },duration);  
+        /**
+         * 
+         * @param {*} layer 
+         * @param {*} item 
+         * @param {*} duration 
+         * @param {*} callback 
+         */
+        handleDelayedDelete: function( layer, item, duration, callback ){
+            if( layer ){
+                var timeline =   layer.getCurPage().ptimer;
+                timeline.add({
+                   target : item,
+                   eventFunc : function(){
+                        item.remove();  
+                        if( callback && callback.onEnd ){
+                            callback.onEnd();
+                        }
+                   }    
+                }, '+=' +duration);
+            } else {
+                setTimeout(function(){    
+                    item.remove();  
+                    if( callback && callback.onEnd ){
+                        callback.onEnd();
+                    }
+                },duration);  
+            } 
          },
          /**
           * 
@@ -575,7 +629,7 @@
                transType = Ani_Types.indexOf(transType)
             if( transType < 0 ) transType = 0;
               if( transType == 13 )  
-                this.handleDelayedDelete(item, duration, callback);
+                this.handleDelayedDelete(layer, item, duration, callback);
              else if ( transType == 15 ) 
                   handleImageTrans(layer, item, duration, transType, easing || 'linear', positionFunc, isCreation, callback);
              else 
@@ -592,13 +646,12 @@
                 rmv_2 = new CroppedImage(img_rmv, bd.width/2, 0, bd.width/2, bd.height),
                 img_add= added instanceof Raster ? added : added.rasterize(),
                 add_1 = new CroppedImage(img_add, 0, 0, bd.width/2, bd.height),
-                timeline =  layer.getCurPage().ptimer;
+                layer = layer || project._activeLayer;
+                timeline =   layer.getCurPage().ptimer;
             removed.remove(); 
             if(!(removed instanceof Raster)) img_rmv.remove();
             if(!(added instanceof Raster)) img_add.remove(); 
-          //  layer.addChild(rmv_1);
-         //   layer.addChild(rmv_2); 
-         //   layer.addChild(add_1); 
+        
             
             var p1 = add_1.position.clone(), add_1_w = add_1.bounds.width, opacity = added.opacity;
             added.opacity = 0.01;
@@ -610,7 +663,7 @@
                 position: rmv_2.position.clone().__add(new Point(-bd.width/4, 0)),
                 duration: duration/2,
                 begin: function(){
-                    layer.addChild(rmv_1);
+                    layer.addChild(rmv_1); 
                 },
                 complete: function(){
                     rmv_2.remove();

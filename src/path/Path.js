@@ -1282,6 +1282,67 @@ var Path = PathItem.extend(/** @lends Path# */{
                 : null;
     },
 
+ 
+    cloneSubPath: function(start_offset, end_offset, copyAttributes){
+        var loc0 = this.getLocationAt(start_offset), index0 = loc0 && loc0.index, time0 = loc0 && loc0.time,
+            loc1 = this.getLocationAt(end_offset), index1 = loc1 && loc1.index, time1 = loc1 && loc1.time,
+            tMin = /*#=*/Numerical.CURVETIME_EPSILON,
+            tMax = 1 - tMin;
+        if (time0 > tMax) {
+            // time == 1 is the same location as time == 0 and index++
+            index0++;
+            time0 = 0;
+        }
+        if (time1 > tMax) {
+            // time == 1 is the same location as time == 0 and index++
+            index1++;
+            time1 = 0;
+        }
+        var path = new Path(Item.NO_INSERT); 
+        if( copyAttributes ){
+            path.insertAbove(this);
+            path.copyAttributes(this);
+        }
+          
+        var segments = this._segments, selength = segments.length,  curves = this._curves;
+        for(var i = index0; i <= index1 ; i++){
+            var seg = segments[i].clone();
+            seg._index = i - index0 ; 
+            seg._path = path;
+            path.add(seg)
+         //   path._segments.push(seg);
+          //  var cv = curves[i].clone();
+          //  cv._path = path;
+         //   path._curves.push(cv);
+        }
+        if( (curves.length == segments.length) && (index1 == curves.length-1) ){
+            var seg = segments[0].clone();
+            seg._index = index1 - index0 +1 ; 
+            seg._path = path;
+            path.add(seg);
+        } else {
+            if( segments.length > index1 +1 ){
+                var seg = segments[index1+1].clone();
+                seg._index = index1 - index0 +1 ; 
+                seg._path = path;
+                path.add(seg);
+            } 
+        }
+
+        path._changed(/*#=*/Change.SEGMENTS);
+        var offset = 0;
+        for(var i = 0; i < index0; i++){
+            offset += curves[i].length;
+        }
+        //remove ending..
+        var path2 = path.splitAt(end_offset - offset,copyAttributes); 
+        if( path2 )  path2.remove();
+        //remove starting.
+        var path3 = path.splitAt(start_offset - offset ,copyAttributes); 
+        path.remove();
+        return path3;  
+    },
+
     /**
      * Splits the path at the given offset or location. After splitting, the
      * path will be open. If the path was open already, splitting will result in
@@ -1338,69 +1399,7 @@ var Path = PathItem.extend(/** @lends Path# */{
      * // Select the first segment:
      * path.firstSegment.selected = true;
      */
-    cloneSubPath: function(start_offset, end_offset){
-        var loc0 = this.getLocationAt(start_offset), index0 = loc0 && loc0.index, time0 = loc0 && loc0.time,
-            loc1 = this.getLocationAt(end_offset), index1 = loc1 && loc1.index, time1 = loc1 && loc1.time,
-            tMin = /*#=*/Numerical.CURVETIME_EPSILON,
-            tMax = 1 - tMin;
-        if (time0 > tMax) {
-            // time == 1 is the same location as time == 0 and index++
-            index0++;
-            time0 = 0;
-        }
-        if (time1 > tMax) {
-            // time == 1 is the same location as time == 0 and index++
-            index1++;
-            time1 = 0;
-        }
-        var path = new Path(Item.NO_INSERT);
-         path.insertAbove(this);
-        path.copyAttributes(this);
-        var segments = this._segments, selength = segments.length,  curves = this._curves;
-        for(var i = index0; i <= index1 ; i++){
-            var seg = segments[i].clone();
-            seg._index = i - index0 ; 
-            seg._path = path;
-            path.add(seg)
-         //   path._segments.push(seg);
-          //  var cv = curves[i].clone();
-          //  cv._path = path;
-         //   path._curves.push(cv);
-        }
-        if( (curves.length == segments.length) && (index1 == curves.length-1) ){
-            var seg = segments[0].clone();
-            seg._index = index1 - index0 +1 ; 
-            seg._path = path;
-            path.add(seg);
-        } else {
-            if( segments.length > index1 +1 ){
-                var seg = segments[index1+1].clone();
-                seg._index = index1 - index0 +1 ; 
-                seg._path = path;
-                path.add(seg);
-            } 
-        }
-
-        path._changed(/*#=*/Change.SEGMENTS);
-        var offset = 0;
-        for(var i = 0; i < index0; i++){
-            offset += curves[i].length;
-        }
-        //remove ending..
-        var path2 = path.splitAt(end_offset - offset); 
-        if( path2 )  path2.remove();
-        //remove starting.
-        var path3 = path.splitAt(start_offset - offset ); 
-        path.remove();
-        return path3;  
-    },
-
-    /**
-     * 
-     * @param {*} location 
-     * @returns 
-     */
-    splitAt: function(location) {
+    splitAt: function(location, copyAttributes) {
         // NOTE: getLocationAt() handles both offset and location:
         var loc = this.getLocationAt(location),
             index = loc && loc.index,
@@ -1436,8 +1435,10 @@ var Path = PathItem.extend(/** @lends Path# */{
                 path = this;
             } else {
                 path = new Path(Item.NO_INSERT);
-                path.insertAbove(this);
-                path.copyAttributes(this);
+                if( copyAttributes ){
+                    path.insertAbove(this);
+                    path.copyAttributes(this);
+                } 
             }
             path._add(segs, 0);
             // Add dividing segment again. In case of a closed path, that's the

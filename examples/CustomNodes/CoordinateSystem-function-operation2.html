@@ -6,13 +6,14 @@
     <link rel="stylesheet" href="../css/style.css">
     <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
     <script type="text/paperscript" canvas="canvas">
-        //   mpaper.settings.insertItems = true;
+       //  mpaper.settings.insertItems = true;
         project.useBuiltinStyle('dark');  
     
         project.configuration.frame_width = 1000;
         project.configuration.frame_height = 1000;
-
-        Main();
+        
+       Main();
+        
         //    center = view.center;
   
           //test 
@@ -23,7 +24,7 @@
                    include_label:true, 
                    show_grid: true,
                       strokeWidth: 3,
-                      strokeColor: 'red', 
+                      strokeColor: 'color1', 
                       dot_color: 'red',
                       draggable_origin: true,
                       draggable_x_dot: 1 ,
@@ -35,52 +36,51 @@
               func  : function(x){  return  2*x  +2; },
               t_range:[-10,10,2],  
               strokeWidth: 3,
-              strokeColor: 'red'
+              strokeColor: 'red',
+              fillColor: 'red'
          }); 
-  
          Create({target: [space, path]});
   
          Wait(2);
   
-         PlayCode(' space.space. createLineToAxis(true, 2, 5,  "blue", true)  ') ;
-         Wait(2);
-         PlayCode( ' space.space. createLineToAxis(false, 6,9, "blue", false) ' );
-         Wait(2);
+       //  PlayCode(' space.space. createLineToAxis(true, 2, 5,  "blue", true)  ') ;
+       //  Wait(2);
+      //   PlayCode( ' space.space. createLineToAxis(false, 6,9, "blue", false) ' );
+      //   Wait(2);
           areaUnderCurve = new  AreaUnderCurve({
               space : space,
               curve : path,
               start_x : -3,
-              end_x : 4,
-              num_rects: 20,
+              end_x : 5,
+              num_rects: 10,
               fillColor: 'rgba(124,0,124,0.4)',
           }); 
           areaUnderCurve.setPostionControl();
           Create({target: areaUnderCurve});
   
-          Wait(2);
-      
-  
-         
+        
          xx2_curve =   R9Function.ParameterFunc({
               coord_system:  space,
               func  : function(x){  return  0.2*x*x +2; },
               t_range:[-10,10,2],  
               is_param_func: false,
               strokeWidth: 3,
-              strokeColor: 'green'
+              strokeColor: 'color3', 
+              
          }); 
-       
-             areaUnderCurve2 = new  AreaUnderCurve({
+         Create({target: [xx2_curve]});
+         
+         areaUnderCurve2 = new  AreaUnderCurve({
               space : space,
               curve : xx2_curve,
               start_x : -4,
               end_x : 4,
-              num_rects: 4,
+              num_rects: 20,
               fillColor: 'rgba(0,124,124,0.4)',
           });
           areaUnderCurve2.setPostionControl();
   
-          Create({target: [xx2_curve,areaUnderCurve2]});
+          Create({target: [areaUnderCurve2]});
       
     </script>
 </head>

@@ -300,6 +300,8 @@ var Group = Item.extend(/** @lends Group# */{
      * alignment all childrend into grid. grid with same cell sizes.
      * @param {*} numrows 
      * @param {*} numcols 
+     *  * @param {*} gap 
+     *  * @param {*} exclude 
      */
     align_grid: function(numrows, numcols, gap, exclude){
         var children = this._children, max_w, max_h, tlx, tly, pos;

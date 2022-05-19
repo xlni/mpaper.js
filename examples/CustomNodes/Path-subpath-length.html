@@ -16,7 +16,7 @@
         path.position = view.center; 
         path.strokeColor = 'orange';
 
-          subpath = path.cloneSubPath(100,900);
+          subpath = path.cloneSubPath(100,900, true);
         subpath.strokColor= 'blue';
         subpath.strokeWidth = 4;  
         console.log('length = ' + subpath.length)
@@ -27,7 +27,7 @@
         }); 
         path2.strokeColor = 'orange';
 
-          subpath2 = path2.cloneSubPath(100,300);
+          subpath2 = path2.cloneSubPath(100,300, true);
         subpath2.strokColor= 'blue';
         subpath2.strokeWidth = 4;  
         console.log('length = ' + subpath2.length)

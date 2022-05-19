@@ -8,8 +8,7 @@
     <script type="text/paperscript" canvas="canvas">
        //  mpaper.settings.insertItems = true;
       //  project.useBuiltinStyle('dark'); 
-       center = view.center; 
-        //test 
+       center = view.center;  
        chart =  new  CoordinateSystem.createBarChart( {  
                  render: [100, 100, 300, 300], 
                  y_range:[-10,20,5],  
@@ -18,8 +17,8 @@
                 values :[[-4,5,7 ],[ 4,15,7 ],[-4,-5,4 ],[14,15,17 ],[-4,15,-7 ]],
                 bar_names : ['a','b', 'c', 'd', 'sdfs'], 
                 bar_name_size : 12, 
-                bar_colors :['red'],  
-                bar_fill_opacity : 0.5,
+                bar_colors :['Green'],  
+                bar_fill_opacity : 0.8,
                 duration:5
         }); 
        Create({target: chart, duration:3}) 

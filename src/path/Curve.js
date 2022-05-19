@@ -521,12 +521,13 @@ var Curve = Base.extend(/** @lends Curve# */{
      *
      * @param {Number|CurveLocation} location the offset or location on the
      *     curve at which to split
+     * @param {*} copyAttributes  
      * @return {Path} the newly created path after splitting, if any
      * @see Path#splitAt(offset)
      */
-    splitAt: function(location) {
+    splitAt: function(location, copyAttributes) {
         var path = this._path;
-        return path ? path.splitAt(location) : null;
+        return path ? path.splitAt(location, copyAttributes) : null;
     },
 
     /**
@@ -536,11 +537,12 @@ var Curve = Base.extend(/** @lends Curve# */{
      *
      * @param {Number} time the curve-time parameter on the curve at which to
      *     split
+     * @param {*} copyAttributes  
      * @return {Path} the newly created path after splitting, if any
      * @see Path#splitAt(offset)
      */
-    splitAtTime: function(time) {
-        return this.splitAt(this.getLocationAtTime(time));
+    splitAtTime: function(time, copyAttributes) {
+        return this.splitAt(this.getLocationAtTime(time), copyAttributes);
     },
 
     // TODO: Remove in 1.0.0? (deprecated January 2016):

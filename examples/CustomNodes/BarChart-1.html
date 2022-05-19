@@ -3,20 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Bar Chart test -1</title> 
-    <style> 
-      canvas[resize] {
-          width: 100%;
-          height: 100%; 
-      }
-    </style>
-    <script type="text/javascript" src="../../dist/mpaper-full.min.js"></script>
+    <link rel="stylesheet" href="../css/style.css">
+    <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
     <script type="text/paperscript" canvas="canvas">
     //   mpaper.settings.insertItems = true;
        project.useBuiltinStyle('dark'); 
-
-
-       center = view.center; 
-        //test 
+ 
+       center = view.center;  
        l1 =  new  CoordinateSystem.createBarChart( {  
                  render: [100, 100, 300, 300], 
                  y_range:[-10,20,5],  
@@ -25,12 +18,10 @@
                 values :[-4,5,7,13,18],
                 bar_names : ['a','b', 'c', 'd', 'sdfs'], 
                 bar_name_size : 24, 
-                bar_colors :['red'], 
+                bar_colors :['green'], 
                 bar_width : 12, 
                 bar_fill_opacity : 0.5
-        });
-      // l1.strokeColor = 'red';
-      // l1.strokeWidth = 3;
+        }); 
       Create({target: l1, duration:3})
 
      

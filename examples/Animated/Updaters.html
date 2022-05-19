@@ -6,28 +6,25 @@
     <link rel="stylesheet" href="../css/style.css"> 
     <script type="text/javascript" src="../../dist/mpaper-full.js"></script>
     <script type="text/paperscript" canvas="canvas">
-        mpaper.settings.insertItems = true;
-        project.useBuiltinStyle('dark'); 
-
-        var center = view.center;
-        var line1 = new Path.Line(center, center + [400,0]);  
-      //  line1.fitBounds(view.bounds.scale(0.7));
+       // mpaper.settings.insertItems = true;
+        project.useBuiltinStyle('dark');  
+         center = view.center;
+         line1 = new Path.Line(center, center + [400,0]);   
         line1.strokeColor = 'orange';
-        line1.fillColor = 'orange'; 
-
-        var path = new Path.Star({
+        line1.fillColor = 'orange';  
+         path = new Path.Star({
                center: [50, 50],
                points: 12,
-               radius1: 25,
-               radius2: 40,
+               radius1: 10,
+               radius2: 20,
                fillColor: 'white'
            });
+        Create({target: [line1,path]})
  
-        var  totalLen = line1.length; 
-        var aupdater = function(event, progress){  
-              var preLoc =  line1.getLocationAt(totalLen*progress);
-              path.position = new Point(preLoc.point.x, preLoc.point.y);
-              console.log(path.position ) 
+         totalLen = line1.length; 
+         aupdater = function(event, progress){  
+               preLoc =  line1.getLocationAt(totalLen*progress);
+              path.position = new Point(preLoc.point.x, preLoc.point.y); 
         };
         
         path.addUpdater( aupdater , 5);

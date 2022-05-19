@@ -11,47 +11,45 @@
     
         project.configuration.frame_width = 1000;
         project.configuration.frame_height = 1000;
-       center = view.center;
-
-        //test 
-       l1 =  new  CoordinateSystem.ByAxiesFullScreen( project, {   
+       center = view.center;  
+       space =  new  CoordinateSystem.ByAxiesFullScreen( project, {   
                  x_range:[-10, 10, 4], 
                  y_range:[-10,20,5], 
                  include_tip:true,
                  include_label:true, 
                  show_grid: true,
                     strokeWidth: 3,
-                    strokeColor: 'red',
+                    strokeColor: 'strokeColor',
                     dot_color: 'green',
                     draggable_origin: true,
                     draggable_x_dot: 1 ,
                     draggable_y_dot: 2 ,
         });
         path = new R9Function.Linear({
-                  coord_system:  l1,
+                  coord_system:  space,
                   func  : function(x){  return  2*x  +2; },
                   t_range:[-10,10,2],  
                   strokeWidth: 3,
-                  strokeColor: 'red'
+                  strokeColor: 'color1'
              });
         path2 = new R9Function.ParameterFunc({
-                  coord_system:  l1,
+                  coord_system:  space,
                   func : function(t){  return [ Math.sin(2 * t), Math.sin(3 * t)]; },
                   t_range:[0, Math.PI],  
                   strokeWidth: 2,
-                  strokeColor: 'red',
+                  strokeColor: 'color2',
                   scale_func: new LinearBase(3)
              });
         path3 = new R9Function.Circle({
-            coord_system:  l1,
+            coord_system:  space,
             center: [1,1],
             radius: 2,
             strokeWidth: 2,
-            strokeColor: 'red',
+            strokeColor: 'color3',
             scale_func: new LinearBase(2)
         });   
         path4 = new R9Function.SVG({
-            coord_system:  l1,
+            coord_system:  space,
             path_data :'M20,50c0,-16.56854 13.43146,-30 30,-30c16.56854,0 30,13.43146 30,30c0,16.56854 -13.43146,30 -30,30c-16.56854,0 -30,-13.43146 -30,-30z M50,60c5.52285,0 10,-4.47715 10,-10c0,-5.52285 -4.47715,-10 -10,-10c-5.52285,0 -10,4.47715 -10,10c0,5.52285 4.47715,10 10,10z',
             t_range:[-10,10],  
             strokeWidth: 2,
@@ -59,7 +57,7 @@
             scale_func: new LinearBase(0.1)
         });    
         path5  = new R9Function.SVG({
-            coord_system:  l1,
+            coord_system:  space,
             path_data :'M20,50c0,-16.56854 13.43146,-30 30,-30c16.56854,0 30,13.43146 30,30c0,16.56854 -13.43146,30 -30,30c-16.56854,0 -30,-13.43146 -30,-30z M50,60c5.52285,0 10,-4.47715 10,-10c0,-5.52285 -4.47715,-10 -10,-10c-5.52285,0 -10,4.47715 -10,10c0,5.52285 4.47715,10 10,10z',
             t_range:[-10,10],  
             strokeWidth: 2,
@@ -67,7 +65,7 @@
             keep_svg_unmapped: true 
         });     
         
-        Create({target: [l1, path, path2, path3, path4,path5]});
+        Create({target: [space, path, path2, path3, path4,path5]});
     </script>
 </head>
 <body>

@@ -12,15 +12,16 @@
         //  mpaper.settings.insertItems = true;
         project.useBuiltinStyle('dark');
         
-         input =   ' P(E) = {n \\choose k} p^k (1-p)^{ n-k } ';
-        
+         input =   ' P(E) = {n \\choose k} p^k (1-p)^{ n-k } '; 
+         input =   ' This is rosy: $$P(E) = {n \\choose k} p^k (1-p)^{ n-k }$$ '; 
          item = new Path.Tex({
              content : input,
              scale: 20,
              position: view.center
          })
          Create( {target: item, type: 'FadeIn', duration: 1} )     
-       Wait(1);
+     
+         Wait(5);
 
        ApplyingWaves( { target: item , amplitude: 50, ripples: 3 }) ;   
         

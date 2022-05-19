@@ -8,9 +8,7 @@
     <script type="text/paperscript" canvas="canvas">
       //mpaper.settings.insertItems = true;
       project.useBuiltinStyle('dark');
-      
-          center = view.center; 
-        //test 
+       center = view.center;  
           table =  new  Table( {  
           area: [100,100,300,200],
            data: [["First", "Second"],  ["Third","Fourth"]],
@@ -19,12 +17,8 @@
            strokeColor: 'red',
            fillColor: 'blue',
            strokeWidth: 1
-        });
-      // table.position = center;
-      Create({target: table})
-      
- 
-        //test 
+        }); 
+      Create({target: table}) 
           table2 =  new  Table( {  
           area: [450,100,300,200],
           data: [["First", "Second"],  ["Third","Fourth"]],
@@ -34,8 +28,7 @@
           fillColor: 'blue',
           strokeWidth: 1,
           include_outer_lines: true
-        });
-   
+        }); 
           table3 =  new  Table( {  
           area: [800,100,300,200],
           data: [["First", "Second"],  ["Third","Fourth"]],
@@ -47,8 +40,7 @@
           include_outer_lines: true,
           background_rectangle_color: 'pink'
         });
-        Create({target: [table2, table3]})
-
+        Create({target: [table2, table3]}) 
           table =  new  Table( {  
           area: [100,350,300,200],
            data: [["First", "Second"],  ["Third","Fourth"]],
